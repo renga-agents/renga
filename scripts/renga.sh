@@ -15,7 +15,6 @@
 #   doctor    — Vérifie la santé du setup (Python, fichiers, schéma)
 #   dashboard — Lance scripts/generate_dashboard.py
 #   build     — Construit l'artefact de distribution
-#   test      — Lance les tests
 # =============================================================================
 
 set -euo pipefail
@@ -359,14 +358,11 @@ cmd_init() {
   # .gitignore reports
   ensure_gitignore_reports
 
-  # Générer le workflow CI de validation (si absent)
+  # Générer le workflow CI de validation (toujours mis à jour — fichier géré par renga)
   local workflow_dir="$ROOT_DIR/.github/workflows"
   local workflow_file="$workflow_dir/agent-validate.yml"
-  if [[ -f "$workflow_file" ]]; then
-    ok "Workflow agent-validate.yml already exists"
-  else
-    mkdir -p "$workflow_dir"
-    cat > "$workflow_file" <<'WORKFLOW'
+  mkdir -p "$workflow_dir"
+  cat > "$workflow_file" <<'WORKFLOW'
 name: Agent Validation
 
 on:
@@ -399,123 +395,17 @@ jobs:
       - name: Validate agents
         run: renga validate
 WORKFLOW
-    ok "Generated .github/workflows/agent-validate.yml"
-  fi
+  ok "Updated .github/workflows/agent-validate.yml"
 
-  # Générer RENGA.md (guide de démarrage)
+  # Copy RENGA.md from share dir (installed by install.sh / renga install)
   local readme_file="$ROOT_DIR/RENGA.md"
   if [[ -f "$readme_file" ]]; then
     ok "RENGA.md already exists"
-  else
-    cat > "$readme_file" <<'RENGA_README'
-# renga — AI Agent Framework
-
-This project uses [renga](https://github.com/renga-agents/renga), a framework for managing
-specialized AI agents in VS Code Copilot.
-
-## Quick start
-
-```bash
-renga install          # download agents, instructions, hooks
-renga doctor           # verify your setup
-renga validate         # check agent files
-```
-
-## Configuration — `.renga.yml`
-
-### Agent mode
-
-| Mode          | Behavior                                                       |
-|---------------|----------------------------------------------------------------|
-| `whitelist`   | Only agents listed under `agents.include` are active           |
-| `all`         | Every installed agent is available; use `exclude` to hide some |
-
-### Profiles
-
-| Profile    | Typical use                        | Agent count |
-|------------|------------------------------------|-------------|
-| `lite`     | Small / personal projects          | ~8          |
-| `standard` | Production team                    | ~20         |
-| `full`     | Large org, all agents available    | 50+         |
-
-Re-run `renga init --profile <name>` to switch (existing `.renga.yml` is preserved).
-
-### LLM model selection
-
-Agents use the model configured in VS Code Copilot by default.
-To pin a specific model, add it inside a custom agent file in `.github/agents/_local/`:
-
-```yaml
----
-name: backend-dev
-model: claude-sonnet-4-5   # or: gpt-4o, gemini-2.5-pro, o3, …
----
-```
-
-### Key `.renga.yml` fields
-
-```yaml
-project:
-  name: "my-project"
-  framework_version: "1.0.0"   # updated automatically by `renga update`
-
-agents:
-  mode: "whitelist"           # whitelist | all
-  include:
-    - backend-dev
-    - qa-engineer
-  exclude: []                 # only used with mode: all
-
-thresholds:
-  l2_min_agents: 2            # minimum agents required for L2 tasks
-  l3_min_agents: 3
-  l4_min_agents: 5
-  max_retries: 3
-
-plugins: []                   # populated by `renga plugin add <name>`
-```
-
-## Commands
-
-| Command                      | Description                               |
-|------------------------------|-------------------------------------------|
-| `renga install`              | Install / refresh agents for this project |
-| `renga update`               | Update to the latest release              |
-| `renga list`                 | List installed agents, skills, plugins    |
-| `renga plugin add <name>`    | Install a plugin (e.g. `game-studio`)     |
-| `renga plugin remove <name>` | Remove a plugin                           |
-| `renga plugin list`          | List installed plugins                    |
-| `renga validate`             | Validate `.agent.md` files                |
-| `renga doctor`               | Full setup health check                   |
-| `renga dashboard`            | Generate a performance dashboard          |
-| `renga help`                 | Show all available commands               |
-
-## Plugins
-
-Plugins add domain-specific agents without polluting the main agent list:
-
-```bash
-renga plugin add game-studio      # adds 9 game development agents
-renga plugin remove game-studio
-renga plugin list
-```
-
-## Local customization
-
-Create files in `.github/agents/_local/` to override or extend agents.
-These files are **never overwritten** by `renga update`.
-
-Same principle applies to:
-- `.github/instructions/_local/` — custom instructions
-- `.github/skills/_local/` — custom skills
-- `.github/hooks/` — custom Copilot hooks
-
-## CI validation
-
-A GitHub Actions workflow (`.github/workflows/agent-validate.yml`) was generated
-to validate agent files on every push. No configuration needed.
-RENGA_README
+  elif [[ -f "$RENGA_SHARE_DIR/RENGA.md" ]]; then
+    cp "$RENGA_SHARE_DIR/RENGA.md" "$readme_file"
     ok "Generated RENGA.md"
+  else
+    warn "RENGA.md not generated -- run 'renga install' then 'renga init' again"
   fi
 
   ok "Init complete"
@@ -600,7 +490,6 @@ cmd_doctor() {
     errors=$((errors + 1))
   fi
 
-  # 5. Scripts essentiels
   # 5. Skills directory
   if [[ -d "$SKILLS_DIR" ]]; then
     local skill_count
@@ -914,8 +803,26 @@ print(m.group(1) if m else 'unknown')
   info "Version actuelle : $current_version"
 
   if [[ "$dry_run" == "true" ]]; then
-    info "[DRY-RUN] Vérification de la version $version..."
-    info "[DRY-RUN] Mise à jour disponible vers $version — relancez sans --dry-run"
+    local tmp_dr
+    tmp_dr="$(mktemp -d)"
+    local remote_json="$tmp_dr/latest.json"
+    curl -fsSL "$RENGA_API/releases/latest" -o "$remote_json" 2>/dev/null || {
+      warn "Impossible de vérifier la version distante"
+      rm -rf "$tmp_dr"
+      return 0
+    }
+    local remote_version
+    remote_version="$(python3 -c "
+import json
+d = json.load(open('$remote_json'))
+print(d.get('tag_name', '?').lstrip('v'))
+")"
+    rm -rf "$tmp_dr"
+    if [[ "$remote_version" == "$current_version" ]]; then
+      ok "Déjà à jour (v$current_version)"
+    else
+      info "Mise à jour disponible : v$current_version → v$remote_version — relancez sans --dry-run"
+    fi
   else
     if [[ "$version" == "latest" ]]; then
       cmd_install
@@ -966,6 +873,27 @@ cmd_list() {
   fi
 }
 
+# Sync plugins list in .renga.lock from filesystem
+_sync_lock_plugins() {
+  [[ -f "$LOCK_FILE" ]] || return 0
+  python3 -c "
+import re, os, pathlib
+lock = pathlib.Path('$LOCK_FILE')
+text = lock.read_text()
+plugins_dir = '$RENGA_DIR/_plugins'
+plugins = sorted(
+    d for d in os.listdir(plugins_dir)
+    if os.path.isdir(os.path.join(plugins_dir, d))
+) if os.path.isdir(plugins_dir) else []
+if plugins:
+    new_plugins = 'plugins:\\n' + '\\n'.join(f'  - {p}' for p in plugins)
+else:
+    new_plugins = 'plugins: []'
+text = re.sub(r'plugins:(?:\\s*\\[\\]|(?:\\n  - [^\\n]+)+)', new_plugins, text)
+lock.write_text(text)
+" 2>/dev/null
+}
+
 cmd_plugin() {
   if [[ $# -eq 0 ]]; then
     fail "Usage: renga plugin <add|remove|list> [name]"
@@ -986,27 +914,30 @@ cmd_plugin() {
         return 0
       fi
 
-      # Fetch from latest release manifest
-      local release_json
-      release_json="$(curl -fsSL "$RENGA_API/releases/latest")" || {
+      # Fetch from latest release manifest (use temp file to avoid control char corruption)
+      local tmp_dir
+      tmp_dir="$(mktemp -d)"
+      trap 'rm -rf "$tmp_dir"' EXIT
+
+      local release_json_file="$tmp_dir/release.json"
+      curl -fsSL "$RENGA_API/releases/latest" -o "$release_json_file" || {
         fail "Impossible de récupérer la dernière release"
         return 1
       }
 
       local tarball_url
-      tarball_url="$(echo "$release_json" | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
+      tarball_url="$(python3 -c "
+import json
+data = json.load(open('$release_json_file'))
 for a in data.get('assets', []):
     if a['name'].endswith('.tar.gz'):
         print(a['browser_download_url']); break
 else:
     print(data.get('tarball_url', ''))
-")"
-
-      local tmp_dir
-      tmp_dir="$(mktemp -d)"
-      trap 'rm -rf "$tmp_dir"' EXIT
+")" || {
+        fail "Impossible de parser la release"
+        return 1
+      }
 
       curl -fsSL "$tarball_url" | tar xz -C "$tmp_dir" --strip-components=1
 
@@ -1023,6 +954,7 @@ else:
       local count
       count="$(find "$RENGA_DIR/_plugins/$plugin_name" -name '*.agent.md' | wc -l | tr -d ' ')"
       ok "Plugin '$plugin_name' installé ($count agents)"
+      _sync_lock_plugins
       ;;
 
     remove)
@@ -1035,6 +967,7 @@ else:
       fi
       rm -rf "$plugin_dir"
       ok "Plugin '$plugin_name' supprimé"
+      _sync_lock_plugins
       ;;
 
     list)

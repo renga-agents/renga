@@ -213,6 +213,17 @@ def _copy_scripts(root: Path, output: Path) -> list[Path]:
     return copied
 
 
+def _copy_renga_readme(root: Path, output: Path) -> Path | None:
+    """Copy RENGA.md → dist/RENGA.md (user-facing onboarding guide)."""
+    src = root / "RENGA.md"
+    if not src.exists():
+        log.warning("RENGA.md not found: %s", src)
+        return None
+    dest = output / "RENGA.md"
+    _copy_file(src, dest)
+    return dest
+
+
 def _copy_hooks(root: Path, output: Path) -> list[Path]:
     """Copy .github/hooks/ → dist/hooks/, excluding _local/."""
     hooks_src = root / ".github" / "hooks"
@@ -428,6 +439,7 @@ def main(argv: list[str] | None = None) -> None:
     _copy_config_example(root, output)
     _copy_cli(root, output, version)
     _copy_scripts(root, output)
+    _copy_renga_readme(root, output)
     _copy_hooks(root, output)
 
     # Build and write manifest

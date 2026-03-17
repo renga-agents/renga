@@ -117,6 +117,11 @@ if [[ -d "$TMP_DIR/scripts" ]]; then
   ok "Scripts Python installés dans $SHARE_SCRIPTS_DIR"
 fi
 
+# Copy RENGA.md to share dir for use by 'renga init'
+if [[ -f "$TMP_DIR/RENGA.md" ]]; then
+  cp "$TMP_DIR/RENGA.md" "${XDG_DATA_HOME:-$HOME/.local/share}/renga/RENGA.md"
+fi
+
 # ---------------------------------------------------------------------------
 # Install hooks from distribution
 # ---------------------------------------------------------------------------
