@@ -172,3 +172,4 @@ if ! echo "$PATH" | tr ':' '\n' | grep -q "^$INSTALL_DIR$"; then
 fi
 
 ok "Installation terminée ! Lancez 'renga help' pour démarrer."
+
