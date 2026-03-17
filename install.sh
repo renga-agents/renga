@@ -52,31 +52,37 @@ fi
 
 info "Installation de la CLI renga…"
 
-# Fetch release
+# Fetch release (to a temp file to avoid control character issues in variables)
 if [[ -z "$VERSION" ]]; then
   RELEASE_URL="$API_URL/releases/latest"
 else
   RELEASE_URL="$API_URL/releases/tags/v$VERSION"
 fi
 
-RELEASE_JSON="$(curl -fsSL "$RELEASE_URL")" || {
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_DIR"' EXIT
+RELEASE_JSON_FILE="$TMP_DIR/release.json"
+
+curl -fsSL "$RELEASE_URL" -o "$RELEASE_JSON_FILE" || {
   fail "Impossible de récupérer la release"
   exit 1
 }
 
-# Extract tarball URL
-TARBALL_URL="$(echo "$RELEASE_JSON" | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
+# Extract tarball URL and tag name
+TARBALL_URL="$(python3 -c "
+import json
+data = json.load(open('$RELEASE_JSON_FILE'))
 for a in data.get('assets', []):
     if a['name'].endswith('.tar.gz'):
         print(a['browser_download_url']); break
 else:
     print(data.get('tarball_url', ''))
-" 2>/dev/null)" || {
+")" || {
   fail "Impossible de parser la release (Python 3 requis)"
   exit 1
 }
+
+INSTALLED_VERSION="$(python3 -c "import json; print(json.load(open('$RELEASE_JSON_FILE')).get('tag_name','unknown'))")"
 
 if [[ -z "$TARBALL_URL" ]]; then
   fail "Aucun artefact trouvé dans la release"
@@ -84,9 +90,6 @@ if [[ -z "$TARBALL_URL" ]]; then
 fi
 
 # Download and extract CLI
-TMP_DIR="$(mktemp -d)"
-trap 'rm -rf "$TMP_DIR"' EXIT
-
 info "Téléchargement…"
 curl -fsSL "$TARBALL_URL" | tar xz -C "$TMP_DIR" --strip-components=1
 
@@ -101,8 +104,6 @@ fi
 mkdir -p "$INSTALL_DIR"
 cp "$CLI_SRC" "$INSTALL_DIR/renga"
 chmod +x "$INSTALL_DIR/renga"
-
-INSTALLED_VERSION="$(echo "$RELEASE_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin).get('tag_name','unknown'))")"
 ok "renga $INSTALLED_VERSION installé dans $INSTALL_DIR/renga"
 
 # ---------------------------------------------------------------------------
