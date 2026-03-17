@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-REPO="${RENGA_REPO:-OWNER/renga}"
+REPO="${RENGA_REPO:-renga-agents/renga}"
 API_URL="https://api.github.com/repos/$REPO"
 INSTALL_DIR="${RENGA_INSTALL_DIR:-$HOME/.local/bin}"
 VERSION=""
