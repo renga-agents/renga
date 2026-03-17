@@ -42,13 +42,13 @@ info() { printf "${BOLD}→${RESET} %s\n" "$1"; }
 # Résolution du répertoire racine du projet
 # ---------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-cd "$ROOT_DIR" || { fail "Impossible de se déplacer vers $ROOT_DIR"; exit 1; }
+ROOT_DIR="$(pwd)"
+# ROOT_DIR is always the working directory from which the CLI is invoked
 
 # ---------------------------------------------------------------------------
 # Configuration distrib
 # ---------------------------------------------------------------------------
-RENGA_REPO="${RENGA_REPO:-owner/renga}"  # à remplacer par le vrai
+RENGA_REPO="${RENGA_REPO:-renga-agents/renga}"
 RENGA_API="https://api.github.com/repos/$RENGA_REPO"
 RENGA_DIR="$ROOT_DIR/.github/agents"
 INSTRUCTIONS_DIR="$ROOT_DIR/.github/instructions"
