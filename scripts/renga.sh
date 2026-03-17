@@ -68,7 +68,7 @@ install_hooks() {
     return 0
   fi
 
-  info "Installation des hooks…"
+  info "Installation des hooks..."
   mkdir -p "$HOOKS_DIR"
   mkdir -p "$HOOKS_DIR/scripts"
 
@@ -322,7 +322,7 @@ cmd_init() {
       ;;
   esac
 
-  info "Initializing renga project ($profile profile)…"
+  info "Initializing renga project ($profile profile)..."
 
   # Guard : ne pas écraser un fichier existant
   if [[ -f "$ROOT_DIR/.renga.yml" ]]; then
@@ -400,7 +400,7 @@ WORKFLOW
 }
 
 cmd_validate() {
-  info "Validation des agents…"
+  info "Validation des agents..."
 
   local script="$ROOT_DIR/scripts/validate_agents.py"
   if [[ ! -f "$script" ]]; then
@@ -420,7 +420,7 @@ cmd_validate() {
 }
 
 cmd_doctor() {
-  info "Diagnostic du setup renga…"
+  info "Diagnostic du setup renga..."
   local errors=0
 
   # 1. Python ≥ 3.9
@@ -531,7 +531,7 @@ cmd_doctor() {
 }
 
 cmd_dashboard() {
-  info "Génération du dashboard…"
+  info "Génération du dashboard..."
 
   local script="$ROOT_DIR/scripts/generate_dashboard.py"
   if [[ ! -f "$script" ]]; then
@@ -544,7 +544,7 @@ cmd_dashboard() {
 }
 
 cmd_test() {
-  info "Lancement des tests…"
+  info "Lancement des tests..."
 
   if [[ ! -d "$ROOT_DIR/tests" ]]; then
     fail "Répertoire tests/ introuvable"
@@ -562,7 +562,7 @@ cmd_test() {
 }
 
 cmd_build() {
-  info "Build de l'artefact de distribution…"
+  info "Build de l'artefact de distribution..."
   local script="$ROOT_DIR/scripts/build_dist.py"
   if [[ ! -f "$script" ]]; then
     fail "Script introuvable : scripts/build_dist.py"
@@ -581,7 +581,7 @@ cmd_install() {
     esac
   done
 
-  info "Installation d'renga (version: $version)…"
+  info "Installation d'renga (version: $version)..."
 
   # Déterminer l'URL de la release
   local release_url
@@ -624,7 +624,7 @@ else:
     return 1
   fi
 
-  info "Téléchargement depuis $tarball_url…"
+  info "Téléchargement depuis $tarball_url..."
   curl -fsSL "$tarball_url" | tar xz -C "$tmp_dir" --strip-components=1 || {
     fail "Échec du téléchargement/extraction"
     return 1
@@ -668,7 +668,7 @@ if m:
   fi
 
   # Copier les agents
-  info "Installation des agents…"
+  info "Installation des agents..."
   mkdir -p "$RENGA_DIR"
 
   local agents_src="$tmp_dir/agents"
@@ -706,7 +706,7 @@ if m:
   fi
 
   # Copier instructions
-  info "Installation des instructions…"
+  info "Installation des instructions..."
   mkdir -p "$INSTRUCTIONS_DIR"
   local instr_src="$tmp_dir/instructions"
   local instr_count=0
@@ -719,7 +719,7 @@ if m:
   fi
 
   # Copier skills
-  info "Installation des skills…"
+  info "Installation des skills..."
   mkdir -p "$SKILLS_DIR"
   local skills_src="$tmp_dir/skills"
   local skill_count=0
@@ -794,7 +794,7 @@ print(m.group(1) if m else 'unknown')
   info "Version actuelle : $current_version"
 
   if [[ "$dry_run" == "true" ]]; then
-    info "[DRY-RUN] Vérification de la version $version…"
+    info "[DRY-RUN] Vérification de la version $version..."
     info "[DRY-RUN] Mise à jour disponible vers $version — relancez sans --dry-run"
   else
     if [[ "$version" == "latest" ]]; then
@@ -858,7 +858,7 @@ cmd_plugin() {
     add)
       [[ $# -ge 1 ]] || { fail "Usage: renga plugin add <name>"; return 1; }
       local plugin_name="$1"
-      info "Ajout du plugin '$plugin_name'…"
+      info "Ajout du plugin '$plugin_name'..."
 
       # Check if already installed
       if [[ -d "$RENGA_DIR/_plugins/$plugin_name" ]]; then
@@ -966,7 +966,7 @@ print(m.group(1) if m else '—')
       ;;
 
     validate)
-      info "Validation des skills…"
+      info "Validation des skills..."
       local errors=0
       if [[ -d "$SKILLS_DIR" ]]; then
         for skill_md in "$SKILLS_DIR"/*/SKILL.md; do
