@@ -21,6 +21,11 @@
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
+# Version (replaced by build_dist.py at build time)
+# ---------------------------------------------------------------------------
+RENG_VERSION="__RENGA_VERSION__"
+
+# ---------------------------------------------------------------------------
 # Couleurs & symboles
 # ---------------------------------------------------------------------------
 if [[ -t 1 ]]; then
@@ -156,13 +161,13 @@ write_profile_config() {
 
   case "$profile" in
     lite)
-      cat > "$dest" <<'EOF'
+      cat > "$dest" <<EOF
 version: "1.0"
 
 project:
   name: "my-project"
   description: "Small project using the Lite profile"
-  framework_version: "1.0.0"
+  framework_version: "$RENG_VERSION"
 
 agents:
   mode: "whitelist"
@@ -196,13 +201,13 @@ paths: {}
 EOF
       ;;
     standard)
-      cat > "$dest" <<'EOF'
+      cat > "$dest" <<EOF
 version: "1.0"
 
 project:
   name: "my-project"
   description: "Production-ready project using the Standard profile"
-  framework_version: "1.0.0"
+  framework_version: "$RENG_VERSION"
 
 agents:
   mode: "whitelist"
@@ -248,13 +253,13 @@ paths: {}
 EOF
       ;;
     full)
-      cat > "$dest" <<'EOF'
+      cat > "$dest" <<EOF
 version: "1.0"
 
 project:
   name: "my-project"
   description: "Large project using the Full profile"
-  framework_version: "1.0.0"
+  framework_version: "$RENG_VERSION"
 
 agents:
   mode: "all"

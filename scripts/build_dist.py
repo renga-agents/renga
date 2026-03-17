@@ -183,14 +183,16 @@ def _copy_config_example(root: Path, output: Path) -> Path | None:
     return config_dest
 
 
-def _copy_cli(root: Path, output: Path) -> Path | None:
-    """Copy scripts/renga.sh → dist/renga (chmod +x)."""
+def _copy_cli(root: Path, output: Path, version: str) -> Path | None:
+    """Copy scripts/renga.sh → dist/renga (chmod +x), injecting version."""
     cli_src = root / "scripts" / "renga.sh"
     if not cli_src.exists():
         log.warning("CLI script not found: %s", cli_src)
         return None
     cli_dest = output / "renga"
-    _copy_file(cli_src, cli_dest)
+    content = cli_src.read_text(encoding="utf-8")
+    content = content.replace("__RENGA_VERSION__", version)
+    cli_dest.write_text(content, encoding="utf-8")
     cli_dest.chmod(cli_dest.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     return cli_dest
 
@@ -408,7 +410,7 @@ def main(argv: list[str] | None = None) -> None:
     _copy_skills(root, output)
     _copy_schema(root, output)
     _copy_config_example(root, output)
-    _copy_cli(root, output)
+    _copy_cli(root, output, version)
     _copy_hooks(root, output)
 
     # Build and write manifest
