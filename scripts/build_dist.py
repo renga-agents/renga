@@ -199,7 +199,7 @@ def _copy_cli(root: Path, output: Path, version: str) -> Path | None:
 
 def _copy_scripts(root: Path, output: Path) -> list[Path]:
     """Copy essential Python scripts (validate_agents.py, generate_dashboard.py) to dist/scripts/."""
-    scripts_to_copy = ["validate_agents.py", "generate_dashboard.py"]
+    scripts_to_copy = ["validate_agents.py", "generate_dashboard.py", "agent_parser.py"]
     scripts_dest = output / "scripts"
     copied: list[Path] = []
     for name in scripts_to_copy:

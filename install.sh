@@ -106,6 +106,17 @@ cp "$CLI_SRC" "$INSTALL_DIR/renga"
 chmod +x "$INSTALL_DIR/renga"
 ok "renga $INSTALLED_VERSION installé dans $INSTALL_DIR/renga"
 
+# Install Python helper scripts to the system share dir
+SHARE_SCRIPTS_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/renga/scripts"
+mkdir -p "$SHARE_SCRIPTS_DIR"
+if [[ -d "$TMP_DIR/scripts" ]]; then
+  for py_script in "$TMP_DIR/scripts"/*.py; do
+    [[ -f "$py_script" ]] || continue
+    cp "$py_script" "$SHARE_SCRIPTS_DIR/"
+  done
+  ok "Scripts Python installés dans $SHARE_SCRIPTS_DIR"
+fi
+
 # ---------------------------------------------------------------------------
 # Install hooks from distribution
 # ---------------------------------------------------------------------------

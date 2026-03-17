@@ -61,6 +61,7 @@ SKILLS_DIR="$ROOT_DIR/.github/skills"
 HOOKS_DIR="$ROOT_DIR/.github/hooks"
 LOCK_FILE="$ROOT_DIR/.renga.lock"
 CONFIG_FILE="$ROOT_DIR/.renga.yml"
+RENGA_SHARE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/renga"
 
 # ---------------------------------------------------------------------------
 # Hooks installation helper
@@ -393,12 +394,128 @@ jobs:
 
       - name: Install renga CLI
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${RENGA_REPO:-OWNER/renga}/main/install.sh | sh
+          curl -fsSL https://raw.githubusercontent.com/renga-agents/renga/main/install.sh | sh
 
       - name: Validate agents
         run: renga validate
 WORKFLOW
     ok "Generated .github/workflows/agent-validate.yml"
+  fi
+
+  # Générer RENGA.md (guide de démarrage)
+  local readme_file="$ROOT_DIR/RENGA.md"
+  if [[ -f "$readme_file" ]]; then
+    ok "RENGA.md already exists"
+  else
+    cat > "$readme_file" <<'RENGA_README'
+# renga — AI Agent Framework
+
+This project uses [renga](https://github.com/renga-agents/renga), a framework for managing
+specialized AI agents in VS Code Copilot.
+
+## Quick start
+
+```bash
+renga install          # download agents, instructions, hooks
+renga doctor           # verify your setup
+renga validate         # check agent files
+```
+
+## Configuration — `.renga.yml`
+
+### Agent mode
+
+| Mode          | Behavior                                                       |
+|---------------|----------------------------------------------------------------|
+| `whitelist`   | Only agents listed under `agents.include` are active           |
+| `all`         | Every installed agent is available; use `exclude` to hide some |
+
+### Profiles
+
+| Profile    | Typical use                        | Agent count |
+|------------|------------------------------------|-------------|
+| `lite`     | Small / personal projects          | ~8          |
+| `standard` | Production team                    | ~20         |
+| `full`     | Large org, all agents available    | 50+         |
+
+Re-run `renga init --profile <name>` to switch (existing `.renga.yml` is preserved).
+
+### LLM model selection
+
+Agents use the model configured in VS Code Copilot by default.
+To pin a specific model, add it inside a custom agent file in `.github/agents/_local/`:
+
+```yaml
+---
+name: backend-dev
+model: claude-sonnet-4-5   # or: gpt-4o, gemini-2.5-pro, o3, …
+---
+```
+
+### Key `.renga.yml` fields
+
+```yaml
+project:
+  name: "my-project"
+  framework_version: "1.0.0"   # updated automatically by `renga update`
+
+agents:
+  mode: "whitelist"           # whitelist | all
+  include:
+    - backend-dev
+    - qa-engineer
+  exclude: []                 # only used with mode: all
+
+thresholds:
+  l2_min_agents: 2            # minimum agents required for L2 tasks
+  l3_min_agents: 3
+  l4_min_agents: 5
+  max_retries: 3
+
+plugins: []                   # populated by `renga plugin add <name>`
+```
+
+## Commands
+
+| Command                      | Description                               |
+|------------------------------|-------------------------------------------|
+| `renga install`              | Install / refresh agents for this project |
+| `renga update`               | Update to the latest release              |
+| `renga list`                 | List installed agents, skills, plugins    |
+| `renga plugin add <name>`    | Install a plugin (e.g. `game-studio`)     |
+| `renga plugin remove <name>` | Remove a plugin                           |
+| `renga plugin list`          | List installed plugins                    |
+| `renga validate`             | Validate `.agent.md` files                |
+| `renga doctor`               | Full setup health check                   |
+| `renga dashboard`            | Generate a performance dashboard          |
+| `renga help`                 | Show all available commands               |
+
+## Plugins
+
+Plugins add domain-specific agents without polluting the main agent list:
+
+```bash
+renga plugin add game-studio      # adds 9 game development agents
+renga plugin remove game-studio
+renga plugin list
+```
+
+## Local customization
+
+Create files in `.github/agents/_local/` to override or extend agents.
+These files are **never overwritten** by `renga update`.
+
+Same principle applies to:
+- `.github/instructions/_local/` — custom instructions
+- `.github/skills/_local/` — custom skills
+- `.github/hooks/` — custom Copilot hooks
+
+## CI validation
+
+A GitHub Actions workflow (`.github/workflows/agent-validate.yml`) was generated
+to validate agent files on every push. No configuration needed.
+RENGA_README
+    ok "Generated RENGA.md"
   fi
 
   ok "Init complete"
@@ -407,14 +524,15 @@ WORKFLOW
 cmd_validate() {
   info "Validation des agents..."
 
-  local script="$ROOT_DIR/scripts/validate_agents.py"
+  # Look for the script in the system share dir (installed by install.sh)
+  local script="$RENGA_SHARE_DIR/scripts/validate_agents.py"
   if [[ ! -f "$script" ]]; then
-    fail "Script introuvable : scripts/validate_agents.py"
+    fail "Script introuvable. Relancez l'installation : curl -fsSL https://raw.githubusercontent.com/renga-agents/renga/main/install.sh | sh"
     return 1
   fi
 
   local rc=0
-  python3 "$script" || rc=$?
+  python3 "$script" --agents-dir "$RENGA_DIR" || rc=$?
 
   case $rc in
     0) ok "Validation terminée — tous les agents sont valides" ;;
@@ -530,32 +648,17 @@ cmd_doctor() {
 cmd_dashboard() {
   info "Génération du dashboard..."
 
-  local script="$ROOT_DIR/scripts/generate_dashboard.py"
+  # Look for the script in the system share dir (installed by install.sh)
+  local script="$RENGA_SHARE_DIR/scripts/generate_dashboard.py"
   if [[ ! -f "$script" ]]; then
-    fail "Script introuvable : scripts/generate_dashboard.py"
+    fail "Script introuvable. Relancez l'installation : curl -fsSL https://raw.githubusercontent.com/renga-agents/renga/main/install.sh | sh"
     return 1
   fi
 
-  python3 "$script"
-  ok "Dashboard généré"
-}
-
-cmd_test() {
-  info "Lancement des tests..."
-
-  if [[ ! -d "$ROOT_DIR/tests" ]]; then
-    fail "Répertoire tests/ introuvable"
-    return 1
-  fi
-
-  # Préférer pytest s'il est disponible, sinon unittest
-  if python3 -m pytest --version &>/dev/null; then
-    python3 -m pytest "$ROOT_DIR/tests/" -v
-  else
-    python3 -m unittest discover "$ROOT_DIR/tests/" -v
-  fi
-
-  ok "Tests terminés"
+  python3 "$script" \
+    --memory-dir "$ROOT_DIR/.copilot/memory" \
+    --output "$ROOT_DIR/.copilot/reports/dashboard.md"
+  ok "Dashboard généré dans .copilot/reports/dashboard.md"
 }
 
 cmd_build() {
@@ -741,12 +844,12 @@ if m:
     cp "$tmp_dir/schemas/skill.schema.json" "$ROOT_DIR/schemas/"
   fi
 
-  # Copier les scripts Python essentiels
+  # Copier les scripts Python essentiels dans le répertoire système partagé
   if [[ -d "$tmp_dir/scripts" ]]; then
-    mkdir -p "$ROOT_DIR/scripts"
+    mkdir -p "$RENGA_SHARE_DIR/scripts"
     for script in "$tmp_dir/scripts"/*.py; do
       [[ -f "$script" ]] || continue
-      cp "$script" "$ROOT_DIR/scripts/"
+      cp "$script" "$RENGA_SHARE_DIR/scripts/"
     done
   fi
 
@@ -768,6 +871,17 @@ installed_at: "$(date -u +%Y-%m-%dT%H:%M:%S)"
 agents_installed: $agent_count
 plugins: []
 LOCK
+
+  # Mettre à jour framework_version dans .renga.yml
+  if [[ -f "$CONFIG_FILE" ]]; then
+    python3 -c "
+import re, pathlib
+path = pathlib.Path('$CONFIG_FILE')
+text = path.read_text()
+text = re.sub(r'(framework_version:\s*)[^\n]+', r'\\1\"$installed_version\"', text)
+path.write_text(text)
+" 2>/dev/null && ok "framework_version mis à jour dans .renga.yml ($installed_version)"
+  fi
 
   ok "renga v$installed_version installé ($agent_count agents, $instr_count instructions, $skill_count skills)"
 }
@@ -1054,7 +1168,6 @@ ${BOLD}Commands:${RESET}
   skill <sub>         Gestion des skills (list, validate)
   dashboard           Génère le dashboard de performance
   build               Construit l'artefact de distribution
-  test                Lance les tests du framework
   help                Affiche cette aide
 
 EOF
@@ -1080,7 +1193,6 @@ case "${1}" in
   doctor)    cmd_doctor ;;
   dashboard) cmd_dashboard ;;
   build)     shift; cmd_build "$@" ;;
-  test)      cmd_test ;;
   help|--help|-h) cmd_help ;;
   *)
     fail "Commande inconnue : '${1}'"
