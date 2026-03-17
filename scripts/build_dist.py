@@ -197,6 +197,22 @@ def _copy_cli(root: Path, output: Path, version: str) -> Path | None:
     return cli_dest
 
 
+def _copy_scripts(root: Path, output: Path) -> list[Path]:
+    """Copy essential Python scripts (validate_agents.py, generate_dashboard.py) to dist/scripts/."""
+    scripts_to_copy = ["validate_agents.py", "generate_dashboard.py"]
+    scripts_dest = output / "scripts"
+    copied: list[Path] = []
+    for name in scripts_to_copy:
+        src = root / "scripts" / name
+        if not src.exists():
+            log.warning("Script not found: %s", src)
+            continue
+        dest = scripts_dest / name
+        _copy_file(src, dest)
+        copied.append(dest)
+    return copied
+
+
 def _copy_hooks(root: Path, output: Path) -> list[Path]:
     """Copy .github/hooks/ → dist/hooks/, excluding _local/."""
     hooks_src = root / ".github" / "hooks"
@@ -411,6 +427,7 @@ def main(argv: list[str] | None = None) -> None:
     _copy_schema(root, output)
     _copy_config_example(root, output)
     _copy_cli(root, output, version)
+    _copy_scripts(root, output)
     _copy_hooks(root, output)
 
     # Build and write manifest

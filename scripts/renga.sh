@@ -29,11 +29,11 @@ RENG_VERSION="__RENGA_VERSION__"
 # Couleurs & symboles
 # ---------------------------------------------------------------------------
 if [[ -t 1 ]]; then
-  GREEN='\033[0;32m'
-  RED='\033[0;31m'
-  YELLOW='\033[0;33m'
-  BOLD='\033[1m'
-  RESET='\033[0m'
+  GREEN=$'\033[0;32m'
+  RED=$'\033[0;31m'
+  YELLOW=$'\033[0;33m'
+  BOLD=$'\033[1m'
+  RESET=$'\033[0m'
 else
   GREEN='' RED='' YELLOW='' BOLD='' RESET=''
 fi
@@ -516,14 +516,6 @@ cmd_doctor() {
     warn ".github/hooks/ introuvable — lancez './scripts/renga.sh init'"
   fi
 
-  # 7. Scripts essentiels
-  for script in validate_agents.py generate_dashboard.py; do
-    if [[ -f "$ROOT_DIR/scripts/$script" ]]; then
-      ok "scripts/$script présent"
-    else
-      warn "scripts/$script manquant"
-    fi
-  done
 
   # Résumé
   echo ""
@@ -749,6 +741,15 @@ if m:
     cp "$tmp_dir/schemas/skill.schema.json" "$ROOT_DIR/schemas/"
   fi
 
+  # Copier les scripts Python essentiels
+  if [[ -d "$tmp_dir/scripts" ]]; then
+    mkdir -p "$ROOT_DIR/scripts"
+    for script in "$tmp_dir/scripts"/*.py; do
+      [[ -f "$script" ]] || continue
+      cp "$script" "$ROOT_DIR/scripts/"
+    done
+  fi
+
   # Installer les hooks
   install_hooks "$tmp_dir/hooks"
 
@@ -923,7 +924,20 @@ else:
       ;;
 
     list)
-      cmd_list  # reuse the listing logic
+      if [[ -d "$RENGA_DIR/_plugins" ]]; then
+        local found=0
+        for d in "$RENGA_DIR/_plugins"/*/; do
+          [[ -d "$d" ]] || continue
+          found=1
+          local plugin_name count
+          plugin_name="$(basename "$d")"
+          count="$(find "$d" -name '*.agent.md' | wc -l | tr -d ' ')"
+          echo "  $plugin_name ($count agents)"
+        done
+        [[ $found -eq 0 ]] && warn "Aucun plugin installé"
+      else
+        warn "Aucun plugin installé"
+      fi
       ;;
 
     *)
