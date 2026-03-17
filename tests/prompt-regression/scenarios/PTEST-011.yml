@@ -1,0 +1,38 @@
+id: "PTEST-011"
+title: "L3 — Migration de base de données avec données sensibles"
+level: "L3"
+tags: ["orchestrator", "L3", "database", "migration", "security", "legal"]
+
+context: |
+  La table `users` doit être restructurée : séparer l'adresse e-mail
+  et le numéro de téléphone dans une nouvelle table `user_contacts`
+  avec chiffrement at-rest. Migration sur une base de production avec
+  200k lignes. Rollback requis.
+
+request: |
+  @orchestrator migre les colonnes email et phone de la table users
+  vers une nouvelle table user_contacts avec chiffrement at-rest.
+  La migration doit être réversible.
+
+expected:
+  - "Orchestrateur classifie la tâche en L3"
+  - "DatabaseEngineer dispatché (nouvelle table + migration)"
+  - "SecurityEngineer dispatché (chiffrement + données personnelles)"
+  - "LegalCompliance dispatché (données PII en mutation)"
+  - "BackendDev dispatché pour adapter les requêtes"
+  - "Migration réversible avec script de rollback"
+  - "Au moins 3 filières mobilisées"
+
+anti_patterns:
+  - "Tâche classifiée L2 (migration production + PII = L3)"
+  - "LegalCompliance absent (données PII en mutation)"
+  - "Migration sans script de rollback"
+  - "Chiffrement implémenté sans SecurityEngineer"
+  - "Migration exécutée directement sans validation humaine"
+
+notes: |
+  Vérifie le balayage des signaux de l'orchestrateur :
+  - Donnée PII en mutation → LegalCompliance + RiskManager
+  - Nouvelle table → DatabaseEngineer
+  - Chiffrement → SecurityEngineer
+  Ref : orchestrator.agent.md §INITIALISATION — Balayage systématique

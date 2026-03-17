@@ -1,0 +1,41 @@
+id: "PTEST-017"
+title: "L2 — Timeout SLA wave dépassé — escalade orchestrateur"
+level: "L2"
+tags: ["orchestrator", "timeout", "SLA", "escalation", "wave-management"]
+
+context: |
+  L'orchestrateur a dispatché une wave d'écriture source avec
+  BackendDev et FrontendDev en parallèle pour implémenter un
+  module de notifications. BackendDev a livré son output en 25 min.
+  FrontendDev n'a produit aucun output après 60 min (seuil
+  d'escalade pour une wave écriture source). La wave est bloquée.
+
+request: |
+  @orchestrator implémente le module de notifications
+  (push + email + in-app) avec backend et frontend.
+  (Simulation : FrontendDev dépasse le seuil d'escalade de 60 min
+  sans livrer d'output)
+
+expected:
+  - "Orchestrateur détecte le dépassement du seuil d'escalade (60 min pour wave écriture)"
+  - "Signal d'alerte à l'humain — l'orchestrateur ne continue pas en silence"
+  - "Référencement dans le scratchpad du blocage et du temps écoulé"
+  - "Proposition d'actions : fractionner la sous-tâche ou escalade HITL"
+  - "Output partiel de BackendDev préservé (pas de rollback de la wave entière)"
+  - "Seuil warning (30 min) mentionné comme ayant été franchi avant l'escalade"
+
+anti_patterns:
+  - "Orchestrateur attend indéfiniment sans signaler le blocage"
+  - "Wave suivante lancée malgré l'absence d'output de FrontendDev"
+  - "Rollback de l'output de BackendDev qui avait livré correctement"
+  - "Timeout traité comme un succès"
+  - "Aucune mention des seuils SLA dans la communication à l'humain"
+  - "Relance automatique sans diagnostic du blocage"
+
+notes: |
+  Scénario P1 testant les timeouts SLA par type de wave.
+  Ref : task-classification.md §Timeouts et SLA par type de wave.
+  Les seuils pour une wave écriture source sont : warning à 30 min,
+  escalade à 60 min. L'orchestrateur doit signaler à l'humain et
+  ne pas continuer en silence. Vérifie aussi que le travail déjà
+  livré par d'autres agents de la wave n'est pas perdu.

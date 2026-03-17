@@ -1,0 +1,87 @@
+---
+description: "Profil de filière Produit — référence interne non invocable, lue par le MOE pour dispatcher les spécialistes produit, UX/UI, business, analytics et GTM"
+alwaysApply: false
+globs: 
+---
+
+<!-- Capacités mappées depuis Copilot tools:
+  - read → file reading
+-->
+
+<!-- Modèle recommandé : claude-opus-4-6 (configurer via sélecteur Cursor UI) -->
+
+# Profil de filière : Produit
+
+**Agents disponibles** : ProxyPO, ProductManager, ProductAnalytics, ProductStrategist, UXUIDesigner, UXWriter, GoToMarketSpecialist, ScrumMaster, TechWriter, BusinessAnalyst, ChangeManagement
+
+**Agents plugins (game-studio)** : CreativeDirector, LevelDesigner, NarrativeDesigner, GameProducer — *disponibles avec le plugin `game-studio` (`_plugins/game-studio/`)*
+
+> **Usage** : Ce profil est **lu par l'orchestrateur** lors de la planification pour sélectionner les agents et définir l'ordre de dispatch. Il n'est pas lui-même invocable — l'orchestrateur dispatch directement les spécialistes à depth=1.
+
+### Critères d'escalade (détectés par le MOE lors de l'exécution)
+
+| Situation | Action MOE |
+|---|---|
+| Décision de dé-priorisation avec impact business > 2 semaines | Arbitrage MOE direct |
+| Désaccord entre ProductStrategist et ProxyPO sur la priorité | Invoquer ArchitectureReviewer ou consensus |
+| Feature impactant RGPD ou AI Act | Invoquer LegalCompliance (filière gouvernance) |
+| Estimation de faisabilité technique requise | Invoquer BackendDev ou SoftwareArchitect |
+
+---
+
+## Matrice de dispatch produit
+
+| Tâche | Agents primaires | Agents secondaires | Agents cross-filières recommandés |
+|---|---|---|---|
+| Définition MVP d'une feature | ProductManager | ProxyPO (stories), ProductStrategist (vision), UXUIDesigner (wireframes) | SoftwareArchitect (tech — faisabilité), SecurityEngineer (gouv. si données perso) |
+| Pilotage transverse d'une feature | ProductManager | ProxyPO (backlog), UXUIDesigner (parcours), TechWriter (delivery) | BackendDev/FrontendDev (tech), QAEngineer (tech), GoToMarketSpecialist |
+| Analyse d'adoption / funnel | ProductAnalytics | ProductManager (contexte), ProductStrategist (lecture roadmap) | DataScientist (analyse avancée), DataEngineer (tracking), GoToMarketSpecialist |
+| Identité visuelle, brand design | CreativeDirector | UXUIDesigner (déclinaison système), UXWriter (ton de marque) | FrontendDev (tech — implémentation), AnimationsEngineer (tech — motion design) |
+| Brief créatif campagne / lancement | CreativeDirector | GoToMarketSpecialist (messagerie), UXWriter (copywriting) | TechWriter (tech — assets), ChangeManagement (produit) |
+| Audit cohérence visuelle produit | CreativeDirector | UXUIDesigner (composants), AnimationsEngineer (motion) | AccessibilityEngineer (gouv. — WCAG), PerformanceEngineer (tech — poids assets) |
+| Lancement feature (go-to-market) | GoToMarketSpecialist | ProductManager (readiness), UXWriter (copywriting), TechWriter (release notes) | DevOpsEngineer (tech — déploiement), ChangeManagement (produit), ProductAnalytics |
+| Rétrospective produit | ScrumMaster | ProxyPO (backlog ajustement) | ProjectController (gouv. — budget), ArchitectureReviewer (tech) |
+| Documentation utilisateur | TechWriter | UXWriter (microcopy) | AccessibilityEngineer (gouv. — doc accessible), FrontendDev (tech — screenshots) |
+| Analyse processus métier | BusinessAnalyst | ProxyPO (impact backlog) | SoftwareArchitect (tech — traduction en architecture), DataEngineer (data — pipelines) |
+| Conduite du changement | ChangeManagement | ScrumMaster, TechWriter | ProxyPO (produit), LegalCompliance (gouv. si RGPD) |
+| Stratégie OKR / roadmap | ProductStrategist | ProductAnalytics (métriques), ProxyPO (traduction en stories) | SoftwareArchitect (tech — faisabilité), FinOpsEngineer (gouv. — budget) |
+
+---
+
+## Signaux cross-filières
+
+Quand une tâche produit doit déclencher des agents d'autres filières :
+
+| Signal détecté dans la tâche | Filière | Agents à inclure |
+|---|---|---|
+| Feature nécessitant une API ou du code | Tech | SoftwareArchitect + BackendDev/FrontendDev |
+| Story impliquant des données personnelles | Gouvernance | LegalCompliance + SecurityEngineer |
+| Feature avec scoring/IA/recommandation | Data | AIProductManager + MLEngineer |
+| Refonte UX impactant l'accessibilité | Gouvernance | AccessibilityEngineer |
+| Lancement avec impact budget cloud | Gouvernance | FinOpsEngineer |
+| Changement impactant la CI/CD | Tech | DevOpsEngineer |
+| Feature à piloter sur plusieurs équipes | Produit | ProductManager |
+| Décision produit basée sur adoption, funnel ou rétention | Produit | ProductAnalytics |
+| Prompt ou workflow d'agent à modifier | Data | PromptEngineer |
+
+---
+
+## Format de consolidation (produit par le MOE après dispatch produit)
+
+> Quand le MOE a dispatché plusieurs agents de la filière produit, il consolide selon ce format avant journalisation.
+
+```
+## Synthèse produit — [nom de la tâche]
+
+### Agents mobilisés
+- [agent] : [mission] → [statut]
+
+### Décisions produit
+- [décision] : [justification]
+
+### User stories / critères d'acceptation
+- [as a ...] [I want ...] [so that ...]
+
+### Points de coordination nécessaires (avec Sous-MOE Tech / Gouvernance)
+- [point ou "Aucun"]
+```

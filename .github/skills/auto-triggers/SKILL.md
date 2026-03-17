@@ -1,0 +1,86 @@
+---
+name: auto-triggers
+description: "Identifies automatic triggers for specialized agents based on conditions detected in the task (personal data, security, AI, compliance)."
+argument-hint: "Describe the task or change to analyze in order to detect the required triggers"
+user-invocable: true
+
+# Skill: Automatic Triggers
+
+This skill identifies the conditions that require automatically consulting specialized agents. These triggers are **non-negotiable** and apply as soon as the condition is detected.
+
+---
+
+## Automatic Trigger Table
+
+| Detected condition | Added agents | Mode |
+| --- | --- | --- |
+| Personal data **being changed** (creation, modification, exposure, or transmission of `userId`, `email`, `phone`, `ip`, `address` to new storage or a third party) | LegalCompliance + RiskManager | parallel |
+| New AI processing, scoring, or automated decision-making | AIEthicsGovernance | sequential (before deployment) |
+| Hosting or country change | LegalCompliance + RiskManager | parallel |
+| AI model deployment/modification | AIEthicsGovernance + MLOpsEngineer | parallel |
+| Delivery affecting non-technical users | ChangeManagement | sequential (before release) |
+| Cloud architecture / sizing decision | FinOpsEngineer | parallel (with CloudEngineer) |
+| New exposure surface (endpoint, auth, third-party integration) | SecurityEngineer | wave 0 if QAEngineer is planned (ERR-008) |
+| New endpoint or public API contract | APIDesigner + SoftwareArchitect | wave 0 |
+| New module without a product spec | ProxyPO | wave 0 |
+| New table or DB migration | DatabaseEngineer | parallel wave 1 |
+| New service or SLO change | ObservabilityEngineer | parallel |
+| Code using a third-party library (not simply reading existing code) | context7 MCP | before generation |
+| Critical validation MCP tool unavailable (ERR-017) | Orchestrator: notify the user | **blocking** |
+
+---
+
+## Proportionality Principle
+
+The trigger must be proportional to the **actual risk**, defined by the combination of:
+
+- **Mutation**: are the data being created, modified, or deleted?
+- **Exposure**: are the data being transmitted to a third party or exposed publicly?
+- **Sensitivity**: are they sensitive data (health, finance, biometrics)?
+
+Reading a `userId` to display a profile is not the same as sending an `email` to a third-party service.
+
+---
+
+## Automatic Human Escalation
+
+| Trigger | Reason |
+| --- | --- |
+| Potentially exposed secret | Security incident |
+| Sensitive or regulated personal data | Legal risk |
+| Irreversible decision, rollback > 2 person-weeks | Strategic risk |
+| SecurityEngineer ↔ LegalCompliance disagreement | Cross-functional risk |
+| High-risk or ambiguous AI system in production | Stronger governance required |
+| Unexpected budget impact | Financial risk |
+| Framework choice with viable alternatives, migration > 1 person-week (ERR-016) | Irreversible architecture |
+| Critical validation tool unavailable (ERR-017) | Delivery without validation |
+
+---
+
+## Circuit Breaker: Failing Agents
+
+| Situation | Action |
+| --- | --- |
+| Agent fails 2 consecutive times | Human escalation + log. Do not retry a 3rd time. |
+| Contradictory outputs across retries | Consensus (if ≥ 2 agents) or HITL escalation |
+| No agent available in the required lane | HITL escalation required |
+
+---
+
+## Expected Output Format
+
+```
+
+=== TRIGGER ANALYSIS ===
+
+Activated triggers:
+  ✅ SecurityEngineer — new exposure surface (POST /api/v1/... endpoint)
+  ✅ DatabaseEngineer — new 'notifications' table
+
+Non-applicable triggers:
+  ⏭️ LegalCompliance — no personal data mutation
+  ⏭️ AIEthicsGovernance — no AI processing
+
+Escalation required: no
+
+```

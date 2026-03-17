@@ -1,0 +1,68 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Copilot Hooks Configuration (*.hooks.json)",
+	"description": "JSON Schema décrivant les fichiers *.hooks.json du framework renga. Définit les GitHub Copilot Agent Hooks exécutés à différents moments du cycle de vie d'une session.",
+	"type": "object",
+	"required": [
+		"version",
+		"hooks"
+	],
+	"properties": {
+		"version": {
+			"type": "integer",
+			"const": 1,
+			"description": "Version du format hooks. Actuellement fixée à 1."
+		},
+		"hooks": {
+			"type": "object",
+			"description": "Map de hook types vers leurs listes de hook entries.",
+			"propertyNames": {
+				"enum": [
+					"sessionStart",
+					"sessionEnd",
+					"userPromptSubmitted",
+					"preToolUse",
+					"postToolUse",
+					"agentStop",
+					"subagentStop",
+					"errorOccurred"
+				]
+			},
+			"patternProperties": {
+				".*": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"command",
+							"description"
+						],
+						"properties": {
+							"command": {
+								"type": "string",
+								"minLength": 1,
+								"description": "Commande shell à exécuter quand le hook se déclenche.",
+								"examples": [
+									"bash .github/hooks/scripts/pre-tool-security.sh"
+								]
+							},
+							"description": {
+								"type": "string",
+								"description": "Description humaine du rôle de ce hook."
+							},
+							"events": {
+								"type": "array",
+								"items": {
+									"type": "string"
+								},
+								"description": "Filtre optionnel d'événements. Par exemple pour preToolUse, filtrer par nom d'outil."
+							}
+						},
+						"additionalProperties": false
+					}
+				}
+			}
+		}
+	},
+	"additionalProperties": false
+}

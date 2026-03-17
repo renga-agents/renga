@@ -1,0 +1,37 @@
+# Centralized LLM model configuration
+# ==================================
+#
+# This file centralizes the LLM model configuration used by agents.
+# Goal: avoid editing N files whenever the default model changes.
+#
+# Usage:
+#   - The `model:` field in a `.agent.md` file is now OPTIONAL
+#   - If absent, the agent uses the `default` model defined here
+#   - If present, it overrides the central value, which should remain rare and justified
+#
+# See docs/agent-format.md, section "Centralized LLM Model Configuration"
+
+# --- Available models ---
+
+default:
+  model: "Claude Opus 4.6 (copilot)"
+  description: "Default model for all agents"
+
+# Profile overrides (optional, disabled by default)
+# Uncomment and adapt if some profiles require a different model.
+#
+# profiles:
+#   advisory:
+#     model: "Claude Sonnet 4 (copilot)"
+#     description: "Lighter model for advisory and read-only agents"
+#   technical:
+#     model: "Claude Opus 4.6 (copilot)"
+#     description: "Full model for implementation agents"
+
+# Per-agent overrides (optional, disabled by default)
+# Uncomment and adapt to force a specific model on a given agent.
+#
+# agents:
+#   orchestrator:
+#     model: "Claude Opus 4.6 (copilot)"
+#     description: "Force Opus for orchestration"

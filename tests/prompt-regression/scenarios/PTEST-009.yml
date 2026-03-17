@@ -1,0 +1,33 @@
+id: "PTEST-009"
+title: "L2 — Correction multi-fichier avec dry-run"
+level: "L2"
+tags: ["orchestrator", "L2", "dry-run", "multi-file"]
+
+context: |
+  Un type TypeScript `UserRole` est défini dans `src/types/user.ts` et
+  utilisé dans 8 fichiers. L'utilisateur veut ajouter un nouveau rôle
+  `MODERATOR` au type union et gérer ce rôle dans tous les switch/case
+  et les guards. L'utilisateur demande un dry-run.
+
+request: |
+  @orchestrator dry-run : ajoute le rôle MODERATOR au type UserRole
+  et gère-le dans tous les fichiers qui font un switch sur le rôle.
+
+expected:
+  - "Orchestrateur affiche le DAG planifié sans exécuter"
+  - "Le plan liste les fichiers impactés avec propriétaire"
+  - "Le plan montre les waves et agents mobilisés"
+  - "Aucun fichier n'est modifié"
+  - "Aucun agent n'est dispatché"
+  - "L'orchestrateur demande validation avant exécution"
+
+anti_patterns:
+  - "Des fichiers sont modifiés avant validation"
+  - "Des agents sont lancés"
+  - "Le dry-run est ignoré"
+  - "Le worktree est créé avant validation"
+
+notes: |
+  Vérifie le mode dry-run / plan-only : le DAG est construit et affiché
+  mais rien n'est exécuté tant que l'utilisateur n'a pas validé.
+  Ref : orchestrator.agent.md §Porte dry-run (plan-only)

@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run tests
+        run: python -m pytest tests/ -v
+      - name: Validate agents
+        run: python scripts/validate_agents.py
+      - name: Validate schema syntax
+        run: python -c "import json, pathlib; json.loads(pathlib.Path('schemas/agent.schema.json').read_text())"

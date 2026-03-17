@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "bash .github/hooks/scripts/session-init.sh",
+        "description": "Initialize session — create reports directory, generate session ID, check jq dependency"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "bash .github/hooks/scripts/session-cleanup.sh",
+        "description": "Finalize session — log session end timestamp"
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "bash .github/hooks/scripts/post-tool-audit.sh",
+        "description": "Audit trail — log tool usage (keys only, no values) to JSONL"
+      }
+    ],
+    "userPromptSubmitted": [
+      {
+        "command": "bash .github/hooks/scripts/post-tool-audit.sh",
+        "description": "Prompt audit — log anonymized prompt metadata (salted hash, rounded length)"
+      }
+    ],
+    "errorOccurred": [
+      {
+        "command": "bash .github/hooks/scripts/error-tracker.sh",
+        "description": "Error tracking — capture error type and context to JSONL"
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+id: "PTEST-001"
+title: "L0 — Renommage variable locale"
+level: "L0"
+tags: ["routing", "fast-track", "backend-dev"]
+
+context: |
+  Un fichier TypeScript `src/stats.ts` contient une variable `tmp` utilisée
+  3 fois dans une seule fonction `calculateUserStats()`. Le nom `tmp` est
+  peu descriptif et devrait être `userCount`. Aucun autre fichier n'est impacté.
+
+request: |
+  @backend-dev renomme tmp en userCount dans src/stats.ts
+
+expected:
+  - "Agent backend-dev invoqué directement (pas d'orchestrateur)"
+  - "Un seul fichier modifié : src/stats.ts"
+  - "Toutes les occurrences de tmp remplacées par userCount dans la fonction"
+  - "Pas de journalisation dans decisions.md"
+  - "Pas de scratchpad créé"
+
+anti_patterns:
+  - "Orchestrateur lancé"
+  - "DAG construit"
+  - "Multi-agent dispatché"
+  - "Worktree créé"
+  - "Fichier decisions.md modifié"
+
+notes: |
+  Scénario L0 classique : tâche triviale, mono-fichier, agent direct.
+  Vérifie que le routing fast-track fonctionne — l'invocation directe
+  d'un agent avec @ bypass l'orchestrateur.
+  Ref : orchestrator.agent.md §Fast-track L0

@@ -1,0 +1,32 @@
+id: "PTEST-007"
+title: "L2 — Refactoring : extraction d'un service partagé"
+level: "L2"
+tags: ["orchestrator", "L2", "refactoring", "backend-dev", "code-reviewer", "qa-engineer"]
+
+context: |
+  Trois contrôleurs (UserController, OrderController, ProductController)
+  dupliquent la même logique de pagination (calcul offset, limit, total pages).
+  L'utilisateur demande d'extraire cette logique dans un service partagé.
+
+request: |
+  @orchestrator extrais la logique de pagination dupliquée dans les 3
+  contrôleurs User/Order/Product dans un PaginationService partagé.
+
+expected:
+  - "Orchestrateur classifie la tâche en L2"
+  - "BackendDev dispatché pour l'extraction du service"
+  - "CodeReviewer dispatché pour vérifier la qualité du refactoring"
+  - "QAEngineer dispatché pour les tests du service extrait"
+  - "Les 3 contrôleurs modifiés pour utiliser le nouveau service"
+  - "Nouveau fichier PaginationService créé"
+  - "Plan de fichiers publié dans le scratchpad avant dispatch"
+
+anti_patterns:
+  - "Tâche classifiée L3 (pas d'impact production)"
+  - "SoftwareArchitect consulté (extraction simple, pas de décision d'archi)"
+  - "Les contrôleurs sont modifiés en parallèle sans plan de fichiers"
+  - "Logique de pagination modifiée (seule l'extraction est demandée)"
+
+notes: |
+  Refactoring L2 multi-fichier. Vérifie le plan de fichiers (ERR-004)
+  et la non-modification de la logique métier lors d'un refactoring.

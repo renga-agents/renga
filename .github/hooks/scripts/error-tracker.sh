@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# NEVER exit non-zero — error tracking must not cause additional errors
+set +e
+
+INPUT="$(cat 2>/dev/null || echo '{}')"
+
+if ! command -v jq &>/dev/null; then exit 0; fi
+
+ERROR_TYPE="$(echo "$INPUT" | jq -r '.error // "unknown"' 2>/dev/null || echo "unknown")"
+TOOL="$(echo "$INPUT" | jq -r '.tool // "unknown"' 2>/dev/null || echo "unknown")"
+TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"
+
+SESSION_ID="${SESSION_ID:-default}"
+REPORT_DIR="${ERROR_LOG_DIR:-.copilot/reports/${SESSION_ID}}"
+mkdir -p "$REPORT_DIR" 2>/dev/null || true
+
+jq -n --arg err "$ERROR_TYPE" --arg tool "$TOOL" --arg ts "$TIMESTAMP" \
+  '{error: $err, tool: $tool, timestamp: $ts}' \
+  >> "$REPORT_DIR/errors.jsonl" 2>/dev/null || true
+
+exit 0

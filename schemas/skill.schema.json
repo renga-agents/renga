@@ -1,0 +1,46 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://renga/schemas/skill.schema.json",
+	"title": "Skill Definition (SKILL.md frontmatter)",
+	"description": "JSON Schema décrivant le frontmatter YAML des fichiers SKILL.md du framework renga. Conforme au standard Agent Skills (agentskills.io).",
+	"type": "object",
+	"required": [
+		"name",
+		"description"
+	],
+	"properties": {
+		"name": {
+			"type": "string",
+			"pattern": "^[a-z][a-z0-9-]*$",
+			"maxLength": 64,
+			"description": "Identifiant unique du skill en kebab-case. Doit correspondre au nom du répertoire parent.",
+			"examples": [
+				"task-decomposition",
+				"worktree-lifecycle",
+				"handoff-protocol"
+			]
+		},
+		"description": {
+			"type": "string",
+			"minLength": 10,
+			"maxLength": 1024,
+			"description": "Description de ce que fait le skill et quand l'utiliser. Copilot utilise ce champ pour décider de charger le skill automatiquement."
+		},
+		"argument-hint": {
+			"type": "string",
+			"maxLength": 200,
+			"description": "Texte indicatif affiché dans le champ de saisie du chat quand le skill est invoqué comme slash command."
+		},
+		"user-invocable": {
+			"type": "boolean",
+			"default": true,
+			"description": "Si true (défaut), le skill apparaît comme slash command dans le menu /. Si false, le skill est chargé automatiquement par l'agent quand pertinent."
+		},
+		"disable-model-invocation": {
+			"type": "boolean",
+			"default": false,
+			"description": "Si true, l'agent ne peut pas charger le skill automatiquement — invocation manuelle uniquement via /slash-command."
+		}
+	},
+	"additionalProperties": false
+}

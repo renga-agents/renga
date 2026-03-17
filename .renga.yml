@@ -1,0 +1,135 @@
+# =============================================================================
+# Framework renga — Configuration projet
+# =============================================================================
+#
+# Ce fichier configure le framework renga pour un projet spécifique.
+# Il est lu par l'orchestrateur à l'initialisation de chaque session.
+#
+# Placement : racine du repo consommateur (à côté de .github/)
+# Référence : docs/getting-started.md
+#
+# ---
+
+version: "1.0"
+
+# -----------------------------------------------------------------------------
+# Identité du projet
+# -----------------------------------------------------------------------------
+project:
+  # Nom court du projet (ex: "mon-saas", "app-mobile-v2")
+  name: ""
+  # Description libre pour le contexte des agents (1-2 phrases)
+  description: ""
+
+# -----------------------------------------------------------------------------
+# Sélection des agents actifs
+# -----------------------------------------------------------------------------
+# Trois modes disponibles :
+#
+#   "all"       — Tous les agents du framework sont disponibles (défaut)
+#   "whitelist" — Seuls les agents listés dans `include` sont chargés
+#   "blacklist" — Tous les agents SAUF ceux listés dans `exclude`
+#
+# Les noms correspondent aux fichiers .agent.md sans l'extension.
+# L'orchestrateur et ses sous-orchestrateurs sont TOUJOURS chargés
+# quel que soit le mode (ils ne peuvent pas être exclus).
+#
+# Exemples :
+#   mode: "whitelist"
+#   include:
+#     - backend-dev
+#     - frontend-dev
+#     - qa-engineer
+#     - software-architect
+#
+#   mode: "blacklist"
+#   exclude:
+#     - game-asset-generator
+#     - audio-generator
+#     - animations-engineer
+agents:
+  mode: "all"
+  include: []
+  exclude: []
+
+# -----------------------------------------------------------------------------
+# Seuils de criticité
+# -----------------------------------------------------------------------------
+# Ces seuils calibrent le comportement de l'orchestrateur.
+# Les valeurs par défaut conviennent à un projet de taille moyenne (10-20 devs).
+#
+# l2_min_agents..l4_min_agents : nombre minimum d'agents spécialisés
+#   requis par l'orchestrateur pour chaque niveau de complexité.
+#   Réduire pour les petits projets, augmenter pour les projets critiques.
+#
+# max_retries : nombre de tentatives avant escalade HITL (Human In The Loop).
+#   Ex: si un agent échoue 2 fois → l'orchestrateur demande à l'humain.
+#
+# migration_threshold_weeks : durée (en semaines) au-delà de laquelle
+#   une migration sans progression déclenche une escalade HITL.
+thresholds:
+  l2_min_agents: 4
+  l3_min_agents: 6
+  l4_min_agents: 8
+  max_retries: 2
+  migration_threshold_weeks: 2
+
+# -----------------------------------------------------------------------------
+# Stack de référence (overrides)
+# -----------------------------------------------------------------------------
+# Surcharge la stack par défaut déclarée dans chaque agent.
+# Seules les clés présentes ici écrasent les valeurs par défaut.
+# Les clés absentes conservent la valeur de l'agent.
+#
+# Exemple :
+#   stack:
+#     backend: "FastAPI"
+#     frontend: "Vue 3"
+#     database: "MySQL 8"
+#     cache: "Memcached"
+#     queue: "RabbitMQ"
+#     orm: "SQLAlchemy"
+#     test_framework: "pytest"
+stack: {}
+
+# -----------------------------------------------------------------------------
+# Waivers — Dérogations explicites
+# -----------------------------------------------------------------------------
+# Liste de dérogations aux règles de gouvernance, approuvées par l'humain.
+# Chaque waiver doit avoir un identifiant de règle, une justification
+# et optionnellement une date d'expiration.
+#
+# Exemple :
+#   waivers:
+#     - rule: "ERR-014"
+#       reason: "Projet solo — un seul agent suffit pour les tâches L2"
+#       expires: "2026-06-01"
+#     - rule: "TDD-first"
+#       reason: "Prototype exploratoire — tests ajoutés en wave finale"
+waivers: []
+
+# -----------------------------------------------------------------------------
+# Conventions de commit (overrides)
+# -----------------------------------------------------------------------------
+# Surcharge les conventions de commit par défaut du framework.
+#
+# Exemple :
+#   commits:
+#     prefix: "feat|fix|docs|chore|refactor|test|ci"
+#     scope_required: true
+#     max_subject_length: 72
+commits: {}
+
+# -----------------------------------------------------------------------------
+# Chemins personnalisés
+# -----------------------------------------------------------------------------
+# Par défaut le framework utilise .copilot/memory/ pour la mémoire de pilotage
+# et .copilot/reports/ pour les rapports. Modifiable si le projet a une
+# convention différente.
+#
+# Exemple :
+#   paths:
+#     memory: ".ai/memory"
+#     reports: ".ai/reports"
+#     agents: ".github/agents"
+paths: {}

@@ -1,0 +1,379 @@
+---
+description: "Référentiel interne non invocable des modes d'exécution : séquentiel, parallèle, vagues"
+alwaysApply: false
+globs: 
+---
+
+<!-- Capacités mappées depuis Copilot tools:
+  - read → file reading
+-->
+
+<!-- Modèle recommandé : claude-opus-4-6 (configurer via sélecteur Cursor UI) -->
+
+# Modes d'exécution des agents
+
+> Référence technique pour l'orchestrateur et les agents. Définit les 3 modes d'exécution avec notation, règles et exemples concrets.
+
+---
+
+## Vue d'ensemble
+
+| Mode | Notation | Quand l'utiliser | Surcoût |
+|---|---|---|---|
+| Séquentiel | `A ──→ B ──→ C` | B dépend de l'output de A | Faible — linéaire |
+| Parallèle | `[A ‖ B ‖ … ‖ N] ──→ SYNTHÈSE` | Agents indépendants | Moyen — synchronisation |
+| Vagues (Consensus) | `{A ⟳ B ⟳ C} → SYNTHÈSE → VERDICT` | Décisions critiques mono-filière | Élevé — multi-itération |
+| **Super-vague** | `[FT:{…} ‖ FP:{…} ‖ FD:{…} ‖ FG:{…}] → SYNTHÈSE_MOE` | Décisions transverses ≥ 3 filières | Très élevé — cross-filières |
+| **Méga-vague** | `MISSION{scope} → MOE → {4 filières} → INTÉGRATION` | Mission stratégique bout-en-bout | Maximal — 4 filières + MOE |
+
+---
+
+## Contraintes plateforme (VS Code Copilot Agent)
+
+> Ces contraintes sont structurelles. Elles ne peuvent pas être contournees sans changement de plateforme.
+
+### Profondeur d'invocation réelle : 1
+
+VS Code Copilot Agent permet à l'orchestrateur (depth 0) d'invoquer un sous-agent via `runSubagent` (depth 1). Mais un agent invoqué en tant que sous-agent **n'a pas accès au même mécanisme** pour invoquer une couche supplémentaire.
+
+| Niveau | Exemple | Invocation réelle ? |
+|---|---|---|
+| depth 0 | orchestrateur | n/a — agent racine |
+| depth 1 | orchestrateur → BackendDev, QAEngineer, SecurityEngineer... | **Oui** — `runSubagent` effectif |
+| depth 2 | BackendDev → autre agent | **Non** — non supporté |
+
+Conséquence : l'orchestrateur dispatche **directement** les agents spécialistes (depth 1). Aucune couche intermédiaire ne peut elle-même invoquer des sous-agents.
+
+### Parallélisme : réel, avec risque de race condition
+
+La notation `‖` exprime l'**indépendance logique** ET correspond à une **exécution réellement simultanée** : VS Code Copilot Agent ouvre N sessions d'agents en parallèle quand les appels `runSubagent` sont placés dans le **même bloc de tool calls**.
+
+Risque à gérer : les agents parallèles **partagent le même filesystem workspace**. Si BackendDev crée `service.ts` pendant que QAEngineer essaie de le lire, QAEngineer peut lire un état incomplet. Mitigation : publier un plan de fichiers dans le scratchpad avant le dispatch (voir ERR-004).
+
+### Terminaux background : cycle de vie obligatoire
+
+L'outil `run_in_terminal` avec `isBackground: true` ouvre un terminal VS Code persistant et retourne un `id`. Ce terminal **reste ouvert indéfiniment** après complétion si non fermé — les terminaux s'accumulent, ralentissent le poste et créent de la confusion.
+
+| Type de terminal | ID disponible ? | Fermeture programmatique | Règle |
+|---|---|---|---|
+| `isBackground: true` | ✅ Oui — retourné par `run_in_terminal` | ✅ `kill_terminal(id)` | **Obligatoire** après confirmation de fin |
+| `isBackground: false` | ❌ Non — shell zsh partagé sans ID | ❌ Non applicable | Ne pas tenter — session partagée |
+
+**Séquence obligatoire pour tout terminal background** :
+```
+id = run_in_terminal(cmd, isBackground=true)
+output = await_terminal(id, timeout)
+# ... utiliser l'output si nécessaire
+kill_terminal(id)   ← TOUJOURS, même en cas d'erreur
+```
+
+**Exceptions légitimes** (terminal background maintenu ouvert) :
+- Serveur de développement actif pendant toute la durée de la tâche (ex : `npm run dev` écouté pour des hot-reloads successifs)
+- Dans ce cas : noter l'`id` dans le scratchpad, fermer en fin de tâche via §7 JOURNALISATION
+
+**Responsabilité** : chaque agent est responsable de fermer ses propres terminaux background. L'orchestrateur vérifie dans le prompt de dispatch (voir §4) que la consigne est incluse.
+
+---
+
+## Mode séquentiel
+
+### Notation
+```
+A ──→ B ──→ C
+```
+
+### Règle de déclenchement
+Utiliser le mode séquentiel quand **l'output d'un agent est un input nécessaire** pour l'agent suivant. Chaque étape attend la validation de l'orchestrateur avant de passer à la suivante.
+
+### Comportement
+1. L'orchestrateur lance l'agent A avec les instructions et le contexte
+2. L'agent A produit son output
+3. L'orchestrateur évalue l'output (voir contrôle qualité dans `orchestrator.agent.md`)
+4. Si validé → l'output de A est injecté comme contexte pour l'agent B
+5. Répéter jusqu'à la dernière étape
+
+### Gestion des erreurs
+- Si un agent produit un output insuffisant → retry avec critique (max 2 retries)
+- Si blocage → l'orchestrateur peut réorganiser le DAG ou escalader
+- Le pipeline entier s'arrête si un agent bloquant échoue
+
+### Exemples concrets
+
+**Développement d'une feature**
+```
+SoftwareArchitect──→ BackendDev──→ QAEngineer```
+L'architecture doit être validée avant que le dev commence. Les specs finales doivent exister avant que les tests soient écrits.
+
+**Documentation API**
+```
+APIDesigner──→ BackendDev──→ TechWriter```
+Le contrat API est défini d'abord, implémenté ensuite, documenté en dernier.
+
+**Migration de base de données**
+```
+DatabaseEngineer──→ BackendDev──→ QAEngineer──→ DevOpsEngineer```
+Le schéma de migration est conçu, le code adapté, les tests écrits, puis le déploiement planifié.
+
+---
+
+## Mode parallèle
+
+### Notation
+```
+[A ‖ B ‖ C ‖ D] ──→ SYNTHÈSE
+```
+
+### Règle de déclenchement
+Utiliser le mode parallèle quand **les agents ne créent pas de dépendances d'écriture/lecture entre eux**. L'orchestrateur collecte tous les résultats puis produit une synthèse consolidée.
+
+> **Parallélisme VS Code Copilot Agent** : pour déclencher une exécution vraiment simultanée, placer tous les appels `runSubagent` indépendants dans le **même bloc de tool calls**. Chaque agent s'exécute alors dans sa propre session. Les agents partagent le filesystem workspace — appliquer la matrice ci-dessous avant tout dispatch.
+
+### Matrice filesystem : parallèle ou séquentiel ?
+
+| Profil d'agent | Écrit dans le workspace ? | Règle |
+|---|---|---|
+| SecurityEngineer, LegalCompliance, RiskManager, CodeReviewer, ArchitectureReviewer, AIEthicsGovernance | **Non** — lecture seule | Parallèle safe avec n'importe quel autre agent |
+| TechWriter, DataScientist (analyse), PerformanceEngineer (audit) | **Non** — lecture seule | Parallèle safe |
+| BackendDev, FrontendDev, DatabaseEngineer, DataEngineer | **Oui** — zones distinctes | Parallèle safe **si** zones différentes + plan de fichiers publié dans le scratchpad |
+| QAEngineer mode **TDD** (wave 1) | **Oui** — fichiers de test uniquement | Parallèle safe avec les agents lecture-seule ; séquentiel **avant** BackendDev |
+| QAEngineer mode **TAD** (après implémentation) | **Oui** — tests dérivés du code | Séquentiel **après** l'agent d'implémentation — sinon race condition |
+
+**Patterns courants :**
+```
+✅ Parallèle safe
+[SecurityEngineer ‖ LegalCompliance ‖ PerformanceEngineer]   ← lecture seule
+[BackendDev(src/api/) ‖ DatabaseEngineer(src/migrations/)]  ← zones distinctes
+[SecurityEngineer ‖ QAEngineer(TDD)]                        ← QA écrit tests, SecEng lit
+
+❌ Race condition → séquentialiser
+[BackendDev ‖ QAEngineer(TAD)]  ← QAEngineer lirait du code incomplet
+[BackendDev ‖ CodeReviewer]     ← CodeReviewer lirait du code incomplet
+
+✅ TDD obligatoire (feature avec nouveau code)
+QAEngineer(red) ──→ BackendDev(green) ──→ CodeReviewer
+```
+
+### Règles de fan-out (nombre d'agents par vague)
+
+> **Principe** : le fan-out n'est pas borné par un nombre fixe arbitraire. La seule contrainte réelle est la **sécurité filesystem** (race conditions). Un DAG bien structuré peut lancer 10-12 agents en parallèle dans une même vague sans aucun problème.
+
+| Type de vague | Fan-out recommandé | Contrainte limitante |
+|---|---|---|
+| **Lecture seule** (wave 0, audits, reviews) | **Aucun cap** — lancer tous les agents pertinents. 8-12 agents est normal | Aucune — pas d'écriture, pas de race condition |
+| **Écriture en zones distinctes** | Limité par le nombre de zones filesystem distinctes | Plan de fichiers publié dans le scratchpad (ERR-004) |
+| **Écriture en zone partagée** | 1 agent écrivain à la fois ; les lecteurs en parallèle | Séquentialiser uniquement les conflits d'écriture réels |
+| **Consensus / vagues** | 4-8 experts par vague d'opinion | Capacité de synthèse de l'orchestrateur |
+
+**Anti-pattern** : limiter artificiellement à 3-4 agents par vague quand 8+ agents indépendants sont disponibles. Un DAG sous-dimensionné appauvrit la couverture et la qualité.
+
+### Comportement
+1. L'orchestrateur lance tous les agents en parallèle avec le même contexte initial
+2. Chaque agent travaille indépendamment
+3. L'orchestrateur collecte tous les outputs
+4. Vérification de cohérence : les recommandations ne se contredisent-elles pas ?
+5. Si contradiction → déclencher un consensus sur les points divergents
+6. Sinon → synthèse consolidée
+
+### Gestion des erreurs
+- Si un agent parallèle échoue : les autres continuent, le résultat partiel est signalé
+- Si la synthèse révèle des contradictions : escalade vers mode vagues sur les points de conflit
+- Timeout : si un agent met significativement plus de temps, l'orchestrateur peut procéder sans lui et l'intégrer plus tard
+
+### Exemples concrets
+
+**Wave 0 massive — audit transverse d'une nouvelle feature (8 agents lecture seule)**
+```
+ ┌─ SoftwareArchitect(cohérence architecture, patterns)
+ ├─ SecurityEngineer(vecteurs d'attaque, OWASP)
+ ├─ PerformanceEngineer(impact SLOs, scalabilité)
+ ├─ LegalCompliance(implications RGPD, données personnelles)
+ ├─ UXUIDesigner(maquettes, parcours utilisateur)
+ ├─ AccessibilityEngineer(WCAG, ARIA, couleurs)
+ ├─ APIDesigner(contrat API, DX)
+ └─ ProxyPO(critères d'acceptation, valeur métier)
+ ──→ SYNTHÈSE orchestrateur (8 rapports consolidés)
+```
+
+**Review de code complète (5 agents lecture seule)**
+```
+ ┌─ CodeReviewer(qualité, patterns, maintenabilité)
+ ├─ SecurityEngineer(vulnérabilités, OWASP)
+ ├─ PerformanceEngineer(complexité algorithmique, requêtes N+1)
+ ├─ AccessibilityEngineer(WCAG, sémantique HTML)
+ └─ TechWriter(qualité documentation inline)
+ ──→ SYNTHÈSE : rapport de review consolidé
+```
+
+**Lancement de feature — cross-filières (6 agents)**
+```
+ ┌─ TechWriter(documentation utilisateur)
+ ├─ ChangeManagement(plan de communication)
+ ├─ GoToMarketSpecialist(messaging, segmentation)
+ ├─ UXWriter(microcopy, onboarding)
+ ├─ ProxyPO(release notes métier)
+ └─ DevOpsEngineer(plan de déploiement, rollback)
+ ──→ SYNTHÈSE : kit de lancement complet
+```
+
+**Implémentation multi-zones (4 agents écriture parallèle safe)**
+```
+ ┌─ BackendDev(src/api/ — endpoint + service)
+ ├─ DatabaseEngineer(src/migrations/ — migration SQL)
+ ├─ FrontendDev(src/components/ — composant UI)
+ └─ QAEngineer(tests/ — tests TDD red)
+ ──→ SYNTHÈSE : vérification cohérence inter-zones
+```
+
+---
+
+## Mode vagues (Consensus)
+
+### Notation
+```
+{A ⟳ B ⟳ C} VAGUE_1 → SYNTHÈSE → {A' ⟳ B' ⟳ C'} VAGUE_2 → VERDICT
+```
+
+Si arbitrage nécessaire :
+```
+{A ⟳ B ⟳ C} V1 → SYNTHÈSE → {A' ⟳ B' ⟳ C'} V2 → {A'' ⟳ B'' ⟳ C''} V3 → ARBITRAGE → VERDICT
+```
+
+### Règle de déclenchement
+Utiliser le mode vagues pour les **décisions critiques** définies dans `consensus-protocol.agent.md`. Ce mode est le plus coûteux et ne doit pas être utilisé pour des décisions facilement réversibles.
+
+### Comportement
+Référence complète : `agents/consensus-protocol.agent.md`
+
+1. **Vague 1** (indépendante) : chaque agent produit sa position sans voir celles des autres
+2. **Synthèse intermédiaire** : l'orchestrateur identifie convergences, divergences, angles morts
+3. **Vague 2** (informée) : chaque agent voit la synthèse et peut réviser ou maintenir sa position
+4. **Vague 3** (si nécessaire) : arbitrage final sur les points de désaccord persistants
+5. **Verdict** : décision documentée avec traçabilité complète
+
+### Critères de convergence
+- Convergence forte (≥ 3/4) → décision automatique, pas de vague supplémentaire
+- Convergence partielle (2/4) → Vague 2 obligatoire
+- Désaccord après Vague 3 → arbitrage orchestrateur ou escalade humaine
+
+### Exemple concret
+
+**Choix de base de données pour un service catalogue**
+```
+Contexte : 50M d'items, lectures 90%, écritures 10%, full-text search nécessaire
+
+Vague 1 :
+ ┌─ DatabaseEngineer→ PostgreSQL + pg_trgm + partitioning
+ ├─ SoftwareArchitect→ PostgreSQL + Elasticsearch sidecar
+ ├─ PerformanceEngineer→ MongoDB + Atlas Search
+ └─ BackendDev→ PostgreSQL + Redis cache layer
+
+Synthèse : Convergence 3/4 sur PostgreSQL, divergence sur la stratégie de recherche
+
+Vague 2 :
+ ┌─ DatabaseEngineer→ Maintenu — pg_trgm suffisant jusqu'à 100M
+ ├─ SoftwareArchitect→ Révisé — pg_trgm au départ, Elasticsearch si latence > 200ms
+ ├─ PerformanceEngineer→ Révisé → PostgreSQL + pg_trgm, benchmark à 3 mois
+ └─ BackendDev→ Maintenu — PostgreSQL avec cache Redis pour hot queries
+
+VERDICT : PostgreSQL avec pg_trgm, benchmark à 3 mois, seuil de bascule vers Elasticsearch défini
+Niveau de consensus : Fort (4/4 convergent sur PostgreSQL après Vague 2)
+```
+
+---
+
+## Super-vague (Cross-filières)
+
+Réservé aux décisions qui affectent **simultanément ≥ 3 filières** (tech + produit + gouvernance, etc.).
+
+### Notation
+```
+[FT:{A ⟳ B}] ‖ [FP:{C ⟳ D}] ‖ [FD:{E ⟳ F}] ‖ [FG:{G ⟳ H}]
+ SUPER‑VAGUE_1 ──→ MOE_SYNTHÈSE ──→ VERDICT_GLOBAL
+```
+
+FT = spécialistes filière Technique, FP = filière Produit, FD = filière Data/AI, FG = filière Gouvernance.  
+Le MOE dispatch **directement** les spécialistes (depth=1) en lisant les matrices dans les profils de filière. Il n'y a pas d'agent sous-MOE intermédiaire — le MOE coordonne lui-même les groupes.
+
+### Comportement
+1. Le MOE lit les 4 profils de filière et identifie les spécialistes à invoquer pour chaque dimension
+2. Il dispatch chaque groupe de spécialistes directement (depth=1)
+3. Chaque groupe produit une **synthèse de filière** en 4 sections : Analyse / Recommandation / Risques / Prérequis
+4. Le MOE intègre les 4 synthèses → identifie les dépendances croisées et conflits inter-filières
+5. Si conflit → vague inter-filières (les spécialistes confrontent leurs synthèses)
+6. **Verdict global** avec plan d'exécution coordonné
+
+### Différence avec le mode vagues classique
+
+| Critère | Vagues (standard) | Super-vague |
+|---|---|---|
+| Périmètre | Agents d'une filière | Spécialistes de filières différentes |
+| Animateur | MOE principal | MOE principal uniquement |
+| Agents mobilisés | 4–8 experts | 4 groupes × 2–5 spécialistes chacun (12-20 agents total) |
+| Durée typique | 15–45 min | 60–120 min |
+| Seuil | Décision critique mono-filière | Impact ≥ 3 filières OU ambiguïté transverse |
+
+### Exemple concret
+
+**Adoption de LangGraph pour l'orchestration IA**
+```
+ ┌─ Filière Tech : { MLEngineer ⟳ BackendDev } — intégration API et latence
+ ├─ Filière Produit : { AIProductManager ⟳ ProxyPO } — roadmap et user stories
+ ├─ Filière Data : { DataScientist ⟳ MLOpsEngineer } — pipelines et monitoring modèles
+ └─ Filière Gouvernance : { LegalCompliance ⟳ AIEthicsGovernance } — conformité AI Act
+ ──→ MOE SYNTHÈSE → VERDICT : "Adopter LangGraph en pilote, conformité AI Act vérifiée"
+```
+
+---
+
+## Méga-vague (Mission stratégique complète)
+
+Réservé aux **missions bout-en-bout** impliquant les 4 filières en phases coordonnées.
+
+### Notation
+```
+MISSION{scope}
+ ──→ MOE_DÉCOMPOSITION
+    ├── [Filière Tech: N agents] ──→ LIVRABLES_TECH
+    ├── [Filière Produit: N agents] ──→ LIVRABLES_PRODUIT
+    ├── [Filière Data: N agents] ──→ LIVRABLES_DATA
+    └── [Filière Gouvernance: N agents] ──→ LIVRABLES_GOUVERNANCE
+ ──→ INTÉGRATION_MOE
+ ──→ LIVRABLE_FINAL
+```
+
+### Règle de déclenchement
+Utiliser la méga-vague uniquement pour :
+- Lancement produit complet (feature stratégique ou MVP)
+- Refonte d'architecture majeure (migration de stack)
+- Mise en conformité réglementaire totale (AI Act + RGPD simultanés)
+- Voir `.github/prompts/workflows/saas-launch-full.md` pour un exemple complet
+
+### Gestion des dépendances inter-filières
+La méga-vague produit un **DAG de dépendances inter-filières** explicite avant toute exécution. Les filières bloquantes sont identifiées et traitées en priorité. Ex : la gouvernance valide avant que le déploiement commence.
+
+---
+
+## Combinaison des modes
+
+Les modes peuvent être combinés dans un même DAG. L'orchestrateur organise les phases :
+
+```
+SoftwareArchitect──→ [BackendDev‖ DatabaseEngineer‖ FrontendDev]
+ ──→ {SecurityEngineer⟳ PerformanceEngineer⟳ LegalCompliance} CONSENSUS
+ ──→ QAEngineer──→ DevOpsEngineer──→ TechWriter```
+
+Lecture : architecture en séquentiel d'abord, puis développement en parallèle, puis audit en consensus, puis tests, déploiement et documentation en séquentiel.
+
+---
+
+## Choix du mode — Aide à la décision
+
+| Question | Oui → Mode | Non → Mode |
+|---|---|---|
+| L'agent B a-t-il besoin de l'output de A ? | Séquentiel | Parallèle |
+| La décision est-elle irréversible ou coûteuse à défaire ? | Vagues | Parallèle ou Séquentiel |
+| Les agents travaillent-ils sur le même sujet avec des perspectives différentes ? | Vagues | Parallèle |
+| Les agents travaillent-ils sur des sujets indépendants ? | Parallèle | Séquentiel ou Vagues |
+| Y a-t-il un risque de désaccord avec fort impact ? | Vagues | Séquentiel |
+| La décision impacte-t-elle ≥ 3 filières simultanément ? | **Super-vague** | Vagues |
+| La mission implique-t-elle les 4 filières bout-en-bout ? | **Méga-vague** | Super-vague |

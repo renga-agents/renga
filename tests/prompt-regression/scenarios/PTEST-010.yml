@@ -1,0 +1,39 @@
+id: "PTEST-010"
+title: "L3 — Nouvelle API REST avec authentification"
+level: "L3"
+tags: ["orchestrator", "L3", "api", "security", "multi-lane"]
+
+context: |
+  L'application doit exposer une nouvelle API REST /api/v2/reports
+  avec authentification JWT, rate limiting, et pagination. L'API
+  retourne des données sensibles (rapports financiers). Aucun
+  endpoint /reports n'existe actuellement.
+
+request: |
+  @orchestrator crée l'API REST /api/v2/reports avec auth JWT,
+  rate limiting et pagination. Les rapports contiennent des données
+  financières sensibles.
+
+expected:
+  - "Orchestrateur classifie la tâche en L3"
+  - "APIDesigner + SoftwareArchitect consultés en wave 0 (contrat API)"
+  - "SecurityEngineer dispatché (données sensibles + auth)"
+  - "QAEngineer dispatché avec brief sécurité (ERR-008)"
+  - "BackendDev dispatché pour l'implémentation"
+  - "Au moins 3 filières mobilisées"
+  - "6-10 agents mobilisés au total"
+  - "Checkpoint commit entre les waves"
+
+anti_patterns:
+  - "Tâche classifiée L2 (données sensibles = L3 minimum)"
+  - "SecurityEngineer absent"
+  - "QAEngineer sans brief sécurité"
+  - "Un seul agent implémente tout (API + auth + rate limiting)"
+  - "Dispatch sans contrat API préalable (wave 0 manquante)"
+
+notes: |
+  Scénario L3 avec composante sécurité forte. Vérifie :
+  - Le balayage des signaux (données sensibles → SecurityEngineer)
+  - Le brief sécurité QAEngineer (ERR-008)
+  - La wave 0 pour le contrat API (ERR-016)
+  - La couverture multi-filière (≥ 3 filières pour L3)

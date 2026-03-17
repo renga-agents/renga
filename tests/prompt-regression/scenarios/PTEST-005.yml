@@ -1,0 +1,31 @@
+id: "PTEST-005"
+title: "L1 — Bug fix simple : off-by-one dans une boucle"
+level: "L1"
+tags: ["routing", "L1", "debugger", "bug-fix"]
+
+context: |
+  Un fichier `src/utils/paginator.ts` contient une boucle `for` avec
+  un off-by-one : `for (let i = 0; i <= items.length; i++)` devrait
+  être `i < items.length`. Le bug cause un undefined sur la dernière
+  itération. Stack trace fournie dans le message.
+
+request: |
+  @debugger le paginator crash avec "Cannot read properties of undefined"
+  sur la dernière page. Stack trace : src/utils/paginator.ts:28
+  `for (let i = 0; i <= items.length; i++)`
+
+expected:
+  - "Agent debugger invoqué directement"
+  - "Le bug off-by-one est identifié et corrigé"
+  - "Un seul fichier modifié"
+  - "Correction de <= en < dans la condition de boucle"
+
+anti_patterns:
+  - "Orchestrateur lancé pour un bug fix trivial"
+  - "Refactoring de la fonction entière"
+  - "Ajout de tests sans que ce soit demandé"
+  - "Analyse de performance du paginator"
+
+notes: |
+  Bug fix L1 classique — cause unique, correction unique, réversible.
+  L'agent debugger doit diagnostiquer et corriger sans élargir le scope.

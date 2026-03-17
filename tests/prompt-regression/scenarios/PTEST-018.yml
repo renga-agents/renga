@@ -1,0 +1,47 @@
+id: "PTEST-018"
+title: "L3 — Rollback wave échouée après régression de tests"
+level: "L3"
+tags: ["orchestrator", "rollback", "wave-failure", "worktree", "resilience"]
+
+context: |
+  Tâche L3 en cours : migration d'un service de paiement de REST
+  vers GraphQL. Le worktree feat/migrate-payment est actif.
+  Wave 1 (QAEngineer) a écrit les tests — commit effectué.
+  Wave 2 (BackendDev) a implémenté les resolvers GraphQL — commit
+  effectué. Wave 3 (CodeReviewer + QAEngineer validation) découvre
+  que 12 tests existants sont en régression (les anciens endpoints
+  REST retournent 404 car les routes ont été supprimées au lieu
+  d'être dépréciées). Plus de 10 fichiers sont impactés.
+
+request: |
+  @orchestrator migre le service de paiement de REST vers GraphQL
+  avec coexistence temporaire des deux APIs.
+  (Simulation : wave 3 détecte une régression de 12 tests sur les
+  endpoints REST existants — ≥ 5 fichiers impactés)
+
+expected:
+  - "Orchestrateur détecte l'échec de la wave 3 (régression de tests)"
+  - "Option 2 appliquée (rollback worktree) car ≥ 5 fichiers impactés"
+  - "git checkout HEAD -- <fichiers> ou git stash dans le worktree"
+  - "Wave 4 (suivante) NON lancée tant que la régression n'est pas résolue"
+  - "Agent correcteur redispatché avec le rapport d'erreur et la liste des fichiers"
+  - "Scratchpad mis à jour avec le statut d'échec de la wave 3 et l'action de rollback"
+  - "Aucun merge vers main tant que les tests ne passent pas"
+
+anti_patterns:
+  - "Wave 4 lancée malgré les tests en échec"
+  - "Merge du worktree vers main avec des tests cassés"
+  - "Option 1 appliquée (correction immédiate) alors que ≥ 5 fichiers sont impactés"
+  - "Option 3 appliquée (abandon) sans tenter de corriger"
+  - "Rollback silencieux sans documentation dans le scratchpad"
+  - "Orchestrateur corrige les tests lui-même au lieu de dispatcher un agent"
+  - "Suppression du worktree sans conserver le travail valide des waves précédentes"
+
+notes: |
+  Scénario P1 testant la procédure de rollback partiel.
+  Ref : worktree-lifecycle.md §Rollback partiel — Wave échouée.
+  La règle de décision : < 5 fichiers → Option 1 (correction),
+  ≥ 5 fichiers → Option 2 (rollback worktree), architecture
+  remise en question → Option 3 (abandon + HITL).
+  Vérifie aussi la règle « ne jamais continuer une wave N+1 si
+  la wave N a produit des tests en échec non résolus ».

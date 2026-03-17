@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Mémoire de session orchestrateur (volatile, contient potentiellement des données sensibles)
+.copilot/memory/scratchpad-*.md
+
+# Rapports d'audit et logs de session (RGPD M3 — données pseudonymisées, stockage local uniquement)
+.copilot/reports/
+
+# Distribution build artifacts
+dist/
+
+# Node
+node_modules/
+scripts/__pycache__/
+tests/__pycache__/
+**/__pycache__/

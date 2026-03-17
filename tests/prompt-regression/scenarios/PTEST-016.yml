@@ -1,0 +1,40 @@
+id: "PTEST-016"
+title: "L2 — Circuit breaker déclenché après 2 échecs consécutifs d'un agent"
+level: "L2"
+tags: ["orchestrator", "circuit-breaker", "ERR-031", "escalation", "resilience"]
+
+context: |
+  L'orchestrateur a dispatché BackendDev pour implémenter un endpoint
+  POST /api/v1/invoices. BackendDev a échoué une première fois (output
+  malformé — code généré dans le mauvais répertoire). L'orchestrateur
+  l'a relancé avec le rapport d'erreur. BackendDev échoue une seconde
+  fois (timeout, pas d'output livré). C'est le 2e échec consécutif
+  sur la même sous-tâche.
+
+request: |
+  @orchestrator crée l'endpoint POST /api/v1/invoices avec validation
+  Zod et persistence PostgreSQL.
+  (Simulation : BackendDev échoue 2× consécutivement sur l'implémentation)
+
+expected:
+  - "Circuit breaker ERR-031 déclenché après le 2e échec consécutif"
+  - "BackendDev n'est PAS relancé une 3e fois"
+  - "Escalade HITL immédiate avec rapport des 2 échecs"
+  - "Log de l'incident dans error-patterns-<slug>.md"
+  - "Le scratchpad mentionne le circuit breaker et les 2 tentatives échouées"
+  - "Les waves suivantes sont suspendues en attendant la résolution HITL"
+
+anti_patterns:
+  - "BackendDev relancé une 3e fois (violation ERR-031)"
+  - "Orchestrateur continue les waves suivantes sans résolution"
+  - "Échecs ignorés silencieusement"
+  - "Circuit breaker non mentionné dans les logs"
+  - "Escalade vers un autre agent au lieu de HITL"
+  - "Orchestrateur tente de résoudre la sous-tâche lui-même"
+
+notes: |
+  Scénario P0 testant le circuit breaker ERR-031.
+  Ref : auto-triggers.md §Circuit Breaker — Agents défaillants.
+  Le circuit breaker est un garde-fou critique : sans lui, un agent
+  défaillant consomme des tokens indéfiniment sans produire de valeur.
+  Vérifier que la limite stricte de 2 tentatives est respectée.

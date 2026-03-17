@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "chrome-devtools-mcp": {
+      "command": "npx",
+      "args": [
+        "TODO: remplacer par le package npm du serveur chrome-devtools-mcp"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "TODO: remplacer par le package npm du serveur context7"
+      ]
+    }
+  }
+}

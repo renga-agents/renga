@@ -1,0 +1,76 @@
+# =============================================================================
+# Example: Lite profile for a small project or prototype
+# =============================================================================
+#
+# This profile keeps only the 8 core agents needed for a solo developer
+# or a fast-moving prototype. Copy this file to `.renga.yml` at the root
+# of the target repository.
+# ---
+
+version: "1.0"
+
+project:
+  name: "my-project"
+  description: "Small project using the Lite profile"
+  framework_version: "1.0.0"
+
+agents:
+  mode: "whitelist"
+  include:
+    # --- Core Lite agents ---
+    - software-architect
+    - backend-dev
+    - frontend-dev
+    - code-reviewer
+    - qa-engineer
+    - debugger
+    - git-expert
+    - tech-writer
+
+thresholds:
+  l2_min_agents: 2 # Small project: 2 agents are enough for L2
+  l3_min_agents: 3 # 3 agents for more complex tasks
+  l4_min_agents: 5 # 5 agents for critical tasks
+  max_retries: 3 # More tolerant because fewer agents are enabled
+  migration_threshold_weeks: 4
+
+stack:
+  backend: "Next.js API Routes"
+  frontend: "Next.js 15 (App Router)"
+  database: "PostgreSQL 16"
+  orm: "Prisma"
+  test_framework: "Vitest + Playwright"
+
+# WAIVERS — Targeted rule exceptions for this project
+# WARNING: a waiver removes a governance guardrail. Required process:
+#   1. Fill the 'reason' field in this file
+#   2. Document the decision in .github/logs/decisions.md
+#   3. Have the PR approved by a second developer (CODEOWNERS recommended)
+#   4. Review it every sprint — the 'expires' field is mandatory
+#
+# Example of a correctly documented waiver:
+#   - rule: ERR-008  # Security brief required in every wave
+#     reason: "Internal prototype without user data — approved by @lead-dev on 2026-01-15"
+#     expires: "2026-06-01"
+#     approved_by: "@lead-dev"
+waivers:
+  - rule: "ERR-014"
+    reason: "Solo project — reduced multi-track coverage accepted"
+    expires: "2027-01-01"
+    approved_by: "@lead-dev" # Replace with the real approver
+  - rule: "TDD-first"
+    reason: "MVP phase — tests added after implementation"
+    expires: "2026-09-01"
+    approved_by: "@lead-dev" # Replace with the real approver
+
+commits:
+  prefix: "feat|fix|docs|chore|refactor|test"
+  scope_required: false
+  max_subject_length: 72
+
+# --- Optional plugins ---
+# Enable specialized agent packs from .github/agents/_plugins/
+plugins: []
+  # - game-studio    # Agents for game development (game-developer, level-designer, audio-generator, etc.)
+
+paths: {}

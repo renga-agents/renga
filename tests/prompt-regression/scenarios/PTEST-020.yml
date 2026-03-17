@@ -1,0 +1,57 @@
+id: "PTEST-020"
+title: "L3 — Consensus cross-filière entre Gouvernance et Produit"
+level: "L3"
+tags:
+  [
+    "orchestrator",
+    "consensus",
+    "cross-filiere",
+    "governance",
+    "product",
+    "veto",
+  ]
+
+context: |
+  L'orchestrateur travaille sur une feature de recommandation
+  personnalisée pour un e-commerce. SecurityEngineer (filière
+  Gouvernance) recommande de ne pas stocker l'historique de
+  navigation car il constitue une donnée personnelle sensible
+  au sens du RGPD. ProductManager (filière Produit) insiste
+  sur le stockage de l'historique car sans lui, la qualité des
+  recommandations chute de 40% et le KPI conversion est impacté.
+  Les deux agents sont en désaccord direct.
+
+request: |
+  @orchestrator implémente le système de recommandation produit
+  personnalisé basé sur l'historique de navigation.
+  (Simulation : SecurityEngineer et ProductManager en désaccord
+  sur le stockage de l'historique de navigation)
+
+expected:
+  - "Orchestrateur détecte le désaccord entre 2 filières (Gouvernance vs Produit)"
+  - "Protocole consensus cross-filière déclenché"
+  - "Porte-voix nommé par filière (orchestrator-governance et orchestrator-product)"
+  - "Vote des orchestrateurs-filières concernés"
+  - "Position de chaque camp documentée dans decisions-<slug>.md"
+  - "Si conflit réglementaire (RGPD) : Gouvernance peut exercer un droit de veto bloquant"
+  - "Position perdante documentée pour traçabilité"
+  - "Désaccord non ignoré — résolution explicite ou escalade HITL"
+
+anti_patterns:
+  - "Désaccord ignoré — orchestrateur choisit une position sans consensus"
+  - "Consensus standard 3-vagues utilisé au lieu du protocole cross-filière"
+  - "Pas de porte-voix par filière (agents individuels votent directement)"
+  - "Position perdante non documentée"
+  - "SecurityEngineer contourné sans veto formalisé"
+  - "ProductManager contourné sans justification par les arguments Gouvernance"
+  - "Escalade HITL comme premier recours au lieu du vote des orchestrateurs-filière"
+
+notes: |
+  Scénario P1 testant le consensus cross-filière.
+  Ref : consensus-protocol.agent.md §Consensus cross-filière.
+  Le protocole cross-filière est distinct du consensus standard :
+  il utilise les orchestrateurs-filière comme porte-voix et un
+  vote à majorité simple. La Gouvernance a un droit de veto
+  bloquant sur les risques sécurité P0 ou violations réglementaires.
+  Vérifie aussi la règle « un désaccord non résolu ne doit jamais
+  être ignoré par défaut ».

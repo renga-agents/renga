@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "agentStop": [
+      {
+        "command": "bash .github/hooks/scripts/quality-check.sh",
+        "description": "Agent stop audit — log completion reason and context"
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": "bash .github/hooks/scripts/quality-check.sh",
+        "description": "Subagent stop audit — log completion reason and verify handoff block"
+      }
+    ]
+  }
+}

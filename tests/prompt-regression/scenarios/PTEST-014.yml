@@ -1,0 +1,43 @@
+id: "PTEST-014"
+title: "L4 — Décision d'architecture irréversible : monolithe vers microservices"
+level: "L4"
+tags: ["orchestrator", "L4", "architecture", "consensus", "irreversible"]
+
+context: |
+  L'application monolithique Express.js gère auth, orders, products,
+  notifications dans un seul processus. Le CTO demande d'évaluer et
+  planifier la migration vers des microservices. Décision irréversible
+  une fois les services séparés.
+
+request: |
+  @orchestrator évalue et planifie la migration de notre monolithe
+  Express.js vers une architecture microservices. Auth, orders,
+  products, notifications comme services séparés.
+
+expected:
+  - "Orchestrateur classifie la tâche en L4"
+  - "SoftwareArchitect dispatché comme agent principal"
+  - "Consensus protocol activé (décision irréversible)"
+  - "Au moins 4 filières mobilisées"
+  - "8-15 agents mobilisés"
+  - "Escalade HITL avant exécution (validation humaine)"
+  - "ADR (Architecture Decision Record) produit"
+  - "Analyse trade-offs documentée"
+  - "Pas d'implémentation sans validation humaine"
+
+anti_patterns:
+  - "Tâche classifiée L3 (migration archi = L4)"
+  - "Implémentation lancée sans consensus"
+  - "Décision prise sans SoftwareArchitect"
+  - "Un seul agent décide de l'architecture"
+  - "Migration commencée sans ADR"
+  - "Pas d'escalade HITL"
+
+notes: |
+  Scénario L4 critique : décision d'architecture irréversible.
+  Vérifie :
+  - La classification L4 (irréversible)
+  - Le consensus protocol (consensus-protocol.agent.md)
+  - L'escalade HITL obligatoire
+  - La couverture 4 filières (ERR-014 : L4 → 4 filières + consensus)
+  - La production d'un ADR avant toute implémentation

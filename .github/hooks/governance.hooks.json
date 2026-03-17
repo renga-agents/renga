@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "bash .github/hooks/scripts/pre-tool-worktree.sh",
+        "description": "Worktree zone enforcement — confines file edits to the authorized worktree zone"
+      }
+    ]
+  }
+}

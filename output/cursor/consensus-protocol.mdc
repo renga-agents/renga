@@ -1,0 +1,304 @@
+---
+description: "Référentiel interne non invocable du protocole de consensus multi-vagues pour les décisions critiques"
+alwaysApply: false
+globs: 
+---
+
+<!-- Capacités mappées depuis Copilot tools:
+  - read → file reading
+-->
+
+<!-- Modèle recommandé : claude-opus-4-6 (configurer via sélecteur Cursor UI) -->
+
+# Protocole de consensus multi-vagues
+
+> Référence partagée de tous les agents pour participer à un processus de décision par consensus.
+> Invocation : `@orchestrator consensus: <question à trancher>`
+
+---
+
+## Principe fondamental
+
+Le consensus multi-vagues est un mécanisme de **challenge itératif** conçu pour les décisions à fort impact. Chaque agent produit sa position de manière indépendante, puis la confronte à celles des autres dans des cycles successifs jusqu'à convergence ou arbitrage.
+
+L'objectif n'est pas l'unanimité mais une **décision éclairée et traçable**, avec les positions minoritaires documentées pour vigilance future.
+
+---
+
+## Seuils de déclenchement
+
+Le mode vagues est déclenché **automatiquement** par l'orchestrateur dans les situations suivantes :
+
+### Déclenchements obligatoires
+1. **Choix architecturaux irréversibles** — base de données principale, framework structurant, modèle IA de production, infrastructure de déploiement
+2. **Décisions de sécurité critiques** — mécanisme d'authentification, stratégie de chiffrement, exposition de données sensibles, gestion des secrets
+3. **Décisions réglementaires** — interprétation de l'AI Act (classification de risque), RGPD edge cases (base légale, transferts hors UE), choix de licences OSS avec obligations
+4. **Désaccord entre 2 agents ou plus** — sur un point à fort impact identifié par l'orchestrateur
+5. **Coût de retour arrière élevé** — tout choix dont le rollback est estimé > 2 semaines-homme
+
+### Déclenchement manuel
+- Par l'utilisateur : `@orchestrator consensus: <question>`
+- Par un agent qui estime que sa décision devrait être challengée : mention explicite dans son output
+
+---
+
+## Déroulement du consensus
+
+### Vague 1 — Positions indépendantes
+
+Chaque agent produit sa réponse **sans voir celles des autres**. C'est la phase de diversité maximale des perspectives.
+
+```
+ ┌─ Agent_A→ Position A
+ ├─ Agent_B→ Position B
+ ├─ Agent_C→ Position C
+ └─ Agent_D→ Position D
+```
+
+L'orchestrateur collecte les 4 positions et produit une **synthèse intermédiaire** identifiant :
+- Les points de convergence (recommandations communes)
+- Les points de divergence (désaccords à résoudre)
+- Les angles morts (aspects non couverts par aucun agent)
+
+### Vague 2 — Challenge informé
+
+Chaque agent reçoit la synthèse intermédiaire et peut :
+- **Maintenir** sa position avec argumentation renforcée
+- **Réviser** sa position en justifiant le changement
+- **Enrichir** avec de nouveaux arguments inspirés par les autres positions
+
+```
+ ┌─ Agent_A'→ Position A' (maintenue ou révisée)
+ ├─ Agent_B'→ Position B' (maintenue ou révisée)
+ ├─ Agent_C'→ Position C' (maintenue ou révisée)
+ └─ Agent_D'→ Position D' (maintenue ou révisée)
+```
+
+**Obligation** : tout agent qui maintient une divergence doit argumenter explicitement pourquoi les arguments adverses ne le convainquent pas.
+
+### Vague 3 — Arbitrage (si nécessaire)
+
+Déclenchée uniquement si la convergence est insuffisante après la Vague 2. L'orchestrateur :
+1. Identifie les points de désaccord persistants
+2. Demande à chaque agent divergent un **ultime argument** en 3 lignes maximum
+3. Tranche avec justification explicite, ou escalade humaine si le désaccord porte sur un point à fort impact irréversible
+
+**Critère d'arrêt** : le consensus est terminé après la Vague 3, quoi qu'il arrive. La paralysie par analyse est un risque plus grand qu'une décision imparfaite.
+
+---
+
+## Format de participation à une vague
+
+Chaque agent **DOIT** structurer sa réponse dans ce format exact :
+
+```markdown
+## Position [NOM_AGENT][VARIANTE] — Vague [N]
+
+**Recommandation** : [en 1 phrase tranchée — pas de "ça dépend"]
+
+**Confiance** : [Haute / Moyenne / Faible] — [justification en 1 ligne]
+
+**Arguments** :
+ 1. [argument principal avec données, métriques ou références vérifiables]
+ 2. [argument secondaire avec contexte spécifique au projet]
+ 3. [argument supplémentaire si pertinent — max 4 arguments]
+
+**Risques si non retenu** :
+ - [conséquence concrète #1 avec impact estimé]
+ - [conséquence concrète #2 si applicable]
+
+**Conditions de révision** : [ce qui me ferait changer d'avis — facteurs déclencheurs explicites]
+
+**Divergence avec vague précédente** : [Maintenu / Révisé — pourquoi]
+← cette section est obligatoire à partir de la Vague 2
+```
+
+### Règles de format
+- La recommandation est **toujours tranchée** : « Utiliser PostgreSQL » et non « PostgreSQL ou MongoDB selon le cas »
+- Le niveau de confiance est **toujours justifié** : « Haute — 3 projets similaires réussis avec cette stack »
+- Les arguments sont **factuels** : métriques, benchmarks, retours d'expérience, documentation officielle
+- Les risques sont **concrets** : coût estimé, délai impacté, fonctionnalité compromise
+
+---
+
+## Critères de convergence
+
+| Situation | Résultat | Action |
+|---|---|---|
+| ≥ 3/4 agents convergent sur la même recommandation | **Convergence forte** | Décision automatique — pas de vague supplémentaire |
+| 2/4 agents convergent | **Convergence partielle** | Vague 2 obligatoire |
+| < 2/4 agents convergent | **Divergence** | Vague 2, puis Vague 3 si toujours < 3/4 |
+| Après Vague 3, toujours < 3/4 | **Désaccord persistant** | Arbitrage de l'orchestrateur ou escalade humaine |
+
+### Critères pour escalade humaine (vs arbitrage orchestrateur)
+L'orchestrateur **doit** escalader à l'humain si :
+- La décision est irréversible ET les arguments des deux camps sont de confiance Haute
+- Le désaccord porte sur un sujet réglementaire (AI Act, RGPD) — l'orchestrateur n'a pas l'autorité
+- L'impact financier dépasse 10 000€ estimés
+- Le risque sécurité est classé critique par le SecurityEngineer
+
+---
+
+## Output final — Verdict de consensus
+
+L'orchestrateur produit **obligatoirement** ce format après chaque consensus :
+
+```markdown
+## VERDICT DE CONSENSUS — [SUJET]
+
+**Date** : [DATE]
+**Décision retenue** : [ce qui est décidé, en 1-2 phrases claires]
+
+**Niveau de consensus** : [Fort / Partiel / Arbitrage]
+- Fort : ≥ 3/4 agents convergents
+- Partiel : 2/4 convergents, décision après Vague 2
+- Arbitrage : décision de l'orchestrateur après Vague 3
+
+**Agents en accord** :
+- [Agent1][Variante] — [résumé position en 1 ligne]
+- [Agent2][Variante] — [résumé position en 1 ligne]
+
+**Agents en désaccord** :
+- [Agent3][Variante] — [position maintenue pour traçabilité]
+ → Point de vigilance associé : [ce qu'il faut surveiller]
+
+**Justification de l'arbitrage** : [si applicable — pourquoi cette position l'emporte]
+
+**Points de vigilance** :
+- [risque soulevé par la minorité qu'il faut surveiller activement]
+- [condition qui pourrait invalider cette décision à l'avenir]
+
+**Référence ADR** : [lien vers l'ADR générée si décision architecturale]
+**Journal** : décision enregistrée dans `.github/logs/decisions-<slug>.md` (index mis à jour dans `decisions.md`)
+```
+
+---
+
+## Notation dans les DAG
+
+Le mode vagues utilise la notation suivante dans les workflows :
+
+```
+{A ⟳ B ⟳ C} VAGUE_1 → SYNTHÈSE → {A' ⟳ B' ⟳ C'} VAGUE_2 → VERDICT
+```
+
+Si arbitrage nécessaire après Vague 3 :
+```
+{A ⟳ B ⟳ C} V1 → SYNTHÈSE → {A' ⟳ B' ⟳ C'} V2 → {A'' ⟳ B'' ⟳ C''} V3 → ARBITRAGE → VERDICT
+```
+
+---
+
+## Anti-patterns à éviter
+
+1. **Consensus mou** — « On est d'accord pour dire que ça dépend » → INTERDIT. Chaque agent doit trancher.
+2. **Conformisme social** — Un agent qui change d'avis sans argument nouveau en Vague 2 doit le justifier sous peine de score 2.
+3. **Paralysie par analyse** — Maximum 3 vagues. Après, on décide et on avance.
+4. **Faux consensus** — Si les agents convergent sur une solution sans avoir considéré les alternatives, l'orchestrateur challenge en demandant des contre-arguments.
+5. **Escalade systématique** — L'escalade humaine est le dernier recours, pas le mode par défaut. L'orchestrateur doit arbitrer dans 80%+ des cas.
+
+---
+
+## Consensus cross-filière
+
+Quand le désaccord oppose des agents de **deux filières différentes** (ex : SecurityEngineer vs ProductManager), le protocole standard à 3 vagues ne suffit pas : les critères d'évaluation divergent fondamentalement et aucun des agents en conflit n'a autorité sur le domaine de l'autre.
+
+> Ce protocole couvre les conflits impliquant **exactement 2 filières**. Pour les conflits touchant ≥ 3 filières simultanément, voir la section [Super-vague](#super-vague--consensus-transverse-inter-filières).
+
+### Processus spécifique
+
+1. **Identifier les filières en conflit** — nommer explicitement les deux filières opposées et les agents qui les représentent.
+2. **Nommer un porte-voix par filière** — l'orchestrateur-filière correspondant (ex : `orchestrator-governance`, `orchestrator-product`) consolide la position de sa filière en une recommandation tranchée.
+3. **Vote des orchestrateurs-filières concernés** — chaque orchestrateur-filière juge s'il est impacté et vote. Majorité simple des orchestrateurs votants.
+4. **En cas d'égalité** — escalade HITL obligatoire. L'orchestrateur ne tranche pas seul.
+5. **Documenter la décision** dans `.github/logs/decisions-<slug>.md` avec les arguments des deux camps, y compris la position perdante.
+
+### Règle fondamentale
+
+> Un désaccord non résolu ne doit **jamais** être ignoré par défaut. L'orchestrateur doit soit conclure le consensus, soit escalader à l'humain.
+
+### Droits de veto par filière
+
+Certains conflits accordent un droit de veto à une filière indépendamment du vote majoritaire :
+
+| Filière | Droit de veto | Condition déclenchante |
+|---|---|---|
+| Gouvernance | Veto bloquant | Risque sécurité P0 ou violation réglementaire avérée |
+| Tech | Veto bloquant | Dette technique irréversible estimée > 4 semaines |
+| Produit | Veto bloquant | Régression de valeur utilisateur sur une métrique P0 |
+| Data | Veto bloquant | Corruption ou perte de données irréversible |
+
+Un veto doit être **motivé par écrit** dans le verdict de consensus. Un veto non motivé est nul.
+
+### Exemples de conflits cross-filière
+
+| Conflit | Filières | Résolution recommandée |
+|---|---|---|
+| SecurityEngineer vs ProductManager (feature risquée) | Gouvernance vs Produit | Vote orchestrateurs-filière — gouvernance a droit de veto P0 |
+| DataScientist vs BackendDev (architecture ML) | Data vs Tech | Vote + arbitrage SoftwareArchitect si égalité |
+| LegalCompliance vs GTMSpecialist (lancement) | Gouvernance vs Produit | Escalade HITL obligatoire |
+| FrontendDev vs UXDesigner (compromis technique UX) | Tech vs Produit | Vote orchestrateurs-filière — escalade si égalité |
+
+---
+
+## Super-vague — Consensus transverse inter-filières
+
+Déclenchée par le MOE principal quand la décision touche **≥ 3 filières simultanément**. Le MOE dispatch directement des spécialistes de chaque filière, en lisant les matrices dans les profils de filière (`orchestrator-{tech,product,data,governance}.agent.md`).
+
+### Déclenchements
+
+| Situation | Filières impliquées |
+|---|---|
+| Choix de stack IA en production | Tech + Data + Gouvernance |
+| Nouveau modèle de données partagé | Tech + Data + Produit |
+| Feature à impact réglementaire + UX | Produit + Gouvernance + Tech |
+| Migration d'infrastructure globale | Tech + Data + FinOps (Gouvernance) |
+
+### Déroulement
+
+```
+Vague inter-filières 1 :
+ ┌─ Filière Tech (spécialistes choisis via profil tech) → Synthèse filière technique
+ ├─ Filière Produit (spécialistes choisis via profil produit) → Synthèse filière produit
+ ├─ Filière Data (spécialistes choisis via profil data) → Synthèse filière data/AI
+ └─ Filière Gouvernance (spécialistes choisis via profil gouvernance) → Synthèse filière gouvernance
+
+MOE Principal → Méta-synthèse (convergences, conflits inter-filières, dépendances)
+
+Vague inter-filières 2 (si conflit) :
+ Les spécialistes de chaque filière répondent spécifiquement aux conflits identifiés
+
+Verdict du MOE : décision avec plan d'exécution coordonné par filière
+```
+
+### Format de synthèse de filière
+
+```markdown
+## Synthèse [FILIÈRE] — Super-vague [SUJET]
+
+**Position de filière** : [recommandation tranchée en 1 phrase]
+
+**Prérequis de ma filière** :
+1. [prérequis incontournable #1]
+2. [prérequis incontournable #2]
+
+**Dépendances sur les autres filières** :
+- De [Filière X] : [ce dont j'ai besoin]
+
+**Risque si ignorée** : [conséquence concrète si ma filière n'est pas consultée]
+```
+
+### Arbitrage super-vague
+Si les filières divergent après la Vague 2 inter-filières, le MOE principal arbitre en appliquant :
+1. Priorisation : Gouvernance > Tech > Data > Produit sur les questions de conformité/sécurité
+2. Priorisation : Produit > Tech > Data > Gouvernance sur les questions de valeur utilisateur
+3. Escalade humaine si conflit Gouvernance ↔ Produit sur une décision irréversible
+
+---
+
+## Exemples de requêtes déclenchant le consensus
+
+1. `@orchestrator consensus: PostgreSQL vs MongoDB pour le service catalogue, 50M d'items, lectures 90%/writes 10%`
+2. `@orchestrator consensus: Authentification OAuth2 + OIDC vs session-based pour l'app publique`
+3. `@orchestrator consensus: Classification EU AI Act du système de recommandation produit`
+4. `@orchestrator consensus: Monorepo vs polyrepo pour les 4 microservices du domaine commande`

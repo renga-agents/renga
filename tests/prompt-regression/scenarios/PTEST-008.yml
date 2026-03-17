@@ -1,0 +1,33 @@
+id: "PTEST-008"
+title: "L2 — Ajout de composants UI avec tests"
+level: "L2"
+tags: ["orchestrator", "L2", "frontend-dev", "qa-engineer", "ux-ui-designer", "TDD"]
+
+context: |
+  L'application a un design system existant. L'utilisateur demande un
+  nouveau composant Tooltip avec 3 variantes (top, bottom, left/right).
+  Le composant doit être accessible (ARIA), testé et documenté dans
+  Storybook.
+
+request: |
+  @orchestrator crée un composant Tooltip accessible avec les variantes
+  top/bottom/left/right. Tests unitaires + story Storybook.
+
+expected:
+  - "Orchestrateur classifie la tâche en L2"
+  - "QAEngineer dispatché en wave 1 (TDD — tests red)"
+  - "FrontendDev dispatché en wave 2 (implémentation — green)"
+  - "QAEngineer ne fait PAS les tests en parallèle de FrontendDev"
+  - "Composant avec attributs ARIA appropriés"
+  - "Story Storybook couvrant les variantes"
+
+anti_patterns:
+  - "QAEngineer et FrontendDev en parallèle (violation TDD)"
+  - "Tests écrits après l'implémentation"
+  - "Accessibility ignorée"
+  - "Tâche classifiée L1 (multi-fichier + accessibilité)"
+
+notes: |
+  Vérifie le respect du TDD par défaut : QAEngineer (wave 1, tests red)
+  avant FrontendDev (wave 2, green). Jamais en parallèle.
+  Ref : orchestrator.agent.md §Planification — TDD par défaut

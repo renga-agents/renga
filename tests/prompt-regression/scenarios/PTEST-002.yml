@@ -1,0 +1,29 @@
+id: "PTEST-002"
+title: "L0 — Correction typo dans un commentaire"
+level: "L0"
+tags: ["routing", "fast-track", "frontend-dev"]
+
+context: |
+  Un composant React `src/components/Modal.tsx` contient un commentaire
+  avec une faute de frappe : « // Oepn the modal on click » au lieu de
+  « // Open the modal on click ». Aucune logique métier n'est modifiée.
+
+request: |
+  @frontend-dev corrige la typo dans le commentaire de src/components/Modal.tsx
+  ligne 42 : "Oepn" → "Open"
+
+expected:
+  - "Agent frontend-dev invoqué directement"
+  - "Un seul fichier modifié : src/components/Modal.tsx"
+  - "Seul le commentaire est modifié, pas le code fonctionnel"
+  - "Exécution immédiate sans planification"
+
+anti_patterns:
+  - "Orchestrateur lancé"
+  - "Analyse de complexité effectuée"
+  - "Autres fichiers modifiés"
+  - "Tests exécutés pour une correction de commentaire"
+
+notes: |
+  Vérifie le fast-track L0 sur un cas encore plus trivial qu'un renommage.
+  Aucune analyse, aucun test, aucune journalisation attendue.

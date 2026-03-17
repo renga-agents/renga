@@ -1,0 +1,144 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://renga/schemas/agent.schema.json",
+	"title": "Agent Definition (.agent.md frontmatter)",
+	"description": "JSON Schema décrivant le frontmatter YAML des fichiers .agent.md du framework renga.",
+	"type": "object",
+	"required": [
+		"name",
+		"description"
+	],
+	"properties": {
+		"name": {
+			"type": "string",
+			"pattern": "^[a-z][a-z0-9-]*$",
+			"description": "Identifiant unique de l'agent en kebab-case. Correspond au nom de fichier sans l'extension .agent.md.",
+			"examples": [
+				"backend-dev",
+				"orchestrator",
+				"security-engineer"
+			]
+		},
+		"user-invocable": {
+			"type": "boolean",
+			"default": true,
+			"description": "Si true, l'agent peut être invoqué directement par l'utilisateur humain via @nom. Si false, c'est un référentiel interne ou un sous-agent non invocable."
+		},
+		"description": {
+			"type": "string",
+			"minLength": 10,
+			"maxLength": 200,
+			"description": "Description courte du domaine de l'agent, utilisée pour le catalogue et le dispatch automatique."
+		},
+		"tools": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"minItems": 1,
+			"description": "Liste des outils MCP autorisés pour cet agent. Utilise des noms courts (execute, read, edit, search, web, agent, todo) ou des patterns qualifiés (io.github.upstash/context7/*, playwright/*).",
+			"examples": [
+				[
+					"execute",
+					"read",
+					"edit",
+					"search",
+					"web",
+					"agent",
+					"todo"
+				],
+				[
+					"read"
+				],
+				[
+					"execute",
+					"read",
+					"edit",
+					"search",
+					"web",
+					"agent",
+					"todo",
+					"io.github.chromedevtools/chrome-devtools-mcp/*",
+					"io.github.upstash/context7/*"
+				]
+			]
+		},
+		"agents": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"description": "Liste des agents que cet agent peut invoquer via runSubagent. \"*\" autorise tous les agents. Réservé aux orchestrateurs.",
+			"examples": [
+				[
+					"*"
+				]
+			]
+		},
+		"model": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"minItems": 1,
+			"maxItems": 1,
+			"description": "Modèle LLM à utiliser pour cet agent. Format : ['<nom du modèle>'].",
+			"examples": [
+				[
+					"Claude Opus 4.6 (copilot)"
+				]
+			]
+		},
+		"plugin": {
+			"oneOf": [
+				{
+					"type": "boolean",
+					"const": true
+				},
+				{
+					"type": "string",
+					"pattern": "^[a-z][a-z0-9-]*$"
+				}
+			],
+			"description": "Indique un agent plugin. `true` pour les plugins custom (dans plugins/), ou le nom du pack pour les plugins bundled (dans _plugins/<pack>/, ex: 'game-studio')."
+		},
+		"filiere": {
+			"type": "string",
+			"description": "Filière métier. Valeur dérivée automatiquement des fichiers orchestrator-*.agent.md présents dans .github/agents/. Convention : le nom de la filière correspond au segment après 'orchestrator-' (ex: orchestrator-tech.agent.md → 'tech').",
+			"pattern": "^[a-z][a-z0-9-]*$"
+		},
+		"overrides": {
+			"type": "string",
+			"pattern": "^[a-z][a-z0-9-]*$",
+			"description": "Nom (name) de l'agent core que ce plugin surcharge. Le plugin remplace l'agent core lors du dispatch."
+		},
+		"framework_version": {
+			"type": "string",
+			"pattern": "^\\d+\\.\\d+\\.\\d+$",
+			"description": "Version sémantique du framework renga avec laquelle cette définition est compatible. Format: MAJOR.MINOR.PATCH.",
+			"examples": [
+				"1.0.0",
+				"2.1.3"
+			]
+		},
+		"mode": {
+			"type": "string",
+			"description": "Mode d'exécution de l'agent."
+		},
+		"skills": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"pattern": "^[a-z][a-z0-9-]*$"
+			},
+			"description": "Liste des skills (SKILL.md) que cet agent charge à la demande. Chaque entrée correspond à un répertoire dans .github/skills/<name>/SKILL.md.",
+			"examples": [
+				[
+					"task-decomposition",
+					"dag-patterns"
+				]
+			]
+		}
+	},
+	"additionalProperties": false
+}

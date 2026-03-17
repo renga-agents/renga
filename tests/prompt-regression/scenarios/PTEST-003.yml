@@ -1,0 +1,29 @@
+id: "PTEST-003"
+title: "L1 — Ajout d'une règle ESLint locale"
+level: "L1"
+tags: ["routing", "L1", "backend-dev", "code-quality"]
+
+context: |
+  Le projet utilise ESLint. L'utilisateur veut ajouter la règle
+  `no-console: warn` dans le fichier `.eslintrc.json` existant.
+  Un seul fichier de configuration modifié, impact réversible.
+
+request: |
+  @backend-dev ajoute la règle no-console: warn dans .eslintrc.json
+
+expected:
+  - "Agent backend-dev invoqué directement"
+  - "Seul .eslintrc.json est modifié"
+  - "La règle est ajoutée avec la bonne syntaxe ESLint"
+  - "Pas de délégation multi-agent obligatoire"
+
+anti_patterns:
+  - "Orchestrateur lancé pour une tâche L1"
+  - "DAG construit"
+  - "SecurityEngineer consulté pour un ajout de règle lint"
+  - "Worktree créé"
+
+notes: |
+  Tâche L1 mécanique : un seul fichier de config, pas de raisonnement
+  technique profond, entièrement réversible.
+  Ref : orchestrator.agent.md §Portes de passage — L1

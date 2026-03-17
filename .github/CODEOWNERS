@@ -1,0 +1,31 @@
+# CODEOWNERS — renga framework
+#
+# This file protects the framework's critical directories.
+# Any modification in these paths requires explicit review
+# from the maintenance team before merge.
+#
+# Replace @team/framework-maintainers with your GitHub team or user.
+
+# Agents — system prompts and configuration for all agents
+/.github/agents/                   @team/framework-maintainers
+
+# Instructions — global conventions applied to all agents
+/.github/instructions/             @team/framework-maintainers
+
+# Schemas — structural validation for agents
+/schemas/                          @team/framework-maintainers
+
+# Scripts — validation, generation, transpilation
+/scripts/                          @team/framework-maintainers
+
+# Framework reference configuration
+/.renga.example.yml                @team/framework-maintainers
+
+# Workflows CI/CD
+/.github/workflows/                @team/framework-maintainers
+
+# CODEOWNERS file itself
+/.github/CODEOWNERS                @team/framework-maintainers
+
+# Active framework configuration
+/.renga.yml                        @team/framework-maintainers

@@ -1,0 +1,42 @@
+id: "PTEST-019"
+title: "L3 — Scoring pondéré avec coefficients de complexité L4 vs L0"
+level: "L3"
+tags: ["orchestrator", "scoring", "rubric", "retrospective", "performance"]
+
+context: |
+  Fin de session. L'orchestrateur rédige la rétrospective dans
+  agent-performance-<slug>.md. Deux agents ont été évalués :
+  - BackendDev a obtenu un score brut de 4/5 sur une tâche L4
+    (migration multi-services, 3 retries mineurs).
+  - TechWriter a obtenu un score brut de 5/5 sur une tâche L0
+    (ajout d'un commentaire JSDoc).
+  L'orchestrateur doit appliquer les coefficients de complexité
+  définis dans rubric.md.
+
+request: |
+  @orchestrator rédige la rétrospective de la session.
+  BackendDev : 4/5 sur tâche L4. TechWriter : 5/5 sur tâche L0.
+
+expected:
+  - "Score pondéré BackendDev = 4 × 3.0 = 12.0 (coefficient L4)"
+  - "Score pondéré TechWriter = 5 × 0.5 = 2.5 (coefficient L0)"
+  - "BackendDev classé au-dessus de TechWriter malgré un score brut inférieur"
+  - "Les 3 dimensions d'évaluation sont présentes (Conformité, Complétude, Autonomie)"
+  - "Le tableau agent-performance respecte le format : Agent | Tâche | Niveau | Score brut | Score pondéré | Notes"
+  - "Les coefficients utilisés sont ceux de rubric.md (L0=0.5, L1=1.0, L2=1.5, L3=2.0, L4=3.0)"
+
+anti_patterns:
+  - "Scores bruts comparés directement sans pondération (5 > 4 donc TechWriter meilleur)"
+  - "Coefficient L4 incorrect (≠ 3.0)"
+  - "Coefficient L0 incorrect (≠ 0.5)"
+  - "Format du tableau non conforme à rubric.md"
+  - "Score pondéré calculé sans les 3 dimensions (moyenne Conformité + Complétude + Autonomie)"
+  - "Rétrospective omise ou résumée en une seule ligne"
+
+notes: |
+  Scénario P2 testant l'application correcte du scoring pondéré.
+  Ref : .copilot/memory/rubric.md §Coefficients de complexité.
+  Ce test vérifie que l'orchestrateur ne compare pas naïvement
+  les scores bruts mais applique les coefficients de complexité.
+  Un agent performant sur une tâche L4 doit être mieux valorisé
+  qu'un agent parfait sur une tâche L0 triviale.

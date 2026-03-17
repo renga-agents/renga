@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "bash .github/hooks/scripts/pre-tool-security.sh",
+        "description": "Security policy enforcement — whitelist-based command and path validation"
+      }
+    ]
+  }
+}

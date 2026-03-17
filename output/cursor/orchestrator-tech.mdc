@@ -1,0 +1,89 @@
+---
+description: "Profil de filière Technique — référence interne non invocable, lue par le MOE pour dispatcher les spécialistes backend, frontend, QA, DevOps et infra"
+alwaysApply: false
+globs: 
+---
+
+<!-- Capacités mappées depuis Copilot tools:
+  - read → file reading
+-->
+
+<!-- Modèle recommandé : claude-opus-4-6 (configurer via sélecteur Cursor UI) -->
+
+# Profil de filière : Technique
+
+**Agents disponibles** : BackendDev, FrontendDev, FullstackDev, MobileDev, QAEngineer, APIDesigner, PerformanceEngineer, DevOpsEngineer, IncidentCommander, InfraArchitect, CloudEngineer, PlatformEngineer, ObservabilityEngineer, ChaosEngineer, SecurityEngineer, CodeReviewer, SoftwareArchitect, Debugger, AccessibilityEngineer
+
+**Agents plugins (game-studio)** : AnimationsEngineer, GameAssetGenerator, AudioGenerator, GameDeveloper, GameBalancer — *disponibles avec le plugin `game-studio` (`_plugins/game-studio/`)*
+
+> **Usage** : Ce profil est **lu par l'orchestrateur** lors de la planification pour sélectionner les agents et définir l'ordre de dispatch. Il n'est pas lui-même invocable — l'orchestrateur dispatch directement les spécialistes à depth=1.
+
+### Critères d'escalade (détectés par le MOE lors de l'exécution)
+
+| Situation | Action MOE |
+|---|---|
+| Conflit architectural inter-domaines | Convoquer DataScientist + SoftwareArchitect en séquence |
+| Vulnérabilité critique détectée | Suspendre, invoquer SecurityEngineer + RiskManager |
+| Feature impactant RGPD ou AI Act | Invoquer LegalCompliance avant livraison |
+| Désaccord qualité / deadline | Invoquer ArchitectureReviewer pour arbitrage |
+
+---
+
+## Matrice de dispatch technique
+
+| Tâche | Agents primaires | Agents en parallèle | Agents cross-filières recommandés |
+|---|---|---|---|
+| Nouvelle feature fullstack | FullstackDev | QAEngineer, APIDesigner (si API publique) | UXUIDesigner (produit), AccessibilityEngineer (gouv.), TechWriter (produit), ProxyPO (si specs manquantes) |
+| Feature backend seule | BackendDev | QAEngineer | SecurityEngineer (gouv.), TechWriter (produit) |
+| Feature frontend seule | FrontendDev | AccessibilityEngineer, QAEngineer | UXUIDesigner (produit), UXWriter (produit), CreativeDirector (si identité visuelle) |
+| Pipeline CI/CD | DevOpsEngineer | PlatformEngineer | SecurityEngineer (gouv.), ObservabilityEngineer (tech spé) |
+| Optimisation performance | PerformanceEngineer | ObservabilityEngineer | SoftwareArchitect (architecture), DatabaseEngineer (si queries) |
+| Déploiement cloud | CloudEngineer | InfraArchitect | SecurityEngineer (gouv.), FinOpsEngineer (gouv.), DevOpsEngineer |
+| Test de résilience | ChaosEngineer | ObservabilityEngineer | RiskManager (gouv.), SoftwareArchitect |
+| API publique | APIDesigner | BackendDev, QAEngineer | TechWriter (produit), LegalCompliance (gouv. si données perso), SecurityEngineer (gouv.) |
+| Animation/jeu interactif | AnimationsEngineer | FrontendDev, QAEngineer | CreativeDirector (produit), UXUIDesigner (produit), PerformanceEngineer, AccessibilityEngineer (gouv.) |
+| Debug/investigation | Debugger | — | QAEngineer (reproduction), ObservabilityEngineer (tracing) |
+| Incident production | IncidentCommander | Debugger, ObservabilityEngineer | DevOpsEngineer (mitigation), SecurityEngineer (si incident sécurité), TechWriter (communication) |
+| Refactoring/migration | SoftwareArchitect | BackendDev, FrontendDev | CodeReviewer, QAEngineer, TechWriter (produit) |
+
+---
+
+## Signaux cross-filières
+
+Quand une tâche tech doit déclencher des agents d'autres filières :
+
+| Signal détecté dans la tâche | Filière | Agents à inclure |
+|---|---|---|
+| Interface utilisateur visible | Produit | UXUIDesigner, AccessibilityEngineer |
+| Nouveau composant UI sans maquette | Produit | UXUIDesigner + ProxyPO (story) |
+| Texte/label affiché à l'utilisateur | Produit | UXWriter |
+| Feature livrée à des non-techniques | Produit | ChangeManagement, TechWriter |
+| Endpoint manipulant des données perso | Gouvernance | LegalCompliance + SecurityEngineer |
+| Nouveau service exposé | Gouvernance | SecurityEngineer (wave 0) |
+| Cloud / infra / scaling | Gouvernance | FinOpsEngineer |
+| Alerte P1/P0 en production | Tech | IncidentCommander + ObservabilityEngineer + DevOpsEngineer |
+| Création de table ou migration BDD | Data | DatabaseEngineer |
+| Feature impliquant des embeddings ou du ML | Data | DataScientist, MLEngineer |
+| Prompt système ou agent à modifier | Data | PromptEngineer |
+
+---
+
+## Format de consolidation (produit par le MOE après dispatch technique)
+
+> Quand le MOE a dispatché plusieurs agents de la filière technique, il consolide selon ce format avant journalisation.
+
+```
+## Synthèse technique — [nom de la tâche]
+
+### Agents mobilisés
+- [agent] : [mission] → [statut]
+
+### Livrables
+- [fichier/décision/artefact]
+
+### Points bloquants
+- [liste ou "Aucun"]
+
+### Points de vigilance pour le MOE
+- [risques identifiés post-implémentation]
+```

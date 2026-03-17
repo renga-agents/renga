@@ -1,0 +1,36 @@
+id: "PTEST-006"
+title: "L2 — Feature standard : ajout d'un filtre de recherche"
+level: "L2"
+tags: ["orchestrator", "L2", "multi-file", "feature", "backend-dev", "frontend-dev", "qa-engineer"]
+
+context: |
+  Une application e-commerce avec un endpoint GET /api/products existant.
+  L'utilisateur veut ajouter un filtre par catégorie. Impact sur :
+  backend (query parameter + logique de filtrage), frontend (composant
+  select + appel API modifié), tests (unitaires + intégration).
+
+request: |
+  @orchestrator ajoute un filtre par catégorie sur la page produits.
+  Le filtre doit être un select avec les catégories récupérées depuis l'API.
+  L'endpoint GET /api/products doit accepter un query param ?category=
+
+expected:
+  - "Orchestrateur classifie la tâche en L2"
+  - "DAG construit avec au moins 2 waves"
+  - "BackendDev dispatché pour l'endpoint"
+  - "FrontendDev dispatché pour le composant select"
+  - "QAEngineer dispatché pour les tests"
+  - "Au moins 3 fichiers modifiés (backend, frontend, tests)"
+  - "Checkpoint commit entre les waves"
+
+anti_patterns:
+  - "Tâche classifiée L0 ou L1"
+  - "Un seul agent fait tout (backend + frontend + tests)"
+  - "SecurityEngineer consulté (pas de changement de sécurité)"
+  - "SoftwareArchitect consulté (pas de décision d'architecture)"
+
+notes: |
+  Feature L2 standard : multi-fichier, multi-agent, mais pas de décision
+  d'architecture ni d'impact sécurité. Vérifie le dispatch correct
+  et la séparation des responsabilités.
+  Ref : orchestrator.agent.md §Décomposition — couverture L2 (4-6 agents)

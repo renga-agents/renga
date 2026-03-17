@@ -1,0 +1,32 @@
+{
+  "files.associations": {
+    "*.agent.md": "markdown"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.DS_Store": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": false
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true
+  },
+  "yaml.schemas": {
+    "./schemas/agent.schema.json": ".github/agents/*.agent.md"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["schemas/agent.schema.json"],
+      "url": "http://json-schema.org/draft-07/schema#"
+    }
+  ],
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.git": true
+  }
+}

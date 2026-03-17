@@ -1,0 +1,49 @@
+id: "PTEST-021"
+title: "L1 — Waiver sans approved_by rejeté par la validation"
+level: "L1"
+tags: ["governance", "waiver", "validation", "renga-yml", "guard-rail"]
+
+context: |
+  Un développeur ajoute un waiver dans `.renga.yml` pour
+  désactiver la règle ERR-014 (couverture multi-agent) pendant
+  la phase prototype. Le waiver contient un `reason` et un
+  `expires`, mais le champ `approved_by` est absent.
+  Le fichier `.renga.yml` est soumis à validation.
+
+  ```yaml
+  waivers:
+    - rule: "ERR-014"
+      reason: "Projet solo prototype — pas de multi-filière nécessaire"
+      expires: "2026-09-01"
+      # approved_by manquant
+  ```
+
+request: |
+  Valide le fichier .renga.yml après ajout du waiver ERR-014
+  sans champ approved_by.
+
+expected:
+  - "Validation rejette le waiver incomplet"
+  - "Erreur explicite mentionnant le champ manquant approved_by"
+  - "Les 4 champs obligatoires rappelés (rule, reason, expires, approved_by)"
+  - "Le waiver n'est pas appliqué tant qu'il est incomplet"
+  - "Suggestion de correction avec le format attendu"
+  - "Référence au processus obligatoire en 4 étapes de governance.md"
+
+anti_patterns:
+  - "Waiver accepté sans approved_by"
+  - "Validation silencieuse (pas d'erreur)"
+  - "Waiver appliqué partiellement (règle désactivée malgré l'erreur)"
+  - "Erreur générique sans préciser quel champ manque"
+  - "Validation ignore le waiver au lieu de le rejeter explicitement"
+  - "Waiver avec expires mais sans approved_by considéré comme suffisant"
+
+notes: |
+  Scénario P0 testant la validation des waivers.
+  Ref : governance.md §Waivers — Désactivation de garde-fous.
+  Le processus obligatoire en 4 étapes exige : reason, décision
+  documentée dans decisions.md, PR approuvée, et date d'expiration.
+  Un waiver sans approved_by viole l'étape 3 (approbation par un
+  second développeur). Ce test vérifie que la validation est stricte
+  et ne laisse pas passer un waiver incomplet qui supprimerait un
+  garde-fou de gouvernance sans traçabilité d'approbation.

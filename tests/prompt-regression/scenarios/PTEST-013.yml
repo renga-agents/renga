@@ -1,0 +1,36 @@
+id: "PTEST-013"
+title: "L3 — Configuration pipeline CI/CD avec déploiement staging"
+level: "L3"
+tags: ["orchestrator", "L3", "devops", "deployment", "multi-lane"]
+
+context: |
+  Le projet n'a pas de CI/CD. L'utilisateur veut un pipeline GitHub Actions
+  complet : lint, tests, build Docker, push registry, deploy staging
+  automatique. Le déploiement production reste manuel.
+
+request: |
+  @orchestrator configure un pipeline CI/CD GitHub Actions complet :
+  lint → tests → build Docker → push registry → deploy staging auto.
+  Le deploy prod reste en manual trigger.
+
+expected:
+  - "Orchestrateur classifie la tâche en L3"
+  - "DevOpsEngineer dispatché comme agent principal"
+  - "SecurityEngineer dispatché (secrets, registry, deploy)"
+  - "QAEngineer dispatché (stratégie de tests dans le pipeline)"
+  - "InfraArchitect ou CloudEngineer consulté (architecture CI/CD)"
+  - "Fichiers .github/workflows/ créés"
+  - "Secrets GitHub documentés (pas en clair)"
+  - "Au moins 3 filières mobilisées"
+
+anti_patterns:
+  - "Tâche classifiée L2 (déploiement = L3)"
+  - "Secrets mis en clair dans les fichiers YAML"
+  - "Deploy production configuré en auto (l'utilisateur veut manual)"
+  - "Orchestrateur lit les Dockerfiles lui-même"
+  - "Un seul agent fait tout (CI + Docker + deploy)"
+
+notes: |
+  Vérifie la classification L3 pour tout ce qui touche au déploiement,
+  et la consultation sécurité pour les secrets et le pipeline.
+  Ref : orchestrator.agent.md §Balayage — impact production/sécu

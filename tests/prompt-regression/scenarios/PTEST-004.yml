@@ -1,0 +1,29 @@
+id: "PTEST-004"
+title: "L1 — Formatage d'un tableau Markdown"
+level: "L1"
+tags: ["routing", "L1", "tech-writer", "formatting"]
+
+context: |
+  Un fichier `docs/api-reference.md` contient un tableau mal aligné :
+  colonnes décalées, pipes manquants sur 2 lignes. Le contenu est correct,
+  seul le formatage est cassé.
+
+request: |
+  @tech-writer corrige le formatage du tableau dans docs/api-reference.md
+
+expected:
+  - "Agent tech-writer invoqué directement"
+  - "Seul le formatage est corrigé (alignement, pipes)"
+  - "Le contenu textuel du tableau n'est pas modifié"
+  - "Un seul fichier modifié"
+
+anti_patterns:
+  - "Contenu du tableau réécrit ou reformulé"
+  - "Orchestrateur lancé"
+  - "Code-reviewer invoqué pour du formatting"
+  - "Autres fichiers de documentation modifiés"
+
+notes: |
+  Tâche L1 de formatting pur. Vérifie que l'agent tech-writer ne
+  prend pas l'initiative de réécrire le contenu quand seul le format
+  est demandé.

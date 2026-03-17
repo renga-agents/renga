@@ -1,0 +1,92 @@
+---
+description: "Profil de filière Data/AI — référence interne non invocable, lue par le MOE pour dispatcher les spécialistes data science, ML, MLOps et data engineering"
+alwaysApply: false
+globs: 
+---
+
+<!-- Capacités mappées depuis Copilot tools:
+  - read → file reading
+-->
+
+<!-- Modèle recommandé : claude-opus-4-6 (configurer via sélecteur Cursor UI) -->
+
+# Profil de filière : Data/AI
+
+**Agents disponibles** : DataScientist, MLEngineer, MLOpsEngineer, DataEngineer, AIResearchScientist, AIProductManager, DatabaseEngineer, PromptEngineer
+
+> **Usage** : Ce profil est **lu par l'orchestrateur** lors de la planification pour sélectionner les agents et définir l'ordre de dispatch. Il n'est pas lui-même invocable — l'orchestrateur dispatch directement les spécialistes à depth=1. Il contient aussi les conventions data/AI du projet.
+
+### Critères d'escalade (détectés par le MOE lors de l'exécution)
+
+| Situation | Action MOE |
+|---|---|
+| Violation de données personnelles (RGPD) | Stop immédiat, invoquer LegalCompliance + RiskManager |
+| Modèle avec biais détecté | Invoquer AIEthicsGovernance en priorité |
+| Défaillance infrastructure data en prod | Invoquer MLOpsEngineer + DevOpsEngineer |
+| Feature engineering sur données indisponibles | Arbitrage MOE direct sur priorisation |
+
+---
+
+## Matrice de dispatch data/AI
+
+| Tâche | Agents séquentiels | Agents parallèles | Agents cross-filières recommandés |
+|---|---|---|---|
+| Pipeline ETL | DataEngineer | DatabaseEngineer (schéma) | SecurityEngineer (gouv. si données sensibles), LegalCompliance (gouv. si RGPD) |
+| Exploration de données | DataScientist | DataEngineer (qualité data) | LegalCompliance (gouv. si données perso), RiskManager (gouv.) |
+| Entraînement d'un modèle | MLEngineer | DataScientist (features) | AIEthicsGovernance (gouv. — biais), PerformanceEngineer (tech — latence) |
+| Mise en production ML | MLOpsEngineer | MLEngineer (packaging), ObservabilityEngineer (monitoring) | DevOpsEngineer (tech — CI/CD), AIEthicsGovernance (gouv. — model card), SecurityEngineer (gouv.) |
+| Recherche d'architecture IA | AIResearchScientist | MLEngineer (faisabilité) | SoftwareArchitect (tech), PerformanceEngineer (tech) |
+| Stratégie produit IA | AIProductManager | DataScientist (métriques) | ProductStrategist (produit — roadmap), ProxyPO (produit — stories) |
+| Analyse d'adoption d'une feature data/IA | DataScientist | ProductAnalytics (lecture produit) | ProductManager (produit), DataEngineer (tracking) |
+| Optimisation base vectorielle | DatabaseEngineer | DataEngineer | PerformanceEngineer (tech — benchmarks), SoftwareArchitect (tech) |
+| Conception/optimisation de prompts système ou agents | PromptEngineer | MLEngineer (contexte modèle) | QAEngineer (tech — test suites), SecurityEngineer (gouv. — injection) |
+| Évaluation de la qualité d'un prompt (PromptFoo/RAGAS) | PromptEngineer | QAEngineer (test suites) | AIEthicsGovernance (gouv. — biais), TechWriter (produit — documentation) |
+| Red-teaming / audit robustesse LLM | PromptEngineer | SecurityEngineer (injection), MLEngineer | AIEthicsGovernance (gouv.), RiskManager (gouv.) |
+
+---
+
+## Signaux cross-filières
+
+Quand une tâche data/AI doit déclencher des agents d'autres filières :
+
+| Signal détecté dans la tâche | Filière | Agents à inclure |
+|---|---|---|
+| Modèle déployé en production | Gouvernance | AIEthicsGovernance (model card) + RiskManager |
+| Données personnelles dans le pipeline | Gouvernance | LegalCompliance + SecurityEngineer |
+| API ou endpoint pour servir le modèle | Tech | APIDesigner + BackendDev + DevOpsEngineer |
+| Dashboard de monitoring ML | Tech | FrontendDev + ObservabilityEngineer |
+| Scoring/recommandation visible par l'utilisateur | Produit | UXUIDesigner + ProxyPO |
+| Feature nécessitant KPI d'adoption ou funnel | Produit | ProductAnalytics + ProductManager |
+| Pipeline data coûteux (GPU, stockage) | Gouvernance | FinOpsEngineer |
+| Prompt système exposé à des utilisateurs | Gouvernance | SecurityEngineer (injection) |
+
+---
+
+## Conventions data/AI du projet
+
+- Toute expérimentation ML est tracée dans MLflow ou équivalent
+- Chaque modèle déployé a un **model card** (voir AIEthicsGovernance)
+- Les données sensibles ne transitent jamais en texte clair dans les prompts
+- Les embeddings sont stockés dans `agent_memory.observations` (pgvector) selon l'ADR interne correspondante du projet
+
+---
+
+## Format de consolidation (produit par le MOE après dispatch data/AI)
+
+> Quand le MOE a dispatché plusieurs agents de la filière data/AI, il consolide selon ce format avant journalisation.
+
+```
+## Synthèse data/AI — [nom de la tâche]
+
+### Agents mobilisés
+- [agent] : [mission] → [statut]
+
+### Métriques clés
+- [métrique] : [valeur] vs [baseline]
+
+### Artefacts produits
+- [modèle / pipeline / dataset / rapport]
+
+### Alertes éthiques / conformité
+- [liste ou "Aucune"]
+```

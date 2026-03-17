@@ -1,0 +1,107 @@
+---
+description: "Profil de filière Gouvernance — référence interne non invocable, lue par le MOE pour dispatcher les spécialistes sécurité, conformité, risques, éthique IA et FinOps"
+alwaysApply: false
+globs: 
+---
+
+<!-- Capacités mappées depuis Copilot tools:
+  - read → file reading
+-->
+
+<!-- Modèle recommandé : claude-opus-4-6 (configurer via sélecteur Cursor UI) -->
+
+# Profil de filière : Gouvernance
+
+**Agents disponibles** : SecurityEngineer, LegalCompliance, AIEthicsGovernance, RiskManager, FinOpsEngineer, ChangeManagement, ArchitectureReviewer, AccessibilityEngineer
+
+> **Usage** : Ce profil est **lu par l'orchestrateur** lors de la planification. Il n'est pas lui-même invocable. Il définit les triggers proactifs obligatoires et les critères de VETO que le MOE applique directement.
+
+### Triggers proactifs (le MOE les applique lors de la planification)
+
+| Événement détecté dans la tâche | Action MOE |
+|---|---|
+| Feature impliquant des données personnelles (`userId`, `email`, `phone`, `ip`, `address`, contenu de communication, identifiant de session) | Invoquer LegalCompliance (DPIA) + SecurityEngineer |
+| Modèle IA mis en production | Invoquer AIEthicsGovernance (model card) + RiskManager |
+| Dépassement budgétaire cloud > 20% | Invoquer FinOpsEngineer |
+| Changement d'architecture majeur | Invoquer ArchitectureReviewer + SecurityEngineer |
+| Feature UI/UX accessible au public | Invoquer AccessibilityEngineer (WCAG audit) |
+
+### Alertes bloquantes — VETO (le MOE suspend la livraison)
+
+| Alerte | Priorité | Action MOE immédiate |
+|---|---|---|
+| Vulnérabilité CVE critique dans une dépendance | P0 | Bloquer merge, invoquer SecurityEngineer, patch < 4h |
+| Fuite de données personnelles | P0 | Stop total, invoquer LegalCompliance, notification CNIL < 72h |
+| Non-conformité AI Act détectée | P1 | Suspension feature, invoquer LegalCompliance + AIEthicsGovernance, remédiation < 48h |
+| Score risque > seuil critique | P1 | Invoquer RiskManager, consensus multi-agents si impact > 2 semaines |
+
+---
+
+## Matrice de dispatch gouvernance
+
+| Tâche | Agents primaires | Agents secondaires | Agents cross-filières recommandés |
+|---|---|---|---|
+| Audit sécurité applicatif | SecurityEngineer | ArchitectureReviewer | BackendDev (tech — correction), QAEngineer (tech — tests des fix), CodeReviewer (tech) |
+| DPIA (données personnelles) | LegalCompliance | RiskManager | BackendDev (tech — implémentation protections), DatabaseEngineer (data — anonymisation) |
+| Model card + red teaming IA | AIEthicsGovernance | RiskManager | MLEngineer (data — ajustements modèle), PromptEngineer (data — robustesse), DataScientist (data — métriques biais) |
+| Audit FinOps | FinOpsEngineer | — | CloudEngineer (tech — rightsizing), DevOpsEngineer (tech — optimisation CI), InfraArchitect (tech) |
+| Revue architecture transverse | ArchitectureReviewer | SecurityEngineer | SoftwareArchitect (tech), PerformanceEngineer (tech), DatabaseEngineer (data) |
+| Conformité accessibilité (RGAA/WCAG) | AccessibilityEngineer | — | FrontendDev (tech — corrections), UXUIDesigner (produit — refonte parcours) |
+| Plan de conduite du changement | ChangeManagement | ScrumMaster (via MOE) | ProxyPO (produit), TechWriter (produit — formation), ProductStrategist (produit) |
+| Cartographie risques globale | RiskManager | LegalCompliance, AIEthicsGovernance | SoftwareArchitect (tech), DevOpsEngineer (tech), ProjectController (produit) |
+
+---
+
+## Signaux cross-filières
+
+Quand une tâche gouvernance doit déclencher des agents d'autres filières :
+
+| Signal détecté dans la tâche | Filière | Agents à inclure |
+|---|---|---|
+| Audit identifiant des vulnérabilités à corriger | Tech | BackendDev/FrontendDev (correction) + QAEngineer (tests) |
+| DPIA révélant des données à anonymiser | Data | DatabaseEngineer + DataEngineer |
+| Non-conformité accessibilité détectée | Tech + Produit | FrontendDev + UXUIDesigner |
+| Model card révélant des biais à corriger | Data | MLEngineer + DataScientist |
+| Audit FinOps recommandant un rightsizing | Tech | CloudEngineer + DevOpsEngineer |
+| Risque nécessitant un changement de roadmap | Produit | ProductStrategist + ProxyPO |
+
+---
+
+## Protocole de veto (appliqué par le MOE)
+
+Lorsqu’une alerte bloquante est détectée, le MOE :
+
+1. Rédige une justification formelle (norme violée, article réglementaire, CVE référencé)
+2. Bloque le merge ou le déploiement concerné
+3. Crée une issue GitHub avec label `governance-blocker`
+4. Propose un chemin de remédiation avec délai estimé (via l’agent concerné)
+5. Re-valide après correction avant de lever le blocage
+
+---
+
+## Format de consolidation (produit par le MOE après dispatch gouvernance)
+
+> Quand le MOE a dispatché plusieurs agents de la filière gouvernance, il consolide selon ce format avant journalisation. Chaque agent invoqué doit avoir produit son bloc (Analyse / Recommandation / Alternatives / Risques).
+
+```
+## Synthèse gouvernance — [nom de la tâche]
+
+### Agents mobilisés
+- [agent] : [mission] → [statut]
+
+### Risques identifiés
+| Risque | Probabilité | Impact | Traitement |
+|---|---|---|---|
+| [risque] | [P1-P4] | [I1-I4] | [accepté / mitigé / évité] |
+
+### Conformité
+- RGPD : [conforme / action requise]
+- AI Act : [conforme / action requise / N/A]
+- WCAG : [niveau AA atteint / écarts identifiés]
+
+### Vetos émis
+- [liste ou "Aucun"]
+
+### Actions requises avant déploiement
+- [liste ou "Aucune"]
+```
