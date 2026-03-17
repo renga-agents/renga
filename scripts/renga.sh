@@ -591,25 +591,28 @@ cmd_install() {
     release_url="$RENGA_API/releases/tags/v${version}"
   fi
 
-  # Récupérer les infos de la release
-  local release_json
-  release_json="$(curl -fsSL "$release_url")" || {
+  # Télécharger et extraire dans un répertoire temporaire
+  local tmp_dir
+  tmp_dir="$(mktemp -d)"
+  trap 'rm -rf "$tmp_dir"' EXIT
+
+  # Récupérer les infos de la release dans un fichier (évite la corruption par caractères de contrôle)
+  local release_json_file="$tmp_dir/release.json"
+  curl -fsSL "$release_url" -o "$release_json_file" || {
     fail "Impossible de récupérer la release $version"
     return 1
   }
 
   # Extraire l'URL du tarball (premier asset .tar.gz)
   local tarball_url
-  tarball_url="$(echo "$release_json" | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
+  tarball_url="$(python3 -c "
+import json
+data = json.load(open('$release_json_file'))
 assets = data.get('assets', [])
 for a in assets:
     if a['name'].endswith('.tar.gz'):
-        print(a['browser_download_url'])
-        break
+        print(a['browser_download_url']); break
 else:
-    # Fallback to source tarball
     print(data.get('tarball_url', ''))
 ")" || {
     fail "Impossible de trouver l'artefact de la release"
@@ -620,11 +623,6 @@ else:
     fail "Aucun artefact trouvé dans la release"
     return 1
   fi
-
-  # Télécharger et extraire
-  local tmp_dir
-  tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
 
   info "Téléchargement depuis $tarball_url…"
   curl -fsSL "$tarball_url" | tar xz -C "$tmp_dir" --strip-components=1 || {
