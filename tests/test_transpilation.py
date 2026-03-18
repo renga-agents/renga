@@ -305,7 +305,13 @@ class TestClaudeCodeTranspilation(unittest.TestCase):
             encoding="utf-8",
         )
         # Add a regular top-level agent so conversion has something to process
-        shutil.copy(REFERENCE_AGENT, self.input_agents_dir / "backend-dev.agent.md")
+        dest = self.input_agents_dir / "backend-dev.agent.md"
+        shutil.copy(REFERENCE_AGENT, dest)
+        # Patch user-invocable: agents are false in production; test needs true to generate a command
+        dest.write_text(
+            dest.read_text(encoding="utf-8").replace("user-invocable: false", "user-invocable: true"),
+            encoding="utf-8",
+        )
 
         self._run_conversion()
 
@@ -337,7 +343,13 @@ class TestNoDataLossRoundtrip(unittest.TestCase):
         self.input_dir.mkdir()
         self.instructions_dir = self.temp_dir / "instructions"
         self.instructions_dir.mkdir()
-        shutil.copy(REFERENCE_AGENT, self.input_dir / "backend-dev.agent.md")
+        dest = self.input_dir / "backend-dev.agent.md"
+        shutil.copy(REFERENCE_AGENT, dest)
+        # Patch user-invocable: agents are false in production; roundtrip tests need true
+        dest.write_text(
+            dest.read_text(encoding="utf-8").replace("user-invocable: false", "user-invocable: true"),
+            encoding="utf-8",
+        )
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir, ignore_errors=True)
@@ -359,9 +371,9 @@ class TestNoDataLossRoundtrip(unittest.TestCase):
 
         # Agent title (from body H1)
         self.assertIn(
-            "BackendDev",
+            "backend-dev",
             content,
-            "Le titre 'BackendDev' doit être préservé dans l'output Cursor",
+            "Le titre 'backend-dev' doit être préservé dans l'output Cursor",
         )
         # Description (from frontmatter, injected into Cursor frontmatter)
         self.assertIn(
