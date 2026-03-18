@@ -46,12 +46,15 @@ Domain experts must be included **read-only in Wave 0** for any task touching th
 | Domain trigger | Required Wave 0 consultant |
 | --- | --- |
 | Frontend / fullstack (React, Next.js, CSS) | `frontend-dev` |
+| Backend API / service (NestJS, FastAPI, Go) | `backend-dev` |
 | Mobile (iOS, Android, React Native) | `mobile-dev` |
 | Data pipeline / warehouse | `data-engineer` |
 | ML / AI feature | `ai-research-scientist` |
-| Database schema | `database-engineer` |
+| Database schema / ORM | `database-engineer` |
+| Cloud infra / IaC | `cloud-engineer` |
+| Security-sensitive architecture | `security-engineer` |
 
-> **Why Wave 0, not just Wave 2?** software-architect selects stack and versions during planning. If the domain expert only arrives in Wave 2 (implementation), version choices are already locked in the ADR and the scaffolding.
+> **Why Wave 0, not just Wave 2?** software-architect selects stack and versions during planning. If the domain expert only arrives in Wave 2 (implementation), version choices are already locked in the ADR and the scaffolding. Domain experts also use context7 to verify current versions — `software-architect` alone cannot be trusted to know them.
 
 ### Visual Deliverables (ERR-020)
 

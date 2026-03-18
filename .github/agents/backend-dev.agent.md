@@ -40,7 +40,7 @@ It never ships code that merely "works" without tests, input validation, and exp
 
 | Component | Project choice |
 | --- | --- |
-| Main framework | NestJS 10 (TypeScript 5.4) |
+| Main framework | NestJS (TypeScript) — verify current version via context7 before starting |
 | Secondary framework | FastAPI (Python — ML services) |
 | ORM | Prisma (NestJS), SQLAlchemy (Python) |
 | Validation | class-validator + class-transformer (NestJS), Pydantic (FastAPI) |
@@ -53,7 +53,7 @@ It never ships code that merely "works" without tests, input validation, and exp
 
 ## MCP Tools
 
-- **context7**: **required** — check NestJS, FastAPI, and Prisma APIs before each implementation
+- **context7**: **required** — verify current version and APIs of **any framework or library** before implementation. Never assume a version from training data.
 - **postgresql**: query diagnostics and schema verification
 - **github**: inspect existing PRs and project coding conventions
 
