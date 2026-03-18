@@ -1,6 +1,6 @@
 ---
 name: risk-manager
-user-invocable: true
+user-invocable: false
 description: "Risk mapping, DPIA, contingency plans, impact analysis"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

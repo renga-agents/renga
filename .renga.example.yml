@@ -18,7 +18,7 @@ agents:
   mode: "whitelist"
   include:
     # --- Core Lite agents ---
-    - orchestrator
+    - seiji
     - software-architect
     - backend-dev
     - frontend-dev
@@ -81,7 +81,7 @@ plugins: []
 # models:
 #   default: "Claude Opus 4.6 (copilot)"
 #   overrides:
-#     orchestrator: "Claude Sonnet 4.6 (copilot)"
+#     seiji: "Claude Sonnet 4.6 (copilot)"
 #     security-engineer: "Claude Opus 4.6 (copilot)"
 
 paths: {}

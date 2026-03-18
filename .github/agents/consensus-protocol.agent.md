@@ -8,7 +8,7 @@ model: ['Claude Opus 4.6 (copilot)']
 # Multi-wave consensus protocol
 
 > Shared reference for all agents to participate in a consensus-based decision process.
-> Invocation: `@orchestrator consensus: <question to decide>`
+> Invocation: `@seiji consensus: <question to decide>`
 
 ---
 
@@ -22,19 +22,19 @@ The goal is not unanimity but an **informed and traceable decision**, with minor
 
 ## Trigger thresholds
 
-Wave mode is triggered **automatically** by the orchestrator in the following situations:
+Wave mode is triggered **automatically** by seiji in the following situations:
 
 ### Mandatory triggers
 
 1. **Irreversible architectural choices** - primary database, structuring framework, production AI model, deployment infrastructure
 2. **Critical security decisions** - authentication mechanism, encryption strategy, sensitive data exposure, secret management
 3. **Regulatory decisions** - interpretation of the AI Act (risk classification), GDPR edge cases (legal basis, transfers outside the EU), OSS license choices with obligations
-4. **Disagreement between 2 or more agents** - on a high-impact point identified by the orchestrator
+4. **Disagreement between 2 or more agents** - on a high-impact point identified by seiji
 5. **High rollback cost** - any choice whose rollback is estimated at > 2 person-weeks
 
 ### Manual trigger
 
-- By the user: `@orchestrator consensus: <question>`
+- By the user: `@seiji consensus: <question>`
 - By an agent that believes its decision should be challenged: explicit mention in its output
 
 ---
@@ -54,7 +54,7 @@ Each agent produces its answer **without seeing the others' answers**. This is t
 
 ```
 
-The orchestrator collects the 4 positions and produces an **intermediate synthesis** identifying:
+Seiji collects the 4 positions and produces an **intermediate synthesis** identifying:
 
 - Convergence points (shared recommendations)
 - Divergence points (disagreements to resolve)
@@ -81,7 +81,7 @@ Each agent receives the intermediate synthesis and can:
 
 ### Wave 3 - Arbitration (if needed)
 
-Triggered only if convergence is insufficient after Wave 2. The orchestrator:
+Triggered only if convergence is insufficient after Wave 2. Seiji:
 
 1. Identifies the persistent disagreement points
 2. Requests from each divergent agent one **final argument** in a maximum of 3 lines
@@ -135,14 +135,14 @@ Each agent **MUST** structure its response in this exact format:
 | ≥ 3/4 agents converge on the same recommendation | **Strong convergence** | Automatic decision - no additional wave |
 | 2/4 agents converge | **Partial convergence** | Wave 2 mandatory |
 | < 2/4 agents converge | **Divergence** | Wave 2, then Wave 3 if still < 3/4 |
-| After Wave 3, still < 3/4 | **Persistent disagreement** | Orchestrator arbitration or human escalation |
+| After Wave 3, still < 3/4 | **Persistent disagreement** | Seiji arbitration or human escalation |
 
-### Criteria for human escalation (vs orchestrator arbitration)
+### Criteria for human escalation (vs seiji arbitration)
 
-The orchestrator **must** escalate to a human if:
+Seiji **must** escalate to a human if:
 
 - The decision is irreversible AND both sides' arguments have High confidence
-- The disagreement concerns a regulatory topic (AI Act, GDPR) - the orchestrator has no authority
+- The disagreement concerns a regulatory topic (AI Act, GDPR) - seiji has no authority
 - The financial impact exceeds an estimated 10,000 EUR
 - The security risk is classified as critical by the security-engineer
 
@@ -150,7 +150,7 @@ The orchestrator **must** escalate to a human if:
 
 ## Final output - Consensus verdict
 
-The orchestrator **must** produce this format after every consensus:
+Seiji **must** produce this format after every consensus:
 
 ```markdown
 
@@ -162,7 +162,7 @@ The orchestrator **must** produce this format after every consensus:
 **Consensus level** : [Strong / Partial / Arbitration]
 - Strong: ≥ 3/4 converging agents
 - Partial: 2/4 converging, decision after Wave 2
-- Arbitration: orchestrator decision after Wave 3
+- Arbitration: seiji decision after Wave 3
 
 **Agents in agreement** :
 - [Agent1][Variant] - [one-line position summary]
@@ -210,8 +210,8 @@ If arbitration is needed after Wave 3:
 1. **Soft consensus** - "We agree that it depends" -> FORBIDDEN. Each agent must decide.
 2. **Social conformity** - An agent that changes its mind without a new argument in Wave 2 must justify it or receive a score of 2.
 3. **Analysis paralysis** - Maximum 3 waves. After that, decide and move forward.
-4. **False consensus** - If agents converge on a solution without considering alternatives, the orchestrator challenges them by requesting counter-arguments.
-5. **Systematic escalation** - Human escalation is the last resort, not the default mode. The orchestrator must arbitrate in 80%+ of cases.
+4. **False consensus** - If agents converge on a solution without considering alternatives, seiji challenges them by requesting counter-arguments.
+5. **Systematic escalation** - Human escalation is the last resort, not the default mode. Seiji must arbitrate in 80%+ of cases.
 
 ---
 
@@ -226,12 +226,12 @@ When the disagreement opposes agents from **two different streams** (example: se
 1. **Identify the streams in conflict** - explicitly name the two opposing streams and the agents representing them.
 2. **Appoint one spokesperson per stream** - the corresponding stream orchestrator (example: `orchestrator-governance`, `orchestrator-product`) consolidates its stream's position into one decisive recommendation.
 3. **Vote of the relevant stream orchestrators** - each stream orchestrator decides whether it is impacted and votes. Simple majority of the voting orchestrators.
-4. **In case of a tie** - mandatory HITL escalation. The orchestrator does not decide alone.
+4. **In case of a tie** - mandatory HITL escalation. Seiji does not decide alone.
 5. **Document the decision** in `.github/logs/decisions-<slug>.md` with the arguments of both sides, including the losing position.
 
 ### Fundamental rule
 
-> An unresolved disagreement must **never** be ignored by default. The orchestrator must either conclude the consensus or escalate to a human.
+> An unresolved disagreement must **never** be ignored by default. Seiji must either conclude the consensus or escalate to a human.
 
 ### Veto rights by stream
 
@@ -320,7 +320,7 @@ If streams still diverge after Inter-stream Wave 2, the main MOE arbitrates by a
 
 ## Example requests triggering consensus
 
-1. `@orchestrator consensus: PostgreSQL vs MongoDB for the catalog service, 50M items, 90% reads / 10% writes`
-2. `@orchestrator consensus: OAuth2 + OIDC authentication vs session-based for the public app`
-3. `@orchestrator consensus: EU AI Act classification of the product recommendation system`
-4. `@orchestrator consensus: Monorepo vs polyrepo for the 4 microservices in the order domain`
+1. `@seiji consensus: PostgreSQL vs MongoDB for the catalog service, 50M items, 90% reads / 10% writes`
+2. `@seiji consensus: OAuth2 + OIDC authentication vs session-based for the public app`
+3. `@seiji consensus: EU AI Act classification of the product recommendation system`
+4. `@seiji consensus: Monorepo vs polyrepo for the 4 microservices in the order domain`

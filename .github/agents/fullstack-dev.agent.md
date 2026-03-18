@@ -1,6 +1,6 @@
 ---
 name: fullstack-dev
-user-invocable: true
+user-invocable: false
 description: "End-to-end development, frontend-backend integration, complete features"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*", "playwright/*"]
 model: ['Claude Opus 4.6 (copilot)']

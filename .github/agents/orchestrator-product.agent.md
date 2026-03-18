@@ -11,13 +11,13 @@ model: ['Claude Opus 4.6 (copilot)']
 
 **Plugin agents (game-studio)**: CreativeDirector, LevelDesigner, NarrativeDesigner, GameProducer — *available with the `game-studio` plugin in `_plugins/game-studio/`*
 
-> **Usage**: This profile is **read by the orchestrator** during planning to select agents and define dispatch order. It is not invocable itself. The orchestrator dispatches the specialists directly at depth 1.
+> **Usage**: This profile is **read by seiji** during planning to select agents and define dispatch order. It is not invocable itself. Seiji dispatches the specialists directly at depth 1.
 
-## Escalation Criteria Detected by the Orchestrator
+## Escalation Criteria Detected by Seiji
 
-| Situation | Orchestrator action |
+| Situation | Seiji action |
 | --- | --- |
-| De-prioritization decision with business impact above two weeks | Direct orchestrator arbitration |
+| De-prioritization decision with business impact above two weeks | Direct seiji arbitration |
 | Disagreement between product-strategist and proxy-po on priority | Involve architecture-reviewer or trigger consensus |
 | Feature impacts GDPR or the AI Act | Involve legal-compliance from the governance lane |
 | Technical feasibility estimate required | Involve backend-dev or software-architect |
@@ -61,9 +61,9 @@ When a product task should trigger agents from other lanes:
 
 ---
 
-## Consolidation Format Produced by the Orchestrator After Product Dispatch
+## Consolidation Format Produced by Seiji After Product Dispatch
 
-> When the orchestrator has dispatched multiple agents from the product lane, it consolidates the outputs in this format before journaling.
+> When seiji has dispatched multiple agents from the product lane, it consolidates the outputs in this format before journaling.
 
 ```markdown
 

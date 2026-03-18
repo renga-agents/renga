@@ -1,6 +1,6 @@
 ---
 name: legal-compliance
-user-invocable: true
+user-invocable: false
 description: "GDPR, AI Act, open source licenses, terms and conditions, regulatory compliance"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

@@ -33,4 +33,4 @@ notes: |
   Feature L2 standard : multi-fichier, multi-agent, mais pas de décision
   d'architecture ni d'impact sécurité. Vérifie le dispatch correct
   et la séparation des responsabilités.
-  Ref : orchestrator.agent.md §Décomposition — couverture L2 (4-6 agents)
+  Ref : seiji.agent.md §Décomposition — couverture L2 (4-6 agents)

@@ -1,6 +1,6 @@
 ---
 name: incident-commander
-user-invocable: true
+user-invocable: false
 description: "Incident management, war rooms, severity, coordination, postmortems"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

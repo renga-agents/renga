@@ -1,6 +1,6 @@
 ---
 name: frontend-dev
-user-invocable: true
+user-invocable: false
 description: "UI, React components, web performance, baseline accessibility"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "playwright/*", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']

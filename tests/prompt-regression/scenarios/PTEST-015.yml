@@ -37,7 +37,7 @@ anti_patterns:
 
 notes: |
   Scénario L4 d'incident critique en production. Vérifie :
-  - La boucle incident (orchestrator.agent.md §Contrat de handoff — Boucle incident)
+  - La boucle incident (seiji.agent.md §Contrat de handoff — Boucle incident)
   - La mobilisation 4 filières (technique, gouvernance, sécurité, légal)
   - L'escalade HITL obligatoire pour modifications en production
   - La priorisation de la mitigation avant l'analyse root cause

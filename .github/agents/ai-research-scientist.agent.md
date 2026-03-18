@@ -1,6 +1,6 @@
 ---
 name: ai-research-scientist
-user-invocable: true
+user-invocable: false
 description: "Advanced research, state of the art, experimentation, publications"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']

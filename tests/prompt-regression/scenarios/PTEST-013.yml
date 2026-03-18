@@ -33,4 +33,4 @@ anti_patterns:
 notes: |
   Vérifie la classification L3 pour tout ce qui touche au déploiement,
   et la consultation sécurité pour les secrets et le pipeline.
-  Ref : orchestrator.agent.md §Balayage — impact production/sécu
+  Ref : seiji.agent.md §Balayage — impact production/sécu

@@ -1,6 +1,6 @@
 ---
 name: proxy-po
-user-invocable: true
+user-invocable: false
 description: "User stories, backlog management, prioritization, acceptance criteria"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

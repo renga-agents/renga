@@ -1,6 +1,6 @@
 ---
 name: tech-writer
-user-invocable: true
+user-invocable: false
 description: "Technical and user documentation, API docs, guides, changelogs"
 tools: ["read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]  # edit retained: the TechWriter creates and edits documentation
 model: ['Claude Opus 4.6 (copilot)']

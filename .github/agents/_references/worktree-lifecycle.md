@@ -1,6 +1,6 @@
-# Worktree Lifecycle — Orchestrator Reference
+# Worktree Lifecycle — Seiji Reference
 
-> This file describes the complete lifecycle of a Git worktree managed by the orchestrator:
+> This file describes the complete lifecycle of a Git worktree managed by seiji:
 > creation, zoning rules, simultaneous multi-MOE handling, common errors, and closure.
 
 ---
@@ -73,9 +73,9 @@ This directory will hold the report files created by each dispatched subagent. S
 
 ## Simultaneous Multi-MOE
 
-Isolation between simultaneous orchestrators is ensured through `scratchpad-<slug>.md` files. Each orchestrator gets its own session file.
+Isolation between simultaneous seiji instances is ensured through `scratchpad-<slug>.md` files. Each seiji instance gets its own session file.
 
-`decisions-<slug>.md` is now **separated by session**, one file per slug. Each entry carries the slug, and each orchestrator writes to its own file. The central `decisions.md` index holds the links.
+`decisions-<slug>.md` is now **separated by session**, one file per slug. Each entry carries the slug, and each seiji instance writes to its own file. The central `decisions.md` index holds the links.
 
 ---
 
@@ -83,7 +83,7 @@ Isolation between simultaneous orchestrators is ensured through `scratchpad-<slu
 
 **Symptom**: an agent writes in the root workspace instead of the worktree, polluting the main branch.
 
-**Cause**: the orchestrator forgot to pass `worktree_path` to agents in the prompt.
+**Cause**: seiji forgot to pass `worktree_path` to agents in the prompt.
 
 **Prevention**: verify that `scratchpad-<slug>.md` contains the `worktree_path` field before the first dispatch.
 
@@ -99,7 +99,7 @@ Isolation between simultaneous orchestrators is ensured through `scratchpad-<slu
 ### Closure Steps
 
 1. **Ensure that all commits** for the task are in the worktree branch `feat/<slug>`
-2. **Mandatory user validation (ERR-022)**: NEVER merge to the main branch without **explicit** user approval. The orchestrator presents a structured summary with bugs fixed, tests passed, screenshots, and commits, then WAITS for written confirmation.
+2. **Mandatory user validation (ERR-022)**: NEVER merge to the main branch without **explicit** user approval. Seiji presents a structured summary with bugs fixed, tests passed, screenshots, and commits, then WAITS for written confirmation.
 3. **Merge** from the main workspace by opening a PR `feat/<slug> -> main` or merging with `git merge --no-ff feat/<slug>`. Never squash merge unless explicitly requested. See ERR-023.
 4. **Cleanup**:
 

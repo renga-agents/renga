@@ -1,6 +1,6 @@
 ---
 name: business-analyst
-user-invocable: true
+user-invocable: false
 description: "Business processes, BPMN, gap analysis, requirements elicitation"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

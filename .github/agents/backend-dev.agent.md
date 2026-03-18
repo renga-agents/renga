@@ -1,6 +1,6 @@
 ---
 name: backend-dev
-user-invocable: true
+user-invocable: false
 description: "Backend APIs, services, business logic, integrations"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']

@@ -40,7 +40,7 @@ La syntaxe est la même pour tous les agents invocables :
 
 @backend-dev: Implémenter le endpoint POST /api/v1/orders avec validation NestJS
 @security-engineer: Auditer le flux d'authentification OAuth2 du service payments
-@orchestrator: Mettre en place un système de notifications push temps réel
+@seiji: Mettre en place un système de notifications push temps réel
 
 ```
 
@@ -53,14 +53,14 @@ La syntaxe est la même pour tous les agents invocables :
 ### Choisir le bon point d'entrée
 
 - **Tâche mono-domaine, courte et ciblée** : invoquer directement le spécialiste concerné.
-- **Tâche transverse, ambiguë, multi-fichiers ou multi-agents** : invoquer `@orchestrator:` pour qu'il planifie et dispatche.
-- **Décision critique à arbitrer** : invoquer `@orchestrator consensus: <question>`.
+- **Tâche transverse, ambiguë, multi-fichiers ou multi-agents** : invoquer `@seiji:` pour qu'il planifie et dispatche.
+- **Décision critique à arbitrer** : invoquer `@seiji consensus: <question>`.
 
 ### Contraintes de plateforme à connaître
 
-- Seul `@orchestrator` peut réellement dispatcher des sous-agents via `runSubagent`.
+- Seul `@seiji` peut réellement dispatcher des sous-agents via `runSubagent`.
 - Une invocation directe d'un spécialiste est un point terminal : l'agent appelé ne re-dispatche pas lui-même d'autres agents.
-- Les profils de filière et référentiels listés plus bas sont **lus** par l'orchestrateur, mais ne sont pas des points d'entrée utilisateur.
+- Les profils de filière et référentiels listés plus bas sont **lus** par seiji, mais ne sont pas des points d'entrée utilisateur.
 
 > **Conseil :** pour une tâche complexe qui mobilise plusieurs agents,
 > déléguer à l'orchestrateur plutôt qu'à un agent spécialisé directement.
@@ -79,7 +79,7 @@ La syntaxe est la même pour tous les agents invocables :
 | Piloter une feature transverse | `@product-manager:` | Si le scope, les dépendances ou les arbitrages restent mouvants |
 | Mesurer l'adoption d'une feature | `@product-analytics:` | Si la question implique aussi data, tracking ou arbitrage roadmap |
 | Concevoir une architecture | `@software-architect:` | Si plusieurs domaines ou arbitrages irréversibles sont impliqués |
-| Arbitrer une décision sensible | `@orchestrator consensus:` | Toujours, pour un vrai protocole de consensus multi-agents |
+| Arbitrer une décision sensible | `@seiji consensus:` | Toujours, pour un vrai protocole de consensus multi-agents |
 
 ### Validation automatique
 
@@ -214,7 +214,7 @@ Typiquement, cela couvre encore des profils comme animation, mobile, fullstack, 
 ```
 
 .github/agents/
-├── orchestrator.agent.md          ← Point d'entrée pour toute tâche complexe
+├── seiji.agent.md                 ← Point d'entrée pour toute tâche complexe
 ├── orchestrator-tech.agent.md     ← Profil de filière (référence, non invocable)
 ├── orchestrator-product.agent.md  ← Profil de filière (référence, non invocable)
 ├── orchestrator-data.agent.md     ← Profil de filière (référence, non invocable)
@@ -230,11 +230,11 @@ Typiquement, cela couvre encore des profils comme animation, mobile, fullstack, 
 
 > **Note sur les profils de filière** (`orchestrator-tech`, `orchestrator-product`,
 > `orchestrator-data`, `orchestrator-governance`) : ce sont des **documents de référence**
-> que l'orchestrateur lit lors de la planification pour choisir les bons agents spécialisés.
+> que seiji lit lors de la planification pour choisir les bons agents spécialisés.
 > Ils ne sont **pas invocables** directement par l'utilisateur.
 
 > **Note sur les référentiels** (`consensus-protocol`, `execution-modes`) : ce sont aussi
-> des documents internes de gouvernance. Ils décrivent comment l'orchestrateur raisonne,
+> des documents internes de gouvernance. Ils décrivent comment seiji raisonne,
 > mais ne constituent pas des points d'entrée utilisateur.
 
 ---
@@ -245,8 +245,8 @@ Le cerveau opérationnel de l'équipe. À invoquer pour toute tâche nécessitan
 
 | Agent | Rôle | Fichier |
 | --- | --- | --- |
-| **orchestrator** | Tour de contrôle de l'équipe — décompose la tâche, construit le DAG d'exécution (séquentiel / parallèle / vagues), dispatche les agents, contrôle la qualité des outputs et journalise les décisions dans `.github/logs/decisions-<slug>.md` | [orchestrator.agent.md](orchestrator.agent.md) |
-| **orchestrator-tech** *(référence)* | Matrice de dispatch filière technique — aide l'orchestrateur à choisir entre backend-dev, frontend-dev, qa-engineer, DevOps, etc. | [orchestrator-tech.agent.md](orchestrator-tech.agent.md) |
+| **seiji** | Tour de contrôle de l'équipe — décompose la tâche, construit le DAG d'exécution (séquentiel / parallèle / vagues), dispatche les agents, contrôle la qualité des outputs et journalise les décisions dans `.github/logs/decisions-<slug>.md` | [seiji.agent.md](seiji.agent.md) |
+| **orchestrator-tech** *(référence)* | Matrice de dispatch filière technique — aide seiji à choisir entre backend-dev, frontend-dev, qa-engineer, DevOps, etc. | [orchestrator-tech.agent.md](orchestrator-tech.agent.md) |
 | **orchestrator-product** *(référence)* | Matrice de dispatch filière produit — proxy-po, ux-ui-designer, business-analyst, GTM | [orchestrator-product.agent.md](orchestrator-product.agent.md) |
 | **orchestrator-data** *(référence)* | Matrice de dispatch filière Data/AI — data-scientist, ml-engineer, MLOps, data-engineer | [orchestrator-data.agent.md](orchestrator-data.agent.md) |
 | **orchestrator-governance** *(référence)* | Triggers proactifs + critères de VETO pour la sécurité, la conformité, l'éthique IA et la gestion des risques | [orchestrator-governance.agent.md](orchestrator-governance.agent.md) |
@@ -397,11 +397,11 @@ Agents distribués en tant que plugins bundled dans `_plugins/`. Ces agents ne f
 
 ## 📚 Protocoles & Référentiels
 
-Documents techniques utilisés par l'orchestrateur pour gouverner l'exécution. **Non invocables directement.**
+Documents techniques utilisés par seiji pour gouverner l'exécution. **Non invocables directement.**
 
 | Fichier | Rôle |
 | --- | --- |
-| [consensus-protocol.agent.md](consensus-protocol.agent.md) | Définit le protocole de consensus multi-vagues pour les décisions critiques (architecture irréversible, sécurité, réglementaire, désaccord entre agents). Invocation via `@orchestrator consensus: <question>`. |
+| [consensus-protocol.agent.md](consensus-protocol.agent.md) | Définit le protocole de consensus multi-vagues pour les décisions critiques (architecture irréversible, sécurité, réglementaire, désaccord entre agents). Invocation via `@seiji consensus: <question>`. |
 | [execution-modes.agent.md](execution-modes.agent.md) | Référence des trois modes d'exécution : `séquentiel` (B dépend de A), `parallèle` (agents indépendants) et `vagues` (consensus itératif). Inclut la matrice filesystem et les règles de fan-out. |
 
 ---

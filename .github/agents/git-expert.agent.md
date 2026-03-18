@@ -1,6 +1,6 @@
 ---
 name: git-expert
-user-invocable: true
+user-invocable: false
 description: "Git strategy, conflict resolution, branch workflows, history"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

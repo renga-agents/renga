@@ -9,16 +9,16 @@ model: ['Claude Opus 4.6 (copilot)']
 
 **Available agents**: data-scientist, ml-engineer, mlops-engineer, data-engineer, ai-research-scientist, ai-product-manager, database-engineer, prompt-engineer
 
-> **Usage**: This profile is **read by the orchestrator** during planning to select agents and define dispatch order. It is not invocable itself. The orchestrator dispatches the specialists directly at depth 1. It also carries the project-level Data/AI conventions.
+> **Usage**: This profile is **read by seiji** during planning to select agents and define dispatch order. It is not invocable itself. Seiji dispatches the specialists directly at depth 1. It also carries the project-level Data/AI conventions.
 
-## Escalation Criteria Detected by the Orchestrator
+## Escalation Criteria Detected by Seiji
 
-| Situation | Orchestrator action |
+| Situation | Seiji action |
 | --- | --- |
 | Personal-data violation detected | Immediate stop, involve legal-compliance + risk-manager |
 | Model bias detected | Involve ai-ethics-governance first |
 | Production data infrastructure failure | Involve mlops-engineer + devops-engineer |
-| Feature engineering blocked by missing data | Direct orchestrator arbitration on prioritization |
+| Feature engineering blocked by missing data | Direct seiji arbitration on prioritization |
 
 ---
 
@@ -66,9 +66,9 @@ When a Data/AI task should trigger agents from other lanes:
 
 ---
 
-## Consolidation Format Produced by the Orchestrator After Data/AI Dispatch
+## Consolidation Format Produced by Seiji After Data/AI Dispatch
 
-> When the orchestrator has dispatched multiple agents from the Data/AI lane, it consolidates the outputs in this format before journaling.
+> When seiji has dispatched multiple agents from the Data/AI lane, it consolidates the outputs in this format before journaling.
 
 ```markdown
 

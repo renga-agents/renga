@@ -1,7 +1,7 @@
-# Task Classification and Planning — Orchestrator
+# Task Classification and Planning — Seiji
 
 > This file is the reference source for task decomposition, multi-agent coverage, DAG planning, and the dry-run gate.
-> Referenced from `orchestrator.agent.md`, sections §2 Decomposition and §3 Planning.
+> Referenced from `seiji.agent.md`, sections §2 Decomposition and §3 Planning.
 
 ---
 
@@ -50,7 +50,7 @@ Visual L3+ work requires CreativeDirector + ux-ui-designer + performance-enginee
 ### Assignment and Organization
 
 - Assign each subtask to the optimal agent
-- Use **direct dispatch** (depth=1, never through a sub-orchestrator). Lane profiles:
+- Use **direct dispatch** (depth=1, never through a sub-seiji). Lane profiles:
   - Tech -> `orchestrator-tech.agent.md` | Product -> `orchestrator-product.agent.md`
   - Data/AI -> `orchestrator-data.agent.md` | Governance -> `orchestrator-governance.agent.md`
 - Organize execution as sequential, parallel, or wave-based depending on dependencies
@@ -104,7 +104,7 @@ If the user mentioned **`dry-run`**, **`plan only`**, or **`plan-only`** in the 
    - Modify: adjust the plan, add or remove an agent, change wave order, modify criteria
    - Cancel: abandon the task with no trace in decision logs
 
-> **Activation**: the user simply includes `dry-run` or `plan only` in the request. No formal syntax is required. The orchestrator detects those keywords semantically. Accepted synonyms include `show me the plan`, `preview`, and `without executing`.
+> **Activation**: the user simply includes `dry-run` or `plan only` in the request. No formal syntax is required. Seiji detects those keywords semantically. Accepted synonyms include `show me the plan`, `preview`, and `without executing`.
 >
 > **Cost**: dry-run mode only consumes steps 1-3: initialization, decomposition, planning. No dispatch, no code reads, no file edits. Token cost remains minimal.
 
@@ -122,4 +122,4 @@ These thresholds are **indicative**. They exist to detect blockers, not to inter
 | Review or validation wave, qa-engineer, code-reviewer | 20 min | 40 min | Retry with a smaller scope |
 | Final wave, synthesis and logging | 10 min | 20 min | HITL escalation |
 
-> **Rule**: if a wave exceeds the escalation threshold without producing output, the orchestrator must notify the human instead of continuing silently. Record that in the scratchpad.
+> **Rule**: if a wave exceeds the escalation threshold without producing output, seiji must notify the human instead of continuing silently. Record that in the scratchpad.

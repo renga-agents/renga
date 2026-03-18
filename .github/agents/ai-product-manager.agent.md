@@ -1,6 +1,6 @@
 ---
 name: ai-product-manager
-user-invocable: true
+user-invocable: false
 description: "AI product strategy, AI roadmap, model evaluation, AI ROI"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

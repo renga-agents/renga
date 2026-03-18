@@ -30,4 +30,4 @@ anti_patterns:
 notes: |
   Vérifie le mode dry-run / plan-only : le DAG est construit et affiché
   mais rien n'est exécuté tant que l'utilisateur n'a pas validé.
-  Ref : orchestrator.agent.md §Porte dry-run (plan-only)
+  Ref : seiji.agent.md §Porte dry-run (plan-only)

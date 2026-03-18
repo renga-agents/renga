@@ -1,4 +1,4 @@
-# Typical DAG Examples — Orchestrator Reference
+# Typical DAG Examples — Seiji Reference
 
 > These examples illustrate how to build multi-agent DAGs for different kinds of tasks.
 > They serve as reusable planning models.
@@ -7,7 +7,7 @@
 
 ## Example 1 — Fullstack Feature (L2, 12 agents, 3 lanes)
 
-`@orchestrator: Add a POST /api/v1/notifications endpoint with real-time WebSocket support`
+`@seiji: Add a POST /api/v1/notifications endpoint with real-time WebSocket support`
 
 ```text
 
@@ -37,7 +37,7 @@ Wave 3 (safe parallel):
 
 ## Example 2 — Authentication System Refactor (L3, 15 agents, 4 lanes)
 
-`@orchestrator: Migrate from NextAuth v5 CredentialsProvider to multi-provider OAuth2/OIDC`
+`@seiji: Migrate from NextAuth v5 CredentialsProvider to multi-provider OAuth2/OIDC`
 
 ```text
 
@@ -65,7 +65,7 @@ Wave 3 (parallel — review + documentation):
 
 ## Example 3 — Production ML Pipeline (L3, 11 agents, 3 lanes)
 
-`@orchestrator: Put a product recommendation pipeline with embeddings into production`
+`@seiji: Put a product recommendation pipeline with embeddings into production`
 
 ```
 

@@ -26,4 +26,4 @@ anti_patterns:
 notes: |
   Tâche L1 mécanique : un seul fichier de config, pas de raisonnement
   technique profond, entièrement réversible.
-  Ref : orchestrator.agent.md §Portes de passage — L1
+  Ref : seiji.agent.md §Portes de passage — L1

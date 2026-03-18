@@ -9,11 +9,11 @@ model: ['Claude Opus 4.6 (copilot)']
 
 **Available agents**: security-engineer, legal-compliance, ai-ethics-governance, risk-manager, finops-engineer, change-management, architecture-reviewer, accessibility-engineer, project-controller
 
-> **Usage**: This profile is **read by the orchestrator** during planning. It is not invocable itself. It defines the proactive mandatory triggers and veto criteria that the orchestrator applies directly.
+> **Usage**: This profile is **read by seiji** during planning. It is not invocable itself. It defines the proactive mandatory triggers and veto criteria that seiji applies directly.
 
 ## Proactive Triggers Applied During Planning
 
-| Event detected in the task | Orchestrator action |
+| Event detected in the task | Seiji action |
 | --- | --- |
 | Feature involving personal data (`userId`, `email`, `phone`, `ip`, `address`, communication content, session identifier) | Involve legal-compliance (DPIA) + security-engineer |
 | AI model moved to production | Involve ai-ethics-governance (model card) + risk-manager |
@@ -21,9 +21,9 @@ model: ['Claude Opus 4.6 (copilot)']
 | Major architecture change | Involve architecture-reviewer + security-engineer |
 | Public-facing UI or UX feature | Involve accessibility-engineer (WCAG audit) |
 
-## Blocking Alerts and Vetoes Applied by the Orchestrator
+## Blocking Alerts and Vetoes Applied by Seiji
 
-| Alert | Priority | Immediate orchestrator action |
+| Alert | Priority | Immediate seiji action |
 | --- | --- | --- |
 | Critical CVE in a dependency | P0 | Block merge, involve security-engineer, patch in under 4 hours |
 | Personal-data leak | P0 | Full stop, involve legal-compliance, CNIL notification in under 72 hours |
@@ -42,7 +42,7 @@ model: ['Claude Opus 4.6 (copilot)']
 | FinOps audit | finops-engineer | — | cloud-engineer (rightsizing), devops-engineer (CI optimization), infra-architect |
 | Cross-cutting architecture review | architecture-reviewer | security-engineer | software-architect, performance-engineer, database-engineer |
 | Accessibility compliance (RGAA/WCAG) | accessibility-engineer | — | frontend-dev (fixes), ux-ui-designer (journey redesign) |
-| Change-management plan | change-management | scrum-master (via orchestrator) | proxy-po, tech-writer (training material), product-strategist |
+| Change-management plan | change-management | scrum-master (via seiji) | proxy-po, tech-writer (training material), product-strategist |
 | Global risk mapping | risk-manager | legal-compliance, ai-ethics-governance | software-architect, devops-engineer, project-controller |
 
 ---
@@ -62,9 +62,9 @@ When a governance task should trigger agents from other lanes:
 
 ---
 
-## Veto Protocol Applied by the Orchestrator
+## Veto Protocol Applied by Seiji
 
-When a blocking alert is detected, the orchestrator:
+When a blocking alert is detected, seiji:
 
 1. Writes a formal justification with the violated standard, regulatory article, or referenced CVE
 2. Blocks the affected merge or deployment
@@ -74,9 +74,9 @@ When a blocking alert is detected, the orchestrator:
 
 ---
 
-## Consolidation Format Produced by the Orchestrator After Governance Dispatch
+## Consolidation Format Produced by Seiji After Governance Dispatch
 
-> When the orchestrator has dispatched multiple agents from the governance lane, it consolidates the outputs in this format before journaling. Each invoked agent must have produced its Analysis / Recommendation / Alternatives / Risks block.
+> When seiji has dispatched multiple agents from the governance lane, it consolidates the outputs in this format before journaling. Each invoked agent must have produced its Analysis / Recommendation / Alternatives / Risks block.
 
 ```markdown
 

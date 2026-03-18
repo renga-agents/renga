@@ -30,4 +30,4 @@ anti_patterns:
 notes: |
   Vérifie le respect du TDD par défaut : QAEngineer (wave 1, tests red)
   avant FrontendDev (wave 2, green). Jamais en parallèle.
-  Ref : orchestrator.agent.md §Planification — TDD par défaut
+  Ref : seiji.agent.md §Planification — TDD par défaut

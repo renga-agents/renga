@@ -1,7 +1,7 @@
-# Quality Control — Orchestrator
+# Quality Control — Seiji
 
 > This file is the reference source for quality control, report verification, output evaluation, and the pre-synthesis checklist.
-> Referenced from `orchestrator.agent.md`, section §5 Quality Control.
+> Referenced from `seiji.agent.md`, section §5 Quality Control.
 
 ---
 
@@ -33,7 +33,7 @@ Each subagent creates its own report file and returns a structured summary with 
 
 > The retrospective is a quality step, not an option. An empty dashboard indicates missed retrospectives.
 
-The orchestrator MUST run a retrospective at the end of every L2+ task. See `orchestrator.agent.md §8`. Minimum checklist:
+Seiji MUST run a retrospective at the end of every L2+ task. See `seiji.agent.md §8`. Minimum checklist:
 
 - Each dispatched agent scored through `.copilot/memory/rubric.md`, including raw and weighted score
 - `agent-performance-<slug>.md` updated before closing the session
@@ -43,5 +43,5 @@ The orchestrator MUST run a retrospective at the end of every L2+ task. See `orc
 
 ## Auditable Exit Checklist
 
-> Authoritative checklist: `orchestrator.agent.md §Auditable Exit Checklist`
-> This section intentionally does not duplicate the checklist. Refer to the orchestrator for the up-to-date version.
+> Authoritative checklist: `seiji.agent.md §Auditable Exit Checklist`
+> This section intentionally does not duplicate the checklist. Refer to seiji for the up-to-date version.

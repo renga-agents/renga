@@ -7,7 +7,7 @@ model: ['Claude Opus 4.6 (copilot)']
 ---
 # Agent execution modes
 
-> Technical reference for the orchestrator and agents. Defines the 3 execution modes with notation, rules, and concrete examples.
+> Technical reference for seiji and agents. Defines the 3 execution modes with notation, rules, and concrete examples.
 
 ---
 
@@ -29,15 +29,15 @@ model: ['Claude Opus 4.6 (copilot)']
 
 ### Actual invocation depth: 1
 
-VS Code Copilot Agent allows the orchestrator (depth 0) to invoke a sub-agent via `runSubagent` (depth 1). But an agent invoked as a sub-agent **does not have access to the same mechanism** to invoke an additional layer.
+VS Code Copilot Agent allows seiji (depth 0) to invoke a sub-agent via `runSubagent` (depth 1). But an agent invoked as a sub-agent **does not have access to the same mechanism** to invoke an additional layer.
 
 | Level | Example | Actual invocation? |
 | --- | --- | --- |
-| depth 0 | orchestrator | n/a - root agent |
-| depth 1 | orchestrator → backend-dev, qa-engineer, security-engineer... | **Yes** - effective `runSubagent` |
+| depth 0 | seiji | n/a - root agent |
+| depth 1 | seiji → backend-dev, qa-engineer, security-engineer... | **Yes** - effective `runSubagent` |
 | depth 2 | backend-dev → another agent | **No** - not supported |
 
-Consequence: the orchestrator dispatches specialist agents **directly** (depth 1). No intermediate layer can itself invoke sub-agents.
+Consequence: seiji dispatches specialist agents **directly** (depth 1). No intermediate layer can itself invoke sub-agents.
 
 ### Parallelism: real, with race condition risk
 
@@ -70,7 +70,7 @@ kill_terminal(id)   ← ALWAYS, even in case of error
 - Active development server for the entire duration of the task (example: `npm run dev` watched for successive hot reloads)
 - In that case: note the `id` in the scratchpad, close it at end of task via §7 LOGGING
 
-**Responsibility**: each agent is responsible for closing its own background terminals. The orchestrator verifies in the dispatch prompt (see §4) that the instruction is included.
+**Responsibility**: each agent is responsible for closing its own background terminals. Seiji verifies in the dispatch prompt (see §4) that the instruction is included.
 
 ---
 
@@ -86,20 +86,20 @@ A ──→ B ──→ C
 
 ### Trigger rule
 
-Use sequential mode when **one agent's output is a required input** for the next agent. Each step waits for the orchestrator's validation before moving to the next.
+Use sequential mode when **one agent's output is a required input** for the next agent. Each step waits for seiji's validation before moving to the next.
 
 ### Behavior
 
-1. The orchestrator launches agent A with the instructions and context
+1. Seiji launches agent A with the instructions and context
 2. Agent A produces its output
-3. The orchestrator evaluates the output (see quality control in `orchestrator.agent.md`)
+3. Seiji evaluates the output (see quality control in `seiji.agent.md`)
 4. If validated → A's output is injected as context for agent B
 5. Repeat until the last step
 
 ### Error handling
 
 - If an agent produces insufficient output -> retry with critique (max 2 retries)
-- If blocked -> the orchestrator can reorganize the DAG or escalate
+- If blocked -> seiji can reorganize the DAG or escalate
 - The entire pipeline stops if a blocking agent fails
 
 ### Sequential examples
@@ -148,7 +148,7 @@ The migration schema is designed, the code is adapted, tests are written, then d
 
 ### Parallel trigger rule
 
-Use parallel mode when **agents do not create write/read dependencies between each other**. The orchestrator collects all results then produces a consolidated synthesis.
+Use parallel mode when **agents do not create write/read dependencies between each other**. Seiji collects all results then produces a consolidated synthesis.
 
 > **VS Code Copilot Agent parallelism**: to trigger truly simultaneous execution, place all independent `runSubagent` calls in the **same tool-call block**. Each agent then runs in its own session. Agents share the workspace filesystem - apply the matrix below before any dispatch.
 
@@ -189,15 +189,15 @@ qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
 | **Read-only** (wave 0, audits, reviews) | **No cap** - launch all relevant agents. 8-12 agents is normal | None - no writes, no race condition |
 | **Writes in distinct zones** | Limited by the number of distinct filesystem zones | File plan published in the scratchpad (ERR-004) |
 | **Writes in a shared zone** | 1 writing agent at a time; readers in parallel | Sequentialize only the actual write conflicts |
-| **Consensus / waves** | 4-8 experts per opinion wave | Orchestrator synthesis capacity |
+| **Consensus / waves** | 4-8 experts per opinion wave | Seiji synthesis capacity |
 
 **Anti-pattern**: artificially limiting to 3-4 agents per wave when 8+ independent agents are available. An undersized DAG weakens coverage and quality.
 
 ### Parallel behavior
 
-1. The orchestrator launches all agents in parallel with the same initial context
+1. Seiji launches all agents in parallel with the same initial context
 2. Each agent works independently
-3. The orchestrator collects all outputs
+3. Seiji collects all outputs
 4. Consistency check: do the recommendations contradict each other?
 5. If contradiction -> trigger a consensus on the divergent points
 6. Otherwise -> consolidated synthesis
@@ -206,7 +206,7 @@ qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
 
 - If one parallel agent fails: the others continue, and the partial result is reported
 - If the synthesis reveals contradictions: escalate to wave mode on the conflict points
-- Timeout: if one agent takes significantly longer, the orchestrator can proceed without it and integrate it later
+- Timeout: if one agent takes significantly longer, seiji can proceed without it and integrate it later
 
 ### Parallel examples
 
@@ -222,7 +222,7 @@ qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
  ├─ accessibility-engineer(WCAG, ARIA, colors)
  ├─ api-designer(API contract, DX)
  └─ proxy-po(acceptance criteria, business value)
- ──→ Orchestrator SYNTHESIS (8 consolidated reports)
+ ──→ Seiji SYNTHESIS (8 consolidated reports)
 
 ```
 
@@ -294,7 +294,7 @@ Use wave mode for the **critical decisions** defined in `consensus-protocol.agen
 Full reference: `agents/consensus-protocol.agent.md`
 
 1. **Wave 1** (independent): each agent produces its position without seeing the others'
-2. **Intermediate synthesis**: the orchestrator identifies convergences, divergences, blind spots
+2. **Intermediate synthesis**: seiji identifies convergences, divergences, blind spots
 3. **Wave 2** (informed): each agent sees the synthesis and can revise or maintain its position
 4. **Wave 3** (if needed): final arbitration on persistent disagreement points
 5. **Verdict**: documented decision with full traceability
@@ -303,7 +303,7 @@ Full reference: `agents/consensus-protocol.agent.md`
 
 - Strong convergence (≥ 3/4) -> automatic decision, no additional wave
 - Partial convergence (2/4) -> Wave 2 mandatory
-- Disagreement after Wave 3 -> orchestrator arbitration or human escalation
+- Disagreement after Wave 3 -> seiji arbitration or human escalation
 
 ### Wave example
 
@@ -421,7 +421,7 @@ The mega-wave produces an explicit **cross-stream dependency DAG** before any ex
 
 ## Combining modes
 
-Modes can be combined in the same DAG. The orchestrator organizes the phases:
+Modes can be combined in the same DAG. Seiji organizes the phases:
 
 ```text
 

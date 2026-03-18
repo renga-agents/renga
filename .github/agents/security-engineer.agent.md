@@ -1,6 +1,6 @@
 ---
 name: security-engineer
-user-invocable: true
+user-invocable: false
 description: "Application security, OWASP, hardening, vulnerability audits"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*", "playwright/*"]
 model: ['Claude Opus 4.6 (copilot)']

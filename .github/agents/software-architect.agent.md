@@ -1,6 +1,6 @@
 ---
 name: software-architect
-user-invocable: true
+user-invocable: false
 description: "Software architecture, design patterns, ADRs, domain decomposition"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']

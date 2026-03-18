@@ -1,6 +1,6 @@
 ---
 name: go-to-market-specialist
-user-invocable: true
+user-invocable: false
 description: "Pricing, segmentation, launch strategy, feature adoption"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

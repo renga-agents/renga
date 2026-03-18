@@ -175,7 +175,7 @@ project:
 agents:
   mode: "whitelist"
   include:
-    - orchestrator
+    - seiji
     - backend-dev
     - frontend-dev
     - qa-engineer
@@ -224,7 +224,7 @@ agents:
     - debugger
     - git-expert
     - tech-writer
-    - orchestrator
+    - seiji
     - security-engineer
     - database-engineer
     - devops-engineer

@@ -35,4 +35,4 @@ notes: |
   - Donnée PII en mutation → LegalCompliance + RiskManager
   - Nouvelle table → DatabaseEngineer
   - Chiffrement → SecurityEngineer
-  Ref : orchestrator.agent.md §INITIALISATION — Balayage systématique
+  Ref : seiji.agent.md §INITIALISATION — Balayage systématique

@@ -1,7 +1,7 @@
-# Automatic Triggers — Orchestrator
+# Automatic Triggers — Seiji
 
 > This file is the reference source for automatic triggers, human escalation, criticality levels, and the L0 fast track.
-> Referenced from `orchestrator.agent.md`, sections §1 Initialization and §2 Decomposition.
+> Referenced from `seiji.agent.md`, sections §1 Initialization and §2 Decomposition.
 
 ---
 
@@ -21,12 +21,12 @@
 | New table or database migration | database-engineer | parallel wave 1 |
 | New service or SLO change | observability-engineer | parallel |
 | Added or modified code using a third-party library, not simple reading of existing code | context7 MCP | before generation |
-| Critical validation MCP tool unavailable (ERR-017) | Orchestrator: notify the user and propose either waiting or explicitly accepting the risk | **blocking** |
+| Critical validation MCP tool unavailable (ERR-017) | Seiji: notify the user and propose either waiting or explicitly accepting the risk | **blocking** |
 | Hook `preToolUse` DENY (`pre-tool-security.sh` exit 1) | Any agent - tool blocked by the Copilot runtime, non-bypassable | Automatic |
 
 > **Note**: `preToolUse` hooks act as a runtime safety net. They operate in defense-in-depth with `.instructions.md` files and the automatic triggers above. A DENY hook is **final**: the Copilot runtime blocks the tool with no agent override possible.
 
-> **Proportionality principle**: automatic triggering must remain proportional to the **actual risk**, defined by mutation × exposure × sensitivity, not by the mere presence of an identifier in code. Reading a `userId` to display a profile does not carry the same risk as sending an `email` to a third-party service or storing a `phone` in a new table. The orchestrator evaluates the **effective risk** before involving compliance agents. In a SaaS codebase where nearly every file touches a `userId`, this principle prevents legal-compliance from triggering on every trivial task.
+> **Proportionality principle**: automatic triggering must remain proportional to the **actual risk**, defined by mutation × exposure × sensitivity, not by the mere presence of an identifier in code. Reading a `userId` to display a profile does not carry the same risk as sending an `email` to a third-party service or storing a `phone` in a new table. Seiji evaluates the **effective risk** before involving compliance agents. In a SaaS codebase where nearly every file touches a `userId`, this principle prevents legal-compliance from triggering on every trivial task.
 
 ---
 
@@ -69,9 +69,9 @@
 
 ---
 
-## L0 Fast Track — Bypass the Orchestrator
+## L0 Fast Track — Bypass Seiji
 
-Trivial tasks do not justify the full orchestrator cycle. L0 fast track lets the user invoke a specialist directly without planning, DAG construction, or logging.
+Trivial tasks do not justify the full seiji cycle. L0 fast track lets the user invoke a specialist directly without planning, DAG construction, or logging.
 
 ### L0 Criteria (All Required)
 
@@ -94,7 +94,7 @@ The user calls the specialist directly:
 
 ```
 
-The orchestrator is not involved. The agent acts alone within its own scope.
+Seiji is not involved. The agent acts alone within its own scope.
 
 ### Limitations
 
@@ -116,7 +116,7 @@ The orchestrator is not involved. The agent acts alone within its own scope.
 
 ### When It Is NOT L0
 
-If any of the following criteria is present, reclassify to `L1+` and route through the orchestrator:
+If any of the following criteria is present, reclassify to `L1+` and route through seiji:
 
 - Modifies multiple files
 - Impacts an API contract or shared interface

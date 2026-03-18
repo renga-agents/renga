@@ -1,6 +1,6 @@
-# Commit Discipline — Orchestrator Reference
+# Commit Discipline — Seiji Reference
 
-> This file details the commit rules that the orchestrator and agents must follow.
+> This file details the commit rules that seiji and agents must follow.
 
 ---
 

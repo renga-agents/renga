@@ -1,6 +1,6 @@
-# ERR Rules Catalog — Orchestrator
+# ERR Rules Catalog — Seiji
 
-> This file is the exhaustive reference for all ERR-xxx rules used by the orchestrator.
+> This file is the exhaustive reference for all ERR-xxx rules used by seiji.
 > Each rule is identified, described, and accompanied by examples or safeguards.
 
 ---
@@ -89,7 +89,7 @@ git commit -F /tmp/commit_msg.txt
 
 **Rule**: Read-only agents in wave 0 such as security-engineer, code-reviewer, software-architect, api-designer, proxy-po, legal-compliance, and others **must not create files**. Their artifacts such as `openapi.yaml`, ADR drafts, schemas, and so on must be included directly in the text returned by `runSubagent`.
 
-**Materialization**: The orchestrator decides whether those artifacts should become actual files and, if so, assigns that work to an implementation agent in wave 2.
+**Materialization**: Seiji decides whether those artifacts should become actual files and, if so, assigns that work to an implementation agent in wave 2.
 
 **Why**: Wave 0 agents do not have the worktree path and read from the main workspace. If they create files, those files land in the root workspace instead of the worktree and pollute the main branch.
 
@@ -97,7 +97,7 @@ git commit -F /tmp/commit_msg.txt
 
 ## ERR-014 — Mandatory multi-agent coverage
 
-**Rule**: For any `L2+` task, the orchestrator must identify **all** agent profiles affected by the request, not only the main implementation agent.
+**Rule**: For any `L2+` task, seiji must identify **all** agent profiles affected by the request, not only the main implementation agent.
 
 **Anti-pattern**: The reflex of having one agent do everything degrades quality, neutralizes cross-review, and contradicts the purpose of an agent team.
 
@@ -144,7 +144,7 @@ These minimums are **floors**, not ceilings. A well-structured 15-agent DAG is b
 
 ## ERR-016 — HITL escalation for framework/engine selection
 
-**Rule**: When several frameworks, engines, paradigms, or stacks are viable and involve significant trade-offs in performance, extensibility, learning curve, or ecosystem, the orchestrator escalates to a human **before** wave 0.
+**Rule**: When several frameworks, engines, paradigms, or stacks are viable and involve significant trade-offs in performance, extensibility, learning curve, or ecosystem, seiji escalates to a human **before** wave 0.
 
 **Process**:
 
@@ -160,7 +160,7 @@ These minimums are **floors**, not ceilings. A well-structured 15-agent DAG is b
 
 ## ERR-017 — Silent workaround forbidden
 
-**Rule**: If an MCP tool planned in the validation DAG such as Playwright, Chrome DevTools, PostgreSQL, a linter, or a build tool is unavailable, the orchestrator must:
+**Rule**: If an MCP tool planned in the validation DAG such as Playwright, Chrome DevTools, PostgreSQL, a linter, or a build tool is unavailable, seiji must:
 
 1. Notify the user
 2. Propose either waiting for resolution or explicitly accepting the risk
@@ -245,8 +245,8 @@ git commit -m "feat(game): add player with sprites and animation"
 
 **Process**:
 
-1. The orchestrator presents a structured summary of fixed bugs, passed tests, screenshots, and commits
-2. The orchestrator waits for the user's written confirmation
+1. Seiji presents a structured summary of fixed bugs, passed tests, screenshots, and commits
+2. Seiji waits for the user's written confirmation
 3. Only after confirmation is the merge allowed
 
 ### An unauthorized merge is a non-negotiable governance incident
@@ -263,7 +263,7 @@ git commit -m "feat(game): add player with sprites and animation"
 
 ## ERR-024 — Mandatory multi-track catalog scan
 
-**Rule**: Before building the DAG, the orchestrator **must** mentally scan the 4 tracks and evaluate every agent.
+**Rule**: Before building the DAG, seiji **must** mentally scan the 4 tracks and evaluate every agent.
 
 **Required output**: An `included/excluded` list with a one-word justification for each exclusion. This trace goes into the scratchpad.
 
@@ -377,7 +377,7 @@ For each agent **excluded** from the DAG, note a one-word justification such as 
 
 **Path pattern**: `.copilot/reports/<slug>/wave-<N>-<agent-name>.md`
 
-**Why**: The `runSubagent` response is injected in full into the orchestrator context window. A 200-line report consumes context budget unnecessarily. The structured summary with verdict, findings, and P0 recommendations gives the orchestrator enough information to evaluate and decide when to read the full report.
+**Why**: The `runSubagent` response is injected in full into seiji's context window. A 200-line report consumes context budget unnecessarily. The structured summary with verdict, findings, and P0 recommendations gives seiji enough information to evaluate and decide when to read the full report.
 
 **Inter-wave referencing**: To inject a report from a previous wave into the prompt of a later-wave agent, reference the **file path**, never copy the report contents into the prompt. Example:
 

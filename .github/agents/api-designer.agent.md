@@ -1,6 +1,6 @@
 ---
 name: api-designer
-user-invocable: true
+user-invocable: false
 description: "Design-first API, OpenAPI, AsyncAPI, developer experience, API governance"
 tools: ["read", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']

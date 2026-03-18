@@ -1,6 +1,6 @@
 ---
 name: product-analytics
-user-invocable: true
+user-invocable: false
 description: "Product KPIs, funnels, adoption, retention, instrumentation"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

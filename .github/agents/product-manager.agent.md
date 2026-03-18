@@ -1,6 +1,6 @@
 ---
 name: product-manager
-user-invocable: true
+user-invocable: false
 description: "Feature ownership, cross-functional coordination, tradeoffs, product delivery"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

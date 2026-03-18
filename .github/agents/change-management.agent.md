@@ -1,6 +1,6 @@
 ---
 name: change-management
-user-invocable: true
+user-invocable: false
 description: "Change management, adoption, training, internal communication"
 tools: ["read", "search", "web", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

@@ -29,4 +29,4 @@ notes: |
   Scénario L0 classique : tâche triviale, mono-fichier, agent direct.
   Vérifie que le routing fast-track fonctionne — l'invocation directe
   d'un agent avec @ bypass l'orchestrateur.
-  Ref : orchestrator.agent.md §Fast-track L0
+  Ref : seiji.agent.md §Fast-track L0
