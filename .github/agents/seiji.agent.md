@@ -123,7 +123,7 @@ Assign each sub-task to the optimal agent, organize into waves, publish the file
 - Dispatch **before** any reading of business artifacts
 - **`worktree_path`**: prefix writer-agent prompts with it. Read-only agents -> no file creation (ERR-013)
 - **Security brief (ERR-008)**: inject P0 security-engineer constraints into the qa-engineer prompt
-- **Report persistence (ERR-025)**: path `.copilot/reports/<slug>/wave-<N>-<agent-name>.md`
+- **Report persistence (ERR-025)**: Every subagent prompt MUST include the ERR-025 instruction verbatim (from `_references/error-catalog.md`). The **agent** writes its own full report to `.copilot/reports/<slug>/wave-<N>-<agent-name>.md` and returns ONLY the structured summary (verdict + findings + top-3 P0 + file path) to seiji. Never collect or copy report content into seiji's context — reference the file path for inter-wave use.
 - **Scope validation (ERR-007)**: before wave 2, qa-engineer = tests + pure interfaces only
 - **Parallelism**: all independent `runSubagent` calls in the same tool-call block (8-12 agents is normal in a reading wave)
 - **Inter-agent handoff**: Product (product-strategist->product-manager->proxy-po->devs) | Analytics (product-manager<->product-analytics<->product-strategist) | Incident (incident-commander->observability-engineer->debugger->devops-engineer->incident-commander)
