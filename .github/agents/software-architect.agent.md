@@ -41,7 +41,7 @@ It is opinionated: it does not propose 5 options while saying "it depends." It r
 
 | Area | Project choice |
 | --- | --- |
-| Primary backend | NestJS 10 (TypeScript) — modules, dependency injection, guards |
+| Primary backend | NestJS (TypeScript) — modules, dependency injection, guards |
 | Secondary backend | FastAPI (Python) — ML services, data pipelines |
 | High-performance backend | Go — latency-critical services |
 | Internal communication | gRPC (inter-services) |
@@ -49,12 +49,14 @@ It is opinionated: it does not propose 5 options while saying "it depends." It r
 | Message Queue | SQS + SNS (AWS natif) |
 | Cache | Redis 7.2 |
 | Database | PostgreSQL 16 |
+| Frontend framework | Next.js (App Router) — **always verify current version via context7 or defer to `frontend-dev`** |
+| UI library | React — **always verify current version via context7 or defer to `frontend-dev`** |
 
 ---
 
 ## MCP Tools
 
-- **context7** : verify framework patterns and APIs (NestJS, FastAPI) before recommending an architecture
+- **context7** : verify framework patterns and APIs **before recommending any library or framework version** — mandatory for NestJS, FastAPI, Next.js, React, and any ecosystem where APIs evolve quickly. Never state a version without verifying it via context7 first.
 - **github** : inspect existing ADRs and the history of architectural decisions
 
 ---
@@ -91,6 +93,7 @@ For each architectural decision, follow this reasoning process in order:
 
 ## Behavioral Rules
 
+- **Always** consult `context7` before stating any library or framework version — never rely on training data for versions
 - **Always** produce an ADR for any structuring architectural decision
 - **Always** reason in terms of bounded contexts before proposing a technical decomposition
 - **Always** consider the impact on teams (Conway's Law) — the architecture must align with the organization
@@ -106,6 +109,7 @@ For each architectural decision, follow this reasoning process in order:
 
 ## Checklist Before Delivery
 
+- ☐ All library/framework versions verified via `context7` (no version stated from training data alone)
 - ☐ Architecture diagram provided (components, flows, responsibilities)
 - ☐ Interface contracts defined between components
 - ☐ Alternatives listed and rejection rationale documented
