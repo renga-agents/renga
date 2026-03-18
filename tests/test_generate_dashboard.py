@@ -282,8 +282,8 @@ class TestGenerateDashboard:
 
     def test_no_data(self):
         report = generate_dashboard([], [], [])
-        assert "Pas de données" in report
-        assert "KPIs globaux" not in report
+        assert "No data" in report
+        assert "Global KPIs" not in report
 
     def test_with_entries_contains_kpis_and_ranking(self):
         entries = [
@@ -292,9 +292,9 @@ class TestGenerateDashboard:
             PerformanceEntry("2026-03-12", "S3", "agent-a", "task3", 3, ""),
         ]
         report = generate_dashboard(entries, [], [])
-        assert "KPIs globaux" in report
-        assert "Classement des agents" in report
-        assert "Tendance par agent" in report
+        assert "Global KPIs" in report
+        assert "Agent ranking" in report
+        assert "Agent trend" in report
         assert "agent-a" in report
         assert "agent-b" in report
 
@@ -303,7 +303,7 @@ class TestGenerateDashboard:
             ErrorPattern("ERR-1", "timeout", ["devops"], 3, "2026-01", "2026-03", "retry"),
         ]
         report = generate_dashboard([], errors, [])
-        assert "Patterns d'erreur les plus fréquents" in report
+        assert "Most frequent error patterns" in report
         assert "ERR-1" in report
         assert "timeout" in report
 
@@ -315,7 +315,7 @@ class TestGenerateDashboard:
             PerformanceEntry("2026-03-10", "S1", "agent-a", "task1", 4, ""),
         ]
         report = generate_dashboard(entries, [], resolved)
-        assert "Patterns résolus" in report
+        assert "Resolved patterns" in report
         assert "ERR-0" in report
 
     def test_retry_rate_computed(self):

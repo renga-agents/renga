@@ -113,6 +113,23 @@ def _copy_agents(root: Path, output: Path) -> list[Path]:
     return copied
 
 
+def _copy_agents_config(root: Path, output: Path) -> list[Path]:
+    """Copy _config/ → dist/agents/_config/ (models.yml and other config files)."""
+    config_src = root / ".github" / "agents" / "_config"
+    config_dest = output / "agents" / "_config"
+    if not config_src.is_dir():
+        return []
+
+    config_dest.mkdir(parents=True, exist_ok=True)
+    copied: list[Path] = []
+    for f in sorted(config_src.iterdir()):
+        if f.is_file():
+            dest = config_dest / f.name
+            _copy_file(f, dest)
+            copied.append(dest)
+    return copied
+
+
 def _copy_references(root: Path, output: Path) -> list[Path]:
     """Copy _references/ → dist/agents/_references/."""
     refs_src = root / ".github" / "agents" / "_references"
@@ -183,16 +200,45 @@ def _copy_config_example(root: Path, output: Path) -> Path | None:
     return config_dest
 
 
-def _copy_cli(root: Path, output: Path) -> Path | None:
-    """Copy scripts/renga.sh → dist/renga (chmod +x)."""
+def _copy_cli(root: Path, output: Path, version: str = "0.0.0-dev") -> Path | None:
+    """Copy scripts/renga.sh → dist/renga (chmod +x), injecting version."""
     cli_src = root / "scripts" / "renga.sh"
     if not cli_src.exists():
         log.warning("CLI script not found: %s", cli_src)
         return None
     cli_dest = output / "renga"
-    _copy_file(cli_src, cli_dest)
+    content = cli_src.read_text(encoding="utf-8")
+    content = content.replace("__RENGA_VERSION__", version)
+    cli_dest.write_text(content, encoding="utf-8")
     cli_dest.chmod(cli_dest.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     return cli_dest
+
+
+def _copy_scripts(root: Path, output: Path) -> list[Path]:
+    """Copy essential Python scripts (validate_agents.py, generate_dashboard.py) to dist/scripts/."""
+    scripts_to_copy = ["validate_agents.py", "generate_dashboard.py", "agent_parser.py"]
+    scripts_dest = output / "scripts"
+    copied: list[Path] = []
+    for name in scripts_to_copy:
+        src = root / "scripts" / name
+        if not src.exists():
+            log.warning("Script not found: %s", src)
+            continue
+        dest = scripts_dest / name
+        _copy_file(src, dest)
+        copied.append(dest)
+    return copied
+
+
+def _copy_renga_readme(root: Path, output: Path) -> Path | None:
+    """Copy RENGA.md → dist/RENGA.md (user-facing onboarding guide)."""
+    src = root / "RENGA.md"
+    if not src.exists():
+        log.warning("RENGA.md not found: %s", src)
+        return None
+    dest = output / "RENGA.md"
+    _copy_file(src, dest)
+    return dest
 
 
 def _copy_hooks(root: Path, output: Path) -> list[Path]:
@@ -402,13 +448,16 @@ def main(argv: list[str] | None = None) -> None:
 
     # Copy all artifacts
     _copy_agents(root, output)
+    _copy_agents_config(root, output)
     _copy_references(root, output)
     _copy_plugins(root, output)
     _copy_instructions(root, output)
     _copy_skills(root, output)
     _copy_schema(root, output)
     _copy_config_example(root, output)
-    _copy_cli(root, output)
+    _copy_cli(root, output, version)
+    _copy_scripts(root, output)
+    _copy_renga_readme(root, output)
     _copy_hooks(root, output)
 
     # Build and write manifest

@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-"""Génère un dashboard de performance à partir des fichiers de mémoire.
+"""Generate a performance dashboard from memory files.
 
-Parse `.copilot/memory/agent-performance.md` et `.copilot/memory/error-patterns.md`
-pour produire un rapport Markdown avec KPIs, classements et tendances.
+Parses `.copilot/memory/agent-performance.md` and `.copilot/memory/error-patterns.md`
+to produce a Markdown report with KPIs, rankings and trends.
 
 Usage:
     python3 scripts/generate_dashboard.py [--memory-dir PATH] [--output PATH]
 
 Options:
-    --memory-dir    Répertoire contenant les fichiers de mémoire
-                    (défaut: .copilot/memory)
-    --output        Chemin du rapport généré
-                    (défaut: reports/dashboard.md)
+    --memory-dir    Directory containing memory files (default: .copilot/memory)
+    --output        Path to the generated report (default: reports/dashboard.md)
 
-Le script fonctionne avec des fichiers vides ou absents (affiche "Pas de données").
-Dépendances : stdlib uniquement (Python 3.10+).
+Works with empty or missing files (displays "No data").
+Dependencies: stdlib only (Python 3.10+).
 """
 
 from __future__ import annotations
@@ -150,25 +148,25 @@ def generate_dashboard(
     """Generate the Markdown dashboard report."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     lines: list[str] = [
-        "# Dashboard de Performance — Agent Team",
+        "# Performance Dashboard — Agent Team",
         "",
-        f"> Généré le {now}",
+        f"> Generated on {now}",
         "",
     ]
 
     if not entries and not active_errors:
         lines += [
-            "## Pas de données",
+            "## No data",
             "",
-            "Aucune donnée de performance ou d'erreur n'a été enregistrée.",
-            "Alimentez `.copilot/memory/agent-performance.md` et "
-            "`.copilot/memory/error-patterns.md` pour générer un dashboard.",
+            "No performance or error data has been recorded.",
+            "Populate `.copilot/memory/agent-performance.md` and "
+            "`.copilot/memory/error-patterns.md` to generate a dashboard.",
             "",
         ]
         return "\n".join(lines)
 
-    # --- KPIs globaux ---
-    lines += ["## KPIs globaux", ""]
+    # --- Global KPIs ---
+    lines += ["## Global KPIs", ""]
 
     total_tasks = len(entries)
     retries = sum(1 for e in entries if e.score <= 2)
@@ -176,16 +174,16 @@ def generate_dashboard(
     retry_rate = (retries / total_tasks * 100) if total_tasks > 0 else 0
 
     lines += [
-        "| KPI | Valeur |",
+        "| KPI | Value |",
         "|---|---|",
-        f"| Nombre total de tâches | {total_tasks} |",
-        f"| Score moyen global | {avg_score:.2f} / 5 |",
-        f"| Taux de retry (score ≤ 2) | {retry_rate:.1f}% ({retries}/{total_tasks}) |"
+        f"| Total tasks | {total_tasks} |",
+        f"| Global average score | {avg_score:.2f} / 5 |",
+        f"| Retry rate (score ≤ 2) | {retry_rate:.1f}% ({retries}/{total_tasks}) |"
         if total_tasks > 0 else
-        "| Taux de retry (score ≤ 2) | N/A |",
-        f"| Patterns d'erreur actifs | {len(active_errors)} |",
-        f"| Patterns d'erreur résolus | {len(resolved_errors)} |",
-        f"| Skills installées | {skills_count} |",
+        "| Retry rate (score ≤ 2) | N/A |",
+        f"| Active error patterns | {len(active_errors)} |",
+        f"| Resolved error patterns | {len(resolved_errors)} |",
+        f"| Installed skills | {skills_count} |",
         "",
     ]
 
@@ -201,9 +199,9 @@ def generate_dashboard(
             reverse=True,
         )
 
-        lines += ["## Classement des agents", ""]
+        lines += ["## Agent ranking", ""]
         lines += [
-            "| Rang | Agent | Score moyen | Nb tâches | Min | Max |",
+            "| Rank | Agent | Avg score | Tasks | Min | Max |",
             "|---|---|---|---|---|---|",
         ]
         for i, (agent, avg, count) in enumerate(ranked, 1):
@@ -217,16 +215,16 @@ def generate_dashboard(
         if len(ranked) >= 3:
             lines += ["### Top 3 agents", ""]
             for agent, avg, count in ranked[:3]:
-                lines.append(f"- **{agent}** — {avg:.2f}/5 ({count} tâches)")
+                lines.append(f"- **{agent}** — {avg:.2f}/5 ({count} tasks)")
             lines.append("")
 
             lines += ["### Bottom 3 agents", ""]
             for agent, avg, count in ranked[-3:]:
-                lines.append(f"- **{agent}** — {avg:.2f}/5 ({count} tâches)")
+                lines.append(f"- **{agent}** — {avg:.2f}/5 ({count} tasks)")
             lines.append("")
 
         # --- Tendance par agent (dernières N sessions) ---
-        lines += ["## Tendance par agent (dernières sessions)", ""]
+        lines += ["## Agent trend (recent sessions)", ""]
         max_trend = 10
         for agent, scores_list in sorted(agent_scores.items()):
             recent = scores_list[-max_trend:]
@@ -244,7 +242,7 @@ def generate_dashboard(
 
     # --- Patterns d'erreur ---
     if active_errors:
-        lines += ["## Patterns d'erreur les plus fréquents", ""]
+        lines += ["## Most frequent error patterns", ""]
         sorted_errors = sorted(active_errors, key=lambda e: e.occurrences, reverse=True)
         lines += [
             "| # | ID | Pattern | Agent(s) | Occurrences | Action |",
@@ -259,9 +257,9 @@ def generate_dashboard(
         lines.append("")
 
     if resolved_errors:
-        lines += ["## Patterns résolus", ""]
+        lines += ["## Resolved patterns", ""]
         lines += [
-            "| ID | Pattern | Résolution | Date |",
+            "| ID | Pattern | Resolution | Date |",
             "|---|---|---|---|",
         ]
         for rp in resolved_errors:
@@ -273,7 +271,7 @@ def generate_dashboard(
     lines += [
         "---",
         "",
-        "*Rapport généré par `scripts/generate_dashboard.py` — stdlib Python uniquement.*",
+        "*Report generated by `scripts/generate_dashboard.py` — stdlib Python only.*",
     ]
     return "\n".join(lines)
 
@@ -283,18 +281,18 @@ def generate_dashboard(
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Génère le dashboard de performance")
+    parser = argparse.ArgumentParser(description="Generate the performance dashboard")
     parser.add_argument(
         "--memory-dir",
         type=Path,
         default=Path(".copilot/memory"),
-        help="Répertoire mémoire (défaut: .copilot/memory)",
+        help="Memory directory (default: .copilot/memory)",
     )
     parser.add_argument(
         "--output",
         type=Path,
         default=Path("reports/dashboard.md"),
-        help="Chemin du rapport (défaut: reports/dashboard.md)",
+        help="Output report path (default: reports/dashboard.md)",
     )
     args = parser.parse_args()
 
@@ -315,8 +313,8 @@ def main() -> None:
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(report, encoding="utf-8")
-    print(f"✅ Dashboard généré : {args.output}")
-    print(f"   {len(entries)} entrées de performance, {len(active_errors)} patterns actifs")
+    print(f"✅ Dashboard generated: {args.output}")
+    print(f"   {len(entries)} performance entries, {len(active_errors)} active patterns")
 
 
 if __name__ == "__main__":

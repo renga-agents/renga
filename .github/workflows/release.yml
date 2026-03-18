@@ -30,8 +30,16 @@ jobs:
           cd dist
           tar czf "../renga-${{ steps.version.outputs.version }}.tar.gz" .
 
+      - name: Generate checksum
+        run: |
+          sha256sum "renga-${{ steps.version.outputs.version }}.tar.gz" \
+            | awk '{print $1}' \
+            > "renga-${{ steps.version.outputs.version }}.sha256"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: renga-${{ steps.version.outputs.version }}.tar.gz
+          files: |
+            renga-${{ steps.version.outputs.version }}.tar.gz
+            renga-${{ steps.version.outputs.version }}.sha256
           generate_release_notes: true

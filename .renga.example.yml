@@ -18,6 +18,7 @@ agents:
   mode: "whitelist"
   include:
     # --- Core Lite agents ---
+    - orchestrator
     - software-architect
     - backend-dev
     - frontend-dev
@@ -69,8 +70,18 @@ commits:
   max_subject_length: 72
 
 # --- Optional plugins ---
-# Enable specialized agent packs from .github/agents/_plugins/
+# Enable specialized agent packs. Run 'renga plugin list' to see available plugins.
+# Installed agents are placed directly in .github/agents/ for full Copilot compatibility.
 plugins: []
   # - game-studio    # Agents for game development (game-developer, level-designer, audio-generator, etc.)
+
+# --- LLM Models (optional) ---
+# Override the model used per agent via `renga models apply`.
+# Without this section, each agent uses the model in its own frontmatter.
+# models:
+#   default: "Claude Opus 4.6 (copilot)"
+#   overrides:
+#     orchestrator: "Claude Sonnet 4.6 (copilot)"
+#     security-engineer: "Claude Opus 4.6 (copilot)"
 
 paths: {}

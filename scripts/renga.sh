@@ -15,20 +15,24 @@
 #   doctor    — Vérifie la santé du setup (Python, fichiers, schéma)
 #   dashboard — Lance scripts/generate_dashboard.py
 #   build     — Construit l'artefact de distribution
-#   test      — Lance les tests
 # =============================================================================
 
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
+# Version (replaced by build_dist.py at build time)
+# ---------------------------------------------------------------------------
+RENG_VERSION="__RENGA_VERSION__"
+
+# ---------------------------------------------------------------------------
 # Couleurs & symboles
 # ---------------------------------------------------------------------------
 if [[ -t 1 ]]; then
-  GREEN='\033[0;32m'
-  RED='\033[0;31m'
-  YELLOW='\033[0;33m'
-  BOLD='\033[1m'
-  RESET='\033[0m'
+  GREEN=$'\033[0;32m'
+  RED=$'\033[0;31m'
+  YELLOW=$'\033[0;33m'
+  BOLD=$'\033[1m'
+  RESET=$'\033[0m'
 else
   GREEN='' RED='' YELLOW='' BOLD='' RESET=''
 fi
@@ -42,13 +46,13 @@ info() { printf "${BOLD}→${RESET} %s\n" "$1"; }
 # Résolution du répertoire racine du projet
 # ---------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-cd "$ROOT_DIR" || { fail "Impossible de se déplacer vers $ROOT_DIR"; exit 1; }
+ROOT_DIR="$(pwd)"
+# ROOT_DIR is always the working directory from which the CLI is invoked
 
 # ---------------------------------------------------------------------------
 # Configuration distrib
 # ---------------------------------------------------------------------------
-RENGA_REPO="${RENGA_REPO:-owner/renga}"  # à remplacer par le vrai
+RENGA_REPO="${RENGA_REPO:-renga-agents/renga}"
 RENGA_API="https://api.github.com/repos/$RENGA_REPO"
 RENGA_DIR="$ROOT_DIR/.github/agents"
 INSTRUCTIONS_DIR="$ROOT_DIR/.github/instructions"
@@ -56,6 +60,7 @@ SKILLS_DIR="$ROOT_DIR/.github/skills"
 HOOKS_DIR="$ROOT_DIR/.github/hooks"
 LOCK_FILE="$ROOT_DIR/.renga.lock"
 CONFIG_FILE="$ROOT_DIR/.renga.yml"
+RENGA_SHARE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/renga"
 
 # ---------------------------------------------------------------------------
 # Hooks installation helper
@@ -68,7 +73,7 @@ install_hooks() {
     return 0
   fi
 
-  info "Installation des hooks…"
+  info "Installation des hooks..."
   mkdir -p "$HOOKS_DIR"
   mkdir -p "$HOOKS_DIR/scripts"
 
@@ -92,14 +97,10 @@ install_hooks() {
   # chmod +x on all .sh scripts in hooks/scripts/
   find "$HOOKS_DIR/scripts" -name '*.sh' -exec chmod +x {} +
 
-  # Preserve _local/hooks/ — never overwrite user-owned hooks
-  local local_hooks="$RENGA_DIR/_local/hooks"
-  mkdir -p "$local_hooks"
-
-  # Copy hooks schema if present
+  # Cache hooks schema in share dir (available via 'renga local init schemas')
   if [[ -f "$hooks_src/../schemas/hooks.schema.json" ]]; then
-    mkdir -p "$ROOT_DIR/schemas"
-    cp "$hooks_src/../schemas/hooks.schema.json" "$ROOT_DIR/schemas/"
+    mkdir -p "$RENGA_SHARE_DIR/schemas"
+    cp "$hooks_src/../schemas/hooks.schema.json" "$RENGA_SHARE_DIR/schemas/"
   fi
 
   ok "$hook_count fichier(s) hooks installé(s)"
@@ -156,17 +157,18 @@ write_profile_config() {
 
   case "$profile" in
     lite)
-      cat > "$dest" <<'EOF'
+      cat > "$dest" <<EOF
 version: "1.0"
 
 project:
   name: "my-project"
   description: "Small project using the Lite profile"
-  framework_version: "1.0.0"
+  framework_version: "$RENG_VERSION"
 
 agents:
   mode: "whitelist"
   include:
+    - orchestrator
     - backend-dev
     - frontend-dev
     - qa-engineer
@@ -196,13 +198,13 @@ paths: {}
 EOF
       ;;
     standard)
-      cat > "$dest" <<'EOF'
+      cat > "$dest" <<EOF
 version: "1.0"
 
 project:
   name: "my-project"
   description: "Production-ready project using the Standard profile"
-  framework_version: "1.0.0"
+  framework_version: "$RENG_VERSION"
 
 agents:
   mode: "whitelist"
@@ -248,13 +250,13 @@ paths: {}
 EOF
       ;;
     full)
-      cat > "$dest" <<'EOF'
+      cat > "$dest" <<EOF
 version: "1.0"
 
 project:
   name: "my-project"
   description: "Large project using the Full profile"
-  framework_version: "1.0.0"
+  framework_version: "$RENG_VERSION"
 
 agents:
   mode: "all"
@@ -291,76 +293,11 @@ EOF
 # Commandes
 # ---------------------------------------------------------------------------
 
-cmd_init() {
-  local profile=""
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --profile)
-        [[ $# -ge 2 ]] || { fail "Usage: renga init [--profile lite|standard|full]"; return 1; }
-        profile="$(normalize_profile "$2")"
-        shift 2
-        ;;
-      *)
-        fail "Unknown option: $1"
-        echo "Usage: renga init [--profile lite|standard|full]"
-        return 1
-        ;;
-    esac
-  done
-
-  if [[ -z "$profile" ]]; then
-    profile="$(prompt_init_profile)"
-  fi
-
-  case "$profile" in
-    lite|standard|full) ;;
-    *)
-      fail "Invalid profile: $profile"
-      echo "Expected one of: lite, standard, full"
-      return 1
-      ;;
-  esac
-
-  info "Initializing renga project ($profile profile)…"
-
-  # Guard : ne pas écraser un fichier existant
-  if [[ -f "$ROOT_DIR/.renga.yml" ]]; then
-    warn ".renga.yml already exists — init skipped (no overwrite)"
-  else
-    write_profile_config "$profile" "$ROOT_DIR/.renga.yml"
-    ok ".renga.yml created for the $profile profile"
-  fi
-
-  # Créer .copilot/memory/ si absent
-  if [[ -d "$ROOT_DIR/.copilot/memory" ]]; then
-    ok ".copilot/memory/ already exists"
-  else
-    mkdir -p "$ROOT_DIR/.copilot/memory"
-    ok "Created .copilot/memory/"
-  fi
-
-  # Créer _local/ dirs
-  mkdir -p "$ROOT_DIR/.github/agents/_local"
-  mkdir -p "$ROOT_DIR/.github/agents/_local/hooks"
-  mkdir -p "$ROOT_DIR/.github/instructions/_local"
-  mkdir -p "$ROOT_DIR/.github/skills/_local"
-
-  # Créer hooks dirs
-  mkdir -p "$HOOKS_DIR/scripts"
-  ok "Created .github/hooks/scripts/"
-
-  # .gitignore reports
-  ensure_gitignore_reports
-
-  # Générer le workflow CI de validation (si absent)
+_create_validate_workflow() {
   local workflow_dir="$ROOT_DIR/.github/workflows"
   local workflow_file="$workflow_dir/agent-validate.yml"
-  if [[ -f "$workflow_file" ]]; then
-    ok "Workflow agent-validate.yml already exists"
-  else
-    mkdir -p "$workflow_dir"
-    cat > "$workflow_file" <<'WORKFLOW'
+  mkdir -p "$workflow_dir"
+  cat > "$workflow_file" <<'WORKFLOW'
 name: Agent Validation
 
 on:
@@ -388,28 +325,25 @@ jobs:
 
       - name: Install renga CLI
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${RENGA_REPO:-OWNER/renga}/main/install.sh | sh
+          curl -fsSL https://raw.githubusercontent.com/renga-agents/renga/main/install.sh | sh
 
       - name: Validate agents
         run: renga validate
 WORKFLOW
-    ok "Generated .github/workflows/agent-validate.yml"
-  fi
-
-  ok "Init complete"
 }
 
 cmd_validate() {
-  info "Validation des agents…"
+  info "Validation des agents..."
 
-  local script="$ROOT_DIR/scripts/validate_agents.py"
+  # Look for the script in the system share dir (installed by install.sh)
+  local script="$RENGA_SHARE_DIR/scripts/validate_agents.py"
   if [[ ! -f "$script" ]]; then
-    fail "Script introuvable : scripts/validate_agents.py"
+    fail "Script introuvable. Relancez l'installation : curl -fsSL https://raw.githubusercontent.com/renga-agents/renga/main/install.sh | sh"
     return 1
   fi
 
   local rc=0
-  python3 "$script" || rc=$?
+  python3 "$script" --agents-dir "$RENGA_DIR" || rc=$?
 
   case $rc in
     0) ok "Validation terminée — tous les agents sont valides" ;;
@@ -420,7 +354,7 @@ cmd_validate() {
 }
 
 cmd_doctor() {
-  info "Diagnostic du setup renga…"
+  info "Diagnostic du setup renga..."
   local errors=0
 
   # 1. Python ≥ 3.9
@@ -473,11 +407,9 @@ cmd_doctor() {
       errors=$((errors + 1))
     fi
   else
-    fail "schemas/agent.schema.json introuvable"
-    errors=$((errors + 1))
+    info "schemas/ non installé (optionnel — utilisez 'renga local init schemas' pour activer la validation IDE)"
   fi
 
-  # 5. Scripts essentiels
   # 5. Skills directory
   if [[ -d "$SKILLS_DIR" ]]; then
     local skill_count
@@ -511,14 +443,6 @@ cmd_doctor() {
     warn ".github/hooks/ introuvable — lancez './scripts/renga.sh init'"
   fi
 
-  # 7. Scripts essentiels
-  for script in validate_agents.py generate_dashboard.py; do
-    if [[ -f "$ROOT_DIR/scripts/$script" ]]; then
-      ok "scripts/$script présent"
-    else
-      warn "scripts/$script manquant"
-    fi
-  done
 
   # Résumé
   echo ""
@@ -531,38 +455,23 @@ cmd_doctor() {
 }
 
 cmd_dashboard() {
-  info "Génération du dashboard…"
+  info "Génération du dashboard..."
 
-  local script="$ROOT_DIR/scripts/generate_dashboard.py"
+  # Look for the script in the system share dir (installed by install.sh)
+  local script="$RENGA_SHARE_DIR/scripts/generate_dashboard.py"
   if [[ ! -f "$script" ]]; then
-    fail "Script introuvable : scripts/generate_dashboard.py"
+    fail "Script introuvable. Relancez l'installation : curl -fsSL https://raw.githubusercontent.com/renga-agents/renga/main/install.sh | sh"
     return 1
   fi
 
-  python3 "$script"
-  ok "Dashboard généré"
-}
-
-cmd_test() {
-  info "Lancement des tests…"
-
-  if [[ ! -d "$ROOT_DIR/tests" ]]; then
-    fail "Répertoire tests/ introuvable"
-    return 1
-  fi
-
-  # Préférer pytest s'il est disponible, sinon unittest
-  if python3 -m pytest --version &>/dev/null; then
-    python3 -m pytest "$ROOT_DIR/tests/" -v
-  else
-    python3 -m unittest discover "$ROOT_DIR/tests/" -v
-  fi
-
-  ok "Tests terminés"
+  python3 "$script" \
+    --memory-dir "$ROOT_DIR/.copilot/memory" \
+    --output "$ROOT_DIR/.copilot/reports/dashboard.md"
+  ok "Dashboard généré dans .copilot/reports/dashboard.md"
 }
 
 cmd_build() {
-  info "Build de l'artefact de distribution…"
+  info "Build de l'artefact de distribution..."
   local script="$ROOT_DIR/scripts/build_dist.py"
   if [[ ! -f "$script" ]]; then
     fail "Script introuvable : scripts/build_dist.py"
@@ -572,16 +481,142 @@ cmd_build() {
   ok "Build terminé"
 }
 
+# ---------------------------------------------------------------------------
+# Helpers model
+# ---------------------------------------------------------------------------
+
+# _apply_models — lit la section models: de .renga.yml et stamp le champ model:
+# dans chaque fichier *.agent.md de RENGA_DIR. N'écrase que les valeurs par
+# défaut ; les overrides par agent sont appliqués depuis models.overrides.
+_apply_models() {
+  local config="$ROOT_DIR/.renga.yml"
+  [[ -f "$config" ]] || return 0
+
+  local py_script
+  py_script="$(mktemp /tmp/renga_apply_models_XXXXXX.py)"
+  cat > "$py_script" << 'PYEOF'
+import re, pathlib, sys
+
+config_p = pathlib.Path(sys.argv[1])
+agents_p = pathlib.Path(sys.argv[2])
+text = config_p.read_text()
+
+# Extract models: section from .renga.yml
+m = re.search(r'^models:\s*\n((?:  [^\n]*\n?)*)', text, re.M)
+if not m:
+    sys.exit(0)
+models_section = m.group(1)
+
+# Parse default model (indented: "  default: ...")
+m2 = re.search(r'^  default:\s*["\']?([^"\'#\n]+)', models_section, re.M)
+default_model = m2.group(1).strip().strip('"\'') if m2 else None
+if not default_model:
+    sys.exit(0)
+
+# Parse per-agent overrides (indented under "  overrides:")
+overrides = {}
+in_ov = False
+for line in models_section.splitlines():
+    if re.match(r'  overrides:', line):
+        in_ov = True
+        continue
+    if in_ov:
+        mm = re.match(r'    (\S+):\s*["\']?([^"\'#\n]+)', line)
+        if mm:
+            overrides[mm.group(1)] = mm.group(2).strip().strip('"\'')
+        elif not line.startswith('    ') and line.strip():
+            in_ov = False
+
+count = 0
+for f in sorted(agents_p.glob('*.agent.md')):
+    name = f.name.replace('.agent.md', '')
+    model = overrides.get(name, default_model)
+    c = f.read_text()
+    if re.search(r'^model:', c, re.M):
+        new = re.sub(r'^model:.*', f'model: {model}', c, flags=re.M)
+    else:
+        # Insérer model: juste après la première ligne ---
+        new = c.replace('---\n', f'---\nmodel: {model}\n', 1)
+    if new != c:
+        f.write_text(new)
+    count += 1
+
+print(count)
+PYEOF
+
+  local count
+  count="$(python3 "$py_script" "$config" "$RENGA_DIR" 2>/dev/null)" || count=0
+  rm -f "$py_script"
+  if [[ -n "$count" && "$count" -gt 0 ]]; then
+    ok "Modèle LLM appliqué à $count agents (depuis .renga.yml section models:)"
+  fi
+}
+
+cmd_models() {
+  local subcmd="${1:-apply}"
+  shift 2>/dev/null || true
+
+  case "$subcmd" in
+    apply)
+      if [[ ! -f "$ROOT_DIR/.renga.yml" ]]; then
+        fail "Fichier introuvable : .renga.yml"
+        return 1
+      fi
+      if ! grep -q '^models:' "$ROOT_DIR/.renga.yml" 2>/dev/null; then
+        fail "Section 'models:' absente de .renga.yml"
+        echo "Ajoutez dans .renga.yml :"
+        echo "  models:"
+        echo "    default: \"Claude Opus 4.6 (copilot)\""
+        return 1
+      fi
+      info "Application de la configuration modèles LLM..."
+      _apply_models
+      ;;
+    *)
+      fail "Sous-commande inconnue : $subcmd"
+      echo "Usage: renga models apply"
+      return 1
+      ;;
+  esac
+}
+
 cmd_install() {
   local version="latest"
+  local profile=""
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --version) version="$2"; shift 2 ;;
+      --profile)
+        profile="$(normalize_profile "$2")"
+        shift 2
+        ;;
       *) fail "Option inconnue : $1"; return 1 ;;
     esac
   done
 
-  info "Installation d'renga (version: $version)…"
+  # Créer .renga.yml si absent (phase init intégrée)
+  if [[ ! -f "$CONFIG_FILE" ]]; then
+    if [[ -z "$profile" ]]; then
+      if [[ -t 0 && -t 1 ]]; then
+        local _profile_ans=""
+        printf 'Select a profile [lite/standard/full] (default: lite): '
+        read -r _profile_ans || true
+        _profile_ans="$(normalize_profile "$_profile_ans")"
+        case "$_profile_ans" in
+          ""|lite|l) profile="lite" ;;
+          standard|s) profile="standard" ;;
+          full|f) profile="full" ;;
+          *) warn "Profile inconnu '$_profile_ans' — utilisation de lite"; profile="lite" ;;
+        esac
+      else
+        profile="lite"
+      fi
+    fi
+    write_profile_config "$profile" "$CONFIG_FILE"
+    ok ".renga.yml créé (profil $profile)"
+  fi
+
+  info "Installation de renga (version: $version)..."
 
   # Déterminer l'URL de la release
   local release_url
@@ -591,25 +626,28 @@ cmd_install() {
     release_url="$RENGA_API/releases/tags/v${version}"
   fi
 
-  # Récupérer les infos de la release
-  local release_json
-  release_json="$(curl -fsSL "$release_url")" || {
+  # Télécharger et extraire dans un répertoire temporaire
+  local tmp_dir
+  tmp_dir="$(mktemp -d)"
+  trap "rm -rf '$tmp_dir'" EXIT
+
+  # Récupérer les infos de la release dans un fichier (évite la corruption par caractères de contrôle)
+  local release_json_file="$tmp_dir/release.json"
+  curl -fsSL "$release_url" -o "$release_json_file" || {
     fail "Impossible de récupérer la release $version"
     return 1
   }
 
   # Extraire l'URL du tarball (premier asset .tar.gz)
   local tarball_url
-  tarball_url="$(echo "$release_json" | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
+  tarball_url="$(python3 -c "
+import json
+data = json.load(open('$release_json_file'))
 assets = data.get('assets', [])
 for a in assets:
     if a['name'].endswith('.tar.gz'):
-        print(a['browser_download_url'])
-        break
+        print(a['browser_download_url']); break
 else:
-    # Fallback to source tarball
     print(data.get('tarball_url', ''))
 ")" || {
     fail "Impossible de trouver l'artefact de la release"
@@ -621,12 +659,7 @@ else:
     return 1
   fi
 
-  # Télécharger et extraire
-  local tmp_dir
-  tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
-
-  info "Téléchargement depuis $tarball_url…"
+  info "Téléchargement depuis $tarball_url..."
   curl -fsSL "$tarball_url" | tar xz -C "$tmp_dir" --strip-components=1 || {
     fail "Échec du téléchargement/extraction"
     return 1
@@ -647,18 +680,23 @@ else:
   local -a whitelist_agents=()
   if [[ -f "$CONFIG_FILE" ]]; then
     whitelist_mode="$(python3 -c "
-import re, sys
-text = open('$CONFIG_FILE').read()
-m = re.search(r'mode:\s*[\"'\'']*(\ w+)', text)
-print(m.group(1) if m else 'all')
+for line in open('$CONFIG_FILE'):
+    s = line.strip()
+    if s.startswith('mode:'):
+        val = s.split(':',1)[1].strip().strip('\"\'')
+        print(val if val else 'all')
+        break
+else:
+    print('all')
 " 2>/dev/null || echo "all")"
 
     if [[ "$whitelist_mode" == "whitelist" ]]; then
-      # Parse include list from YAML (simple regex parsing)
-      mapfile -t whitelist_agents < <(python3 -c "
+      # Parse include list from YAML — boucle while compatible bash 3.2 (macOS)
+      while IFS= read -r _agent_name; do
+        [[ -n "$_agent_name" ]] && whitelist_agents+=("$_agent_name")
+      done < <(python3 -c "
 import re
 text = open('$CONFIG_FILE').read()
-# Find the include section
 m = re.search(r'include:\s*\n((?:\s+-\s+\S+\n?)+)', text)
 if m:
     for line in m.group(1).strip().splitlines():
@@ -670,7 +708,7 @@ if m:
   fi
 
   # Copier les agents
-  info "Installation des agents…"
+  info "Installation des agents..."
   mkdir -p "$RENGA_DIR"
 
   local agents_src="$tmp_dir/agents"
@@ -708,7 +746,7 @@ if m:
   fi
 
   # Copier instructions
-  info "Installation des instructions…"
+  info "Installation des instructions..."
   mkdir -p "$INSTRUCTIONS_DIR"
   local instr_src="$tmp_dir/instructions"
   local instr_count=0
@@ -721,7 +759,7 @@ if m:
   fi
 
   # Copier skills
-  info "Installation des skills…"
+  info "Installation des skills..."
   mkdir -p "$SKILLS_DIR"
   local skills_src="$tmp_dir/skills"
   local skill_count=0
@@ -737,13 +775,22 @@ if m:
     done
   fi
 
-  # Copier schema
-  if [[ -f "$tmp_dir/schemas/agent.schema.json" ]]; then
-    mkdir -p "$ROOT_DIR/schemas"
-    cp "$tmp_dir/schemas/agent.schema.json" "$ROOT_DIR/schemas/"
+  # Mettre en cache les schémas dans le répertoire partagé (disponibles via 'renga local init schemas')
+  if [[ -d "$tmp_dir/schemas" ]]; then
+    mkdir -p "$RENGA_SHARE_DIR/schemas"
+    for schema_file in "$tmp_dir/schemas/"*.json; do
+      [[ -f "$schema_file" ]] || continue
+      cp "$schema_file" "$RENGA_SHARE_DIR/schemas/"
+    done
   fi
-  if [[ -f "$tmp_dir/schemas/skill.schema.json" ]]; then
-    cp "$tmp_dir/schemas/skill.schema.json" "$ROOT_DIR/schemas/"
+
+  # Copier les scripts Python essentiels dans le répertoire système partagé
+  if [[ -d "$tmp_dir/scripts" ]]; then
+    mkdir -p "$RENGA_SHARE_DIR/scripts"
+    for script in "$tmp_dir/scripts"/*.py; do
+      [[ -f "$script" ]] || continue
+      cp "$script" "$RENGA_SHARE_DIR/scripts/"
+    done
   fi
 
   # Installer les hooks
@@ -752,10 +799,40 @@ if m:
   # .gitignore reports
   ensure_gitignore_reports
 
-  # Créer _local/ si absent
-  mkdir -p "$RENGA_DIR/_local"
-  mkdir -p "$RENGA_DIR/_local/hooks"
-  mkdir -p "$INSTRUCTIONS_DIR/_local"
+  # Appliquer la configuration des modèles LLM sur les agents installés
+  _apply_models
+
+  # Mettre en cache le manifest pour plugin list
+  mkdir -p "$RENGA_SHARE_DIR"
+  cp "$manifest" "$RENGA_SHARE_DIR/manifest.json"
+
+  # Proposer les plugins disponibles
+  local available_plugins=""
+  available_plugins="$(python3 -c "
+import json
+m = json.load(open('$manifest'))
+plugins = list(m.get('plugins', {}).keys())
+print(' '.join(plugins))
+" 2>/dev/null)"
+
+  if [[ -n "$available_plugins" && -t 0 && -t 1 ]]; then
+    echo ""
+    info "Plugins disponibles : $available_plugins"
+    printf 'Activer des plugins ? (noms séparés par un espace, entrée pour ignorer) : '
+    local _plugins_ans=""
+    read -r _plugins_ans || true
+    if [[ -n "$_plugins_ans" ]]; then
+      for _p in $_plugins_ans; do
+        local _plugin_src="$tmp_dir/plugins/$_p"
+        if [[ -d "$_plugin_src" ]]; then
+          _install_plugin_flat "$_p" "$_plugin_src"
+          _add_plugin_to_config "$_p"
+        else
+          warn "Plugin '$_p' introuvable dans la release — ignoré"
+        fi
+      done
+    fi
+  fi
 
   # Écrire le lockfile
   cat > "$LOCK_FILE" <<LOCK
@@ -764,6 +841,23 @@ installed_at: "$(date -u +%Y-%m-%dT%H:%M:%S)"
 agents_installed: $agent_count
 plugins: []
 LOCK
+
+  # Mettre à jour framework_version dans .renga.yml
+  if [[ -f "$CONFIG_FILE" ]]; then
+    python3 -c "
+import re, pathlib
+path = pathlib.Path('$CONFIG_FILE')
+text = path.read_text()
+text = re.sub(r'(framework_version:\s*)[^\n]+', r'\\1\"$installed_version\"', text)
+path.write_text(text)
+" 2>/dev/null && ok "framework_version mis à jour dans .renga.yml ($installed_version)"
+  fi
+
+  # Copier RENGA.md depuis le répertoire partagé
+  if [[ ! -f "$ROOT_DIR/RENGA.md" ]] && [[ -f "$RENGA_SHARE_DIR/RENGA.md" ]]; then
+    cp "$RENGA_SHARE_DIR/RENGA.md" "$ROOT_DIR/RENGA.md"
+    ok "RENGA.md généré"
+  fi
 
   ok "renga v$installed_version installé ($agent_count agents, $instr_count instructions, $skill_count skills)"
 }
@@ -796,8 +890,26 @@ print(m.group(1) if m else 'unknown')
   info "Version actuelle : $current_version"
 
   if [[ "$dry_run" == "true" ]]; then
-    info "[DRY-RUN] Vérification de la version $version…"
-    info "[DRY-RUN] Mise à jour disponible vers $version — relancez sans --dry-run"
+    local tmp_dr
+    tmp_dr="$(mktemp -d)"
+    local remote_json="$tmp_dr/latest.json"
+    curl -fsSL "$RENGA_API/releases/latest" -o "$remote_json" 2>/dev/null || {
+      warn "Impossible de vérifier la version distante"
+      rm -rf "$tmp_dr"
+      return 0
+    }
+    local remote_version
+    remote_version="$(python3 -c "
+import json
+d = json.load(open('$remote_json'))
+print(d.get('tag_name', '?').lstrip('v'))
+")"
+    rm -rf "$tmp_dr"
+    if [[ "$remote_version" == "$current_version" ]]; then
+      ok "Déjà à jour (v$current_version)"
+    else
+      info "Mise à jour disponible : v$current_version → v$remote_version — relancez sans --dry-run"
+    fi
   else
     if [[ "$version" == "latest" ]]; then
       cmd_install
@@ -835,17 +947,115 @@ cmd_list() {
 
   # Plugins
   if [[ -d "$RENGA_DIR/_plugins" ]]; then
-    echo ""
-    info "Plugins installés :"
+    local found_plugins=0
     for d in "$RENGA_DIR/_plugins"/*/; do
-      [[ -d "$d" ]] || continue
-      local plugin_name
+      [[ -d "$d" ]] && [[ -f "$d/agents.txt" ]] || continue
+      if [[ $found_plugins -eq 0 ]]; then
+        echo ""
+        info "Plugins installés :"
+      fi
+      found_plugins=1
+      local plugin_name count
       plugin_name="$(basename "$d")"
-      local count
-      count="$(find "$d" -name '*.agent.md' | wc -l | tr -d ' ')"
+      count="$(wc -l < "$d/agents.txt" | tr -d ' ')"
       echo "  $plugin_name ($count agents)"
     done
   fi
+}
+
+# Sync plugins list in .renga.lock from .renga.yml
+_sync_lock_plugins() {
+  [[ -f "$LOCK_FILE" ]] || return 0
+  python3 -c "
+import re, pathlib
+lock = pathlib.Path('$LOCK_FILE')
+config = pathlib.Path('$CONFIG_FILE')
+text = lock.read_text()
+if not config.exists():
+    new_plugins = 'plugins: []'
+else:
+    cfg = config.read_text()
+    if re.search(r'plugins:\s*\[\]', cfg):
+        new_plugins = 'plugins: []'
+    else:
+        m = re.search(r'plugins:\n((?:  - [^\n]+\n?)+)', cfg)
+        if m:
+            new_plugins = 'plugins:\n' + m.group(1).rstrip()
+        else:
+            new_plugins = 'plugins: []'
+text = re.sub(r'plugins:(?:\s*\[\]|(?:\n  - [^\n]+)+)', new_plugins, text)
+lock.write_text(text)
+" 2>/dev/null
+}
+
+# Install plugin agents flat into RENGA_DIR and record metadata
+# Usage: _install_plugin_flat <plugin_name> <plugin_src_dir>
+_install_plugin_flat() {
+  local plugin_name="$1"
+  local src_dir="$2"
+
+  if [[ ! -d "$src_dir" ]]; then
+    fail "Plugin '$plugin_name' introuvable dans la release"
+    return 1
+  fi
+
+  # Metadata dir — not loaded by Copilot, tracks which agents belong to this plugin
+  local meta_dir="$RENGA_DIR/_plugins/$plugin_name"
+  mkdir -p "$meta_dir"
+
+  local count=0
+  local agents_list=""
+  for agent_file in "$src_dir"/*.agent.md; do
+    [[ -f "$agent_file" ]] || continue
+    local agent_name
+    agent_name="$(basename "$agent_file" .agent.md)"
+    cp "$agent_file" "$RENGA_DIR/"
+    agents_list="${agents_list}${agent_name}
+"
+    count=$((count + 1))
+  done
+
+  # Save agent list for uninstall
+  printf '%s' "$agents_list" > "$meta_dir/agents.txt"
+
+  # Copy README if present
+  [[ -f "$src_dir/README.md" ]] && cp "$src_dir/README.md" "$meta_dir/"
+
+  ok "Plugin '$plugin_name' installé ($count agents)"
+}
+
+# Add plugin name to plugins: section in .renga.yml
+_add_plugin_to_config() {
+  local plugin_name="$1"
+  [[ -f "$CONFIG_FILE" ]] || return 0
+  python3 -c "
+import re, pathlib, sys
+path = pathlib.Path('$CONFIG_FILE')
+text = path.read_text()
+if '  - $plugin_name' in text:
+    sys.exit(0)
+# plugins: [] -> plugins:\n  - name
+text = re.sub(r'plugins:\s*\[\]', 'plugins:\n  - $plugin_name', text)
+# plugins:\n  - other\n -> add new entry
+if '  - $plugin_name' not in text:
+    text = re.sub(r'(plugins:\n(?:  - [^\n]+\n)+)', r'\1  - $plugin_name\n', text)
+path.write_text(text)
+" 2>/dev/null
+}
+
+# Remove plugin name from plugins: section in .renga.yml
+_remove_plugin_from_config() {
+  local plugin_name="$1"
+  [[ -f "$CONFIG_FILE" ]] || return 0
+  python3 -c "
+import re, pathlib
+path = pathlib.Path('$CONFIG_FILE')
+text = path.read_text()
+text = re.sub(r'\n  - $plugin_name\b[^\n]*', '', text)
+# If plugins: section is now empty, normalize to plugins: []
+text = re.sub(r'plugins:\n(?=\S|\Z)', 'plugins: []\n', text)
+path.write_text(text)
+" 2>/dev/null
 }
 
 cmd_plugin() {
@@ -860,72 +1070,198 @@ cmd_plugin() {
     add)
       [[ $# -ge 1 ]] || { fail "Usage: renga plugin add <name>"; return 1; }
       local plugin_name="$1"
-      info "Ajout du plugin '$plugin_name'…"
+      info "Ajout du plugin '$plugin_name'..."
 
-      # Check if already installed
-      if [[ -d "$RENGA_DIR/_plugins/$plugin_name" ]]; then
+      # Check if already installed (metadata dir exists)
+      if [[ -f "$RENGA_DIR/_plugins/$plugin_name/agents.txt" ]]; then
         warn "Plugin '$plugin_name' déjà installé"
         return 0
       fi
 
-      # Fetch from latest release manifest
-      local release_json
-      release_json="$(curl -fsSL "$RENGA_API/releases/latest")" || {
+      # Fetch from latest release (use temp file to avoid control char corruption)
+      local tmp_dir
+      tmp_dir="$(mktemp -d)"
+      trap "rm -rf '$tmp_dir'" EXIT
+
+      local release_json_file="$tmp_dir/release.json"
+      curl -fsSL "$RENGA_API/releases/latest" -o "$release_json_file" || {
         fail "Impossible de récupérer la dernière release"
         return 1
       }
 
       local tarball_url
-      tarball_url="$(echo "$release_json" | python3 -c "
-import json, sys
-data = json.load(sys.stdin)
+      tarball_url="$(python3 -c "
+import json
+data = json.load(open('$release_json_file'))
 for a in data.get('assets', []):
     if a['name'].endswith('.tar.gz'):
         print(a['browser_download_url']); break
 else:
     print(data.get('tarball_url', ''))
-")"
-
-      local tmp_dir
-      tmp_dir="$(mktemp -d)"
-      trap 'rm -rf "$tmp_dir"' EXIT
+")" || {
+        fail "Impossible de parser la release"
+        return 1
+      }
 
       curl -fsSL "$tarball_url" | tar xz -C "$tmp_dir" --strip-components=1
 
-      local plugin_src="$tmp_dir/plugins/$plugin_name"
-      if [[ ! -d "$plugin_src" ]]; then
-        fail "Plugin '$plugin_name' introuvable dans la release"
-        rm -rf "$tmp_dir"
-        return 1
-      fi
-
-      mkdir -p "$RENGA_DIR/_plugins/$plugin_name"
-      cp -R "$plugin_src/"* "$RENGA_DIR/_plugins/$plugin_name/"
-
-      local count
-      count="$(find "$RENGA_DIR/_plugins/$plugin_name" -name '*.agent.md' | wc -l | tr -d ' ')"
-      ok "Plugin '$plugin_name' installé ($count agents)"
+      _install_plugin_flat "$plugin_name" "$tmp_dir/plugins/$plugin_name"
+      _add_plugin_to_config "$plugin_name"
+      _sync_lock_plugins
       ;;
 
     remove)
       [[ $# -ge 1 ]] || { fail "Usage: renga plugin remove <name>"; return 1; }
       local plugin_name="$1"
-      local plugin_dir="$RENGA_DIR/_plugins/$plugin_name"
-      if [[ ! -d "$plugin_dir" ]]; then
+      local meta_dir="$RENGA_DIR/_plugins/$plugin_name"
+      if [[ ! -f "$meta_dir/agents.txt" ]]; then
         warn "Plugin '$plugin_name' non installé"
         return 0
       fi
-      rm -rf "$plugin_dir"
+      # Remove flat-installed agents
+      while IFS= read -r agent_name; do
+        [[ -n "$agent_name" ]] || continue
+        rm -f "$RENGA_DIR/${agent_name}.agent.md"
+      done < "$meta_dir/agents.txt"
+      rm -rf "$meta_dir"
+      _remove_plugin_from_config "$plugin_name"
       ok "Plugin '$plugin_name' supprimé"
+      _sync_lock_plugins
       ;;
 
     list)
-      cmd_list  # reuse the listing logic
+      local cached_manifest="$RENGA_SHARE_DIR/manifest.json"
+      echo ""
+      info "Plugins :"
+      if [[ -f "$cached_manifest" ]]; then
+        python3 -c "
+import json, pathlib
+cached = pathlib.Path('$cached_manifest')
+meta_base = pathlib.Path('$RENGA_DIR/_plugins')
+m = json.load(cached.open())
+plugins = m.get('plugins', {})
+if not plugins:
+    print('  Aucun plugin disponible.')
+for name, data in plugins.items():
+    installed = (meta_base / name / 'agents.txt').exists()
+    marker = '[installed]' if installed else '[available]'
+    count = len(data.get('agents', []))
+    print(f'  {marker} {name} ({count} agents)')
+" 2>/dev/null
+      elif [[ -d "$RENGA_DIR/_plugins" ]]; then
+        local found=0
+        for d in "$RENGA_DIR/_plugins"/*/; do
+          [[ -d "$d" ]] && [[ -f "$d/agents.txt" ]] || continue
+          found=1
+          local pname pcount
+          pname="$(basename "$d")"
+          pcount="$(wc -l < "$d/agents.txt" | tr -d ' ')"
+          echo "  [installed] $pname ($pcount agents)"
+        done
+        [[ $found -eq 0 ]] && echo "  Aucun plugin installé."
+        echo ""
+        warn "Lancez 'renga install' pour voir tous les plugins disponibles."
+      else
+        echo "  Aucun plugin installé."
+        echo ""
+        warn "Lancez 'renga install' pour voir tous les plugins disponibles."
+      fi
       ;;
 
     *)
       fail "Sous-commande inconnue : '$subcmd'"
       echo "Usage: renga plugin <add|remove|list> [name]"
+      return 1
+      ;;
+  esac
+}
+
+cmd_local() {
+  if [[ $# -eq 0 ]]; then
+    cat <<EOF
+Usage: renga local init <target>
+
+Crée un espace de customisation locale pour renga.
+Ces dossiers ne sont jamais écrasés par 'renga update'.
+
+Targets:
+  agents        Crée .github/agents/_local/ pour des agents personnalisés
+  hooks         Crée .github/agents/_local/hooks/ pour des hooks personnalisés
+                (propose l'activation du workflow CI si remote GitHub détecté)
+  skills        Crée .github/skills/_local/ pour des skills personnalisés
+  instructions  Crée .github/instructions/_local/ pour des instructions personnalisées
+  schemas       Copie les schémas JSON dans schemas/ (validation IDE des fichiers .agent.md)
+EOF
+    return 0
+  fi
+
+  local subcmd="$1"; shift
+
+  case "$subcmd" in
+    init)
+      [[ $# -ge 1 ]] || {
+        fail "Usage: renga local init <agents|hooks|skills|instructions>"
+        return 1
+      }
+      local target="$1"
+      case "$target" in
+        agents)
+          mkdir -p "$RENGA_DIR/_local"
+          ok "Créé : .github/agents/_local/"
+          ;;
+        hooks)
+          mkdir -p "$RENGA_DIR/_local/hooks"
+          ok "Créé : .github/agents/_local/hooks/"
+          # Propose CI workflow if GitHub remote detected
+          if git -C "$ROOT_DIR" remote -v 2>/dev/null | grep -q 'github\.com'; then
+            if [[ -f "$ROOT_DIR/.github/workflows/agent-validate.yml" ]]; then
+              ok "Workflow CI déjà présent (.github/workflows/agent-validate.yml)"
+            elif [[ -t 0 && -t 1 ]]; then
+              echo ""
+              info "Un workflow GitHub Actions peut valider automatiquement vos agents à chaque push."
+              printf 'Activer la validation automatique sur GitHub ? [Y/n] : '
+              local _ci_ans=""
+              read -r _ci_ans || true
+              if [[ "${_ci_ans:-y}" =~ ^[Yy]?$ ]]; then
+                _create_validate_workflow
+                ok "Workflow CI créé dans .github/workflows/agent-validate.yml"
+              fi
+            fi
+          fi
+          ;;
+        skills)
+          mkdir -p "$SKILLS_DIR/_local"
+          ok "Créé : .github/skills/_local/"
+          ;;
+        instructions)
+          mkdir -p "$INSTRUCTIONS_DIR/_local"
+          ok "Créé : .github/instructions/_local/"
+          ;;
+        schemas)
+          local schema_src="$RENGA_SHARE_DIR/schemas"
+          if [[ ! -d "$schema_src" ]]; then
+            fail "Schémas non disponibles — lancez 'renga install' d'abord"
+            return 1
+          fi
+          mkdir -p "$ROOT_DIR/schemas"
+          local schema_count=0
+          for f in "$schema_src/"*.json; do
+            [[ -f "$f" ]] || continue
+            cp "$f" "$ROOT_DIR/schemas/"
+            schema_count=$((schema_count + 1))
+          done
+          ok "Schémas JSON copiés dans schemas/ ($schema_count fichiers)"
+          ;;
+        *)
+          fail "Cible inconnue : '$target'"
+          echo "Targets disponibles : agents, hooks, skills, instructions, schemas"
+          return 1
+          ;;
+      esac
+      ;;
+    *)
+      fail "Sous-commande inconnue : '$subcmd'"
+      echo "Usage: renga local init <agents|hooks|skills|instructions>"
       return 1
       ;;
   esac
@@ -968,7 +1304,7 @@ print(m.group(1) if m else '—')
       ;;
 
     validate)
-      info "Validation des skills…"
+      info "Validation des skills..."
       local errors=0
       if [[ -d "$SKILLS_DIR" ]]; then
         for skill_md in "$SKILLS_DIR"/*/SKILL.md; do
@@ -1027,18 +1363,18 @@ ${BOLD}renga CLI${RESET} — Framework de gouvernance IA
 ${BOLD}Usage:${RESET} renga <command> [options]
 
 ${BOLD}Commands:${RESET}
-  init [--profile]    Initialize a project (.renga.yml, hooks, local folders)
-  install [--version] Installe les agents, skills et hooks depuis une release GitHub
-  update [--dry-run]  Met à jour les agents et hooks (préserve _local/)
-  list                Liste les agents et plugins installés
-  plugin <sub>        Gestion des plugins (add, remove, list)
-  validate            Valide les fichiers .agent.md
-  doctor              Vérifie la santé du setup
-  skill <sub>         Gestion des skills (list, validate)
-  dashboard           Génère le dashboard de performance
-  build               Construit l'artefact de distribution
-  test                Lance les tests du framework
-  help                Affiche cette aide
+  install [--profile] [--version]  Installe renga (crée .renga.yml si absent, installe agents/hooks/skills)
+  update [--dry-run]               Met à jour les agents et hooks
+  list                             Liste les agents et plugins installés
+  local init <target>              Crée un espace de customisation locale (agents|hooks|skills|instructions|schemas)
+  models apply              Applique la section models: de .renga.yml sur tous les agents
+  plugin <sub>              Gestion des plugins (add, remove, list)
+  validate                  Valide les fichiers .agent.md
+  doctor                    Vérifie la santé du setup
+  skill <sub>               Gestion des skills (list, validate)
+  dashboard                 Génère le dashboard de performance
+  build                     Construit l'artefact de distribution
+  help                      Affiche cette aide
 
 EOF
 }
@@ -1053,17 +1389,17 @@ if [[ $# -eq 0 ]]; then
 fi
 
 case "${1}" in
-  init)      shift; cmd_init "$@" ;;
   install)   shift; cmd_install "$@" ;;
   update)    shift; cmd_update "$@" ;;
   list)      cmd_list ;;
+  local)     shift; cmd_local "$@" ;;
+  models)    shift; cmd_models "$@" ;;
   plugin)    shift; cmd_plugin "$@" ;;
   skill)     shift; cmd_skill "$@" ;;
   validate)  cmd_validate ;;
   doctor)    cmd_doctor ;;
   dashboard) cmd_dashboard ;;
   build)     shift; cmd_build "$@" ;;
-  test)      cmd_test ;;
   help|--help|-h) cmd_help ;;
   *)
     fail "Commande inconnue : '${1}'"

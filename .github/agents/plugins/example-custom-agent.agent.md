@@ -5,6 +5,7 @@ user-invocable: true
 description: "Example agent illustrating the plugin format — use it as a template to create your own custom agents"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.upstash/context7/*"]
 filiere: tech
+model: "Claude Sonnet 4.6 (copilot)"
 ---
 # Agent: ExampleCustomAgent
 

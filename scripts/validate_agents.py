@@ -264,9 +264,15 @@ def validate_agent_file(
         # Some reference docs may only have a main title — that's acceptable
         pass
 
-    has_collab = bool(COLLAB_PATTERN.search(body)) or bool(COLLAB_INLINE_PATTERN.search(body))
-    if not has_collab:
-        result.warn("Missing collaboration/handoff section")
+    # Non-invocable agents (reference docs, lane profiles, protocols) don't have
+    # collaboration contracts — they are read by the orchestrator, not dispatched.
+    # user-invocable may be parsed as string 'false' or bool False from YAML.
+    _inv = frontmatter.get("user-invocable", True)
+    is_invocable = str(_inv).lower() != "false"
+    if is_invocable:
+        has_collab = bool(COLLAB_PATTERN.search(body)) or bool(COLLAB_INLINE_PATTERN.search(body))
+        if not has_collab:
+            result.warn("Missing collaboration/handoff section")
 
     # --- Cross-references ---
     mentioned = extract_mentioned_agents(body)
@@ -276,10 +282,11 @@ def validate_agent_file(
     # Handles devops-engineer vs dev-ops-engineer, mlops vs ml-ops, etc.
     normalized_known = {n.replace("-", ""): n for n in known_agent_names}
 
-    # Non-agent patterns to ignore (tools, technologies, CSS, etc.)
+    # Non-agent patterns to ignore (tools, technologies, CSS, HTML attrs, game terms, etc.)
     false_positive_prefixes = {
         "context7", "chrome-devtools", "devtools-mcp", "io-github",
         "get-library", "resolve-library", "library-docs", "library-id",
+        "prefers-reduced-motion", "data-testid", "blocking", "non-blocking",
     }
 
     for ref in sorted(mentioned):
@@ -331,6 +338,10 @@ def validate_plugin_tools(agents_dir: Path) -> list[ValidationResult]:
     if not plugins_dir.is_dir():
         return results
 
+    # Tools that are valid for plugins even if not used by any core agent
+    # (external APIs and platform-specific integrations)
+    PLUGIN_TOOL_ALLOWLIST: set[str] = {"replicate/*"}
+
     # Collect the union of all tools declared by core agents
     core_tools: set[str] = set()
     for core_file in sorted(agents_dir.glob("*.agent.md")):
@@ -355,7 +366,7 @@ def validate_plugin_tools(agents_dir: Path) -> list[ValidationResult]:
             continue
 
         plugin_tools = _parse_tools_list(fm["tools"])
-        unauthorized = plugin_tools - core_tools
+        unauthorized = plugin_tools - core_tools - PLUGIN_TOOL_ALLOWLIST
         if unauthorized:
             result = ValidationResult(filename=str(plugin_file.relative_to(agents_dir)))
             result.warn(
@@ -491,13 +502,12 @@ def validate_skill_references(
 # Config waiver validation
 # ---------------------------------------------------------------------------
 
-def validate_config_waivers() -> list[ValidationResult]:
+def validate_config_waivers(root_dir: Path) -> list[ValidationResult]:
     """Validate waivers in .renga.yml configuration file."""
     results: list[ValidationResult] = []
-    repo_root = Path(__file__).resolve().parent.parent
-    config_path = repo_root / ".renga.yml"
+    config_path = root_dir / ".renga.yml"
     if not config_path.exists():
-        config_path = repo_root / ".renga.example.yml"
+        config_path = root_dir / ".renga.example.yml"
     if not config_path.exists():
         log.info("No .renga.yml or .renga.example.yml found — waiver validation skipped")
         return results
@@ -587,6 +597,9 @@ def main(agents_dir: Path | None = None) -> int:
         # Resolve relative to the repo root (script is in scripts/)
         repo_root = Path(__file__).resolve().parent.parent
         agents_dir = repo_root / ".github" / "agents"
+    else:
+        # Derive repo root from the provided agents dir (.github/agents -> project root)
+        repo_root = agents_dir.resolve().parent.parent
 
     if not agents_dir.is_dir():
         log.error("❌ Agents directory not found: %s", agents_dir)
@@ -659,7 +672,6 @@ def main(agents_dir: Path | None = None) -> int:
     results.extend(plugin_results)
 
     # --- Skill validation ---
-    repo_root = Path(__file__).resolve().parent.parent
     skills_dir = repo_root / ".github" / "skills"
     if skills_dir.is_dir():
         skill_files = sorted(skills_dir.rglob("SKILL.md"))
@@ -700,7 +712,7 @@ def main(agents_dir: Path | None = None) -> int:
         results.extend(skill_ref_results)
 
     # --- Waiver validation ---
-    waiver_results = validate_config_waivers()
+    waiver_results = validate_config_waivers(repo_root)
     results.extend(waiver_results)
 
     total = len(results)

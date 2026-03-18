@@ -429,17 +429,8 @@ class TestValidateConfigWaivers(unittest.TestCase):
         config_path.write_text(yaml.dump(config), encoding="utf-8")
 
     def _call(self) -> None:
-        """Call validate_config_waivers with patched __file__ to use temp dir."""
-        import unittest.mock
-        # Create the expected directory structure: temp_dir/scripts/validate_agents.py
-        fake_scripts = self.temp_dir / "scripts"
-        fake_scripts.mkdir(exist_ok=True)
-        (fake_scripts / "validate_agents.py").touch()
-        # Patch __file__ so Path(__file__).resolve().parent.parent == temp_dir
-        with unittest.mock.patch.object(
-            validate_agents, "__file__", str(fake_scripts / "validate_agents.py")
-        ):
-            validate_agents.validate_config_waivers()
+        """Call validate_config_waivers with the temp dir as root."""
+        validate_agents.validate_config_waivers(self.temp_dir)
 
     def test_valid_waiver_no_warning(self):
         """A well-formed waiver emits no warnings about missing fields."""
