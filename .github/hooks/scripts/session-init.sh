@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set +e
 
-# Generate session ID
-SESSION_ID="${SESSION_ID:-$(python3 -c 'import uuid; print(uuid.uuid4())' 2>/dev/null || date +%s)}"
-export SESSION_ID
+SESSION_FILE=".copilot/reports/.current-session"
 
-# Create reports directory
-COPILOT_BASE="${COPILOT_DIR:-.copilot}"
-REPORT_DIR="${COPILOT_BASE}/reports/${SESSION_ID}"
+# Generate session ID
+SESSION_ID="$(python3 -c 'import uuid; print(uuid.uuid4())' 2>/dev/null || date +%s)"
+
+# Create reports directory and persist SESSION_ID to file (env vars don't survive across hook subprocess calls)
+REPORT_DIR=".copilot/reports/${SESSION_ID}"
 mkdir -p "$REPORT_DIR" 2>/dev/null || true
+echo "$SESSION_ID" > "$SESSION_FILE" 2>/dev/null || true
 
 # Initialize audit log
 touch "$REPORT_DIR/tool-audit.jsonl" 2>/dev/null || true
@@ -17,6 +18,7 @@ touch "$REPORT_DIR/tool-audit.jsonl" 2>/dev/null || true
 if ! command -v jq &>/dev/null; then
   echo "⚠️ jq not found — hook scripts will not function correctly." >&2
   echo "Install: brew install jq (macOS) or apt-get install jq (Linux)" >&2
+  exit 0
 fi
 
 # Log session start

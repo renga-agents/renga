@@ -3,12 +3,17 @@ set +e
 
 INPUT="$(cat 2>/dev/null || echo '{}')"
 
+# Debug mode: dump raw payload if .hook-debug exists in project root
+[[ -f ".hook-debug" ]] && echo "[quality-check] $INPUT" >> /tmp/renga-hook-debug.log
+
 if ! command -v jq &>/dev/null; then exit 0; fi
 
-AGENT="$(echo "$INPUT" | jq -r '.agent // "unknown"' 2>/dev/null || echo "unknown")"
-REASON="$(echo "$INPUT" | jq -r '.reason // "unknown"' 2>/dev/null || echo "unknown")"
+AGENT="$(echo "$INPUT" | jq -r '.agent // .agentName // .name // "unknown"' 2>/dev/null || echo "unknown")"
+REASON="$(echo "$INPUT" | jq -r '.reason // .stopReason // .stop_reason // "unknown"' 2>/dev/null || echo "unknown")"
 
-# Log agent stop event
+# Session directory (read from file — env vars don't survive across hook subprocess calls)
+SESSION_FILE=".copilot/reports/.current-session"
+SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
 REPORT_DIR=".copilot/reports/${SESSION_ID}"
 mkdir -p "$REPORT_DIR" 2>/dev/null || true

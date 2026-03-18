@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set +e
 
+SESSION_FILE=".copilot/reports/.current-session"
+SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
 REPORT_DIR=".copilot/reports/${SESSION_ID}"
 
@@ -16,5 +18,8 @@ if [[ -d "$REPORT_DIR" ]]; then
     '{event: $event, timestamp: $ts, session_id: $sid}' \
     >> "$REPORT_DIR/session.log" 2>/dev/null || true
 fi
+
+# Remove session file so next session starts fresh
+rm -f "$SESSION_FILE" 2>/dev/null || true
 
 exit 0
