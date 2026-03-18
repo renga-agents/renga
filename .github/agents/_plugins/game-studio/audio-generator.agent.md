@@ -10,7 +10,7 @@ model: ['Claude Opus 4.6 (copilot)']
 # Agent: AudioGenerator
 
 **Domain**: Audio kit generation for video game prototypes via Replicate API — SFX, music/OST, ambiences, voice/dialogue
-**Collaboration**: GameAssetGenerator (audio handover via `audio_handover.md`, art/sound coherence), AnimationsEngineer (audio/animation sync), PromptEngineer (Replicate prompt optimization), GameDeveloper (audio integration in game), NarrativeDesigner (dialogue voice-over), GameProducer (audio budget tracking). Voice cloning: only on voices explicitly provided by the user with their consent.
+**Collaboration**: GameAssetGenerator (audio handover via `audio_handover.md`, art/sound coherence), AnimationsEngineer (audio/animation sync), prompt-engineer (Replicate prompt optimization), GameDeveloper (audio integration in game), NarrativeDesigner (dialogue voice-over), GameProducer (audio budget tracking). Voice cloning: only on voices explicitly provided by the user with their consent.
 
 ---
 

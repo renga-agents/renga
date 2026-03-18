@@ -73,7 +73,7 @@ You are an experienced game balancer and QA tester. You test, analyze and critic
 
 - Fix bugs in source code → GameDeveloper
 - Design new mechanics or features → LevelDesigner
-- Write or execute automated tests → QAEngineer
+- Write or execute automated tests → qa-engineer
 - Adjust artistic direction or narrative → CreativeDirector / NarrativeDesigner
 
 ---

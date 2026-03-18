@@ -28,10 +28,10 @@
 ## File plan — wave 2
 | File | Owning agent |
 |---|---|
-| src/api/notifications.controller.ts | BackendDev |
-| src/api/notifications.service.ts | BackendDev |
-| migrations/20260307_add_notifications.sql | DatabaseEngineer |
-| tests/notifications.spec.ts | QAEngineer (wave 1) |
+| src/api/notifications.controller.ts | backend-dev |
+| src/api/notifications.service.ts | backend-dev |
+| migrations/20260307_add_notifications.sql | database-engineer |
+| tests/notifications.spec.ts | qa-engineer (wave 1) |
 
 ```
 
@@ -61,33 +61,33 @@ git commit -F /tmp/commit_msg.txt
 
 ---
 
-## ERR-007 — Validate QAEngineer scope before wave 2
+## ERR-007 — Validate qa-engineer scope before wave 2
 
-**Rule**: Before moving to wave 2, verify the files created by QAEngineer. Only `*.spec.ts`, test infrastructure files such as `package.json`, `vitest.config.ts`, `tsconfig.json`, and pure interfaces are allowed.
+**Rule**: Before moving to wave 2, verify the files created by qa-engineer. Only `*.spec.ts`, test infrastructure files such as `package.json`, `vitest.config.ts`, `tsconfig.json`, and pure interfaces are allowed.
 
 **Forbidden files in wave 1 (TDD red)**: services, controllers, repositories, DTOs, modules, guards, decorators, entities, filters.
 
-**Action on violation**: Remove those files from the commit and annotate the scratchpad before starting wave 2. QAEngineer must create only **tests** and **interfaces/contracts**, never the implementation.
+**Action on violation**: Remove those files from the commit and annotate the scratchpad before starting wave 2. qa-engineer must create only **tests** and **interfaces/contracts**, never the implementation.
 
-**Why**: If QAEngineer writes the implementation, BackendDev in wave 2 will either face a conflict or overwrite it, and TDD loses its meaning because the tests are no longer red once the implementation already exists.
+**Why**: If qa-engineer writes the implementation, backend-dev in wave 2 will either face a conflict or overwrite it, and TDD loses its meaning because the tests are no longer red once the implementation already exists.
 
 ---
 
-## ERR-008 — SecurityEngineer → QAEngineer brief
+## ERR-008 — security-engineer → qa-engineer brief
 
-**Rule**: If SecurityEngineer is in wave 0 and QAEngineer is in wave 1, include the following text in the QAEngineer prompt, word for word, before the source material:
+**Rule**: If security-engineer is in wave 0 and qa-engineer is in wave 1, include the following text in the qa-engineer prompt, word for word, before the source material:
 
-> `P0 security constraints extracted from the SecurityEngineer report (wave 0) that your tests must honor: [summary of P0 points: expected sourcing of sensitive data (e.g. userId from JWT sub, not from request body), required auth, scopes]. These constraints are part of the endpoint contract — your tests must validate them and guide the implementation design. If you do not test them, BackendDev will not implement them.`
+> `P0 security constraints extracted from the security-engineer report (wave 0) that your tests must honor: [summary of P0 points: expected sourcing of sensitive data (e.g. userId from JWT sub, not from request body), required auth, scopes]. These constraints are part of the endpoint contract — your tests must validate them and guide the implementation design. If you do not test them, backend-dev will not implement them.`
 
-**Why**: Without this brief, QAEngineer writes purely functional tests and ignores security constraints. BackendDev therefore does not implement them because in TDD, no test means no implementation. The result is a functional but vulnerable endpoint.
+**Why**: Without this brief, qa-engineer writes purely functional tests and ignores security constraints. backend-dev therefore does not implement them because in TDD, no test means no implementation. The result is a functional but vulnerable endpoint.
 
-**Mandatory sequencing**: SecurityEngineer must be in **wave 0** if QAEngineer is scheduled. Running both in parallel is forbidden because the security brief must exist before the tests are written.
+**Mandatory sequencing**: security-engineer must be in **wave 0** if qa-engineer is scheduled. Running both in parallel is forbidden because the security brief must exist before the tests are written.
 
 ---
 
 ## ERR-013 — Wave 0 agents: read-only, no file creation
 
-**Rule**: Read-only agents in wave 0 such as SecurityEngineer, CodeReviewer, SoftwareArchitect, APIDesigner, ProxyPO, LegalCompliance, and others **must not create files**. Their artifacts such as `openapi.yaml`, ADR drafts, schemas, and so on must be included directly in the text returned by `runSubagent`.
+**Rule**: Read-only agents in wave 0 such as security-engineer, code-reviewer, software-architect, api-designer, proxy-po, legal-compliance, and others **must not create files**. Their artifacts such as `openapi.yaml`, ADR drafts, schemas, and so on must be included directly in the text returned by `runSubagent`.
 
 **Materialization**: The orchestrator decides whether those artifacts should become actual files and, if so, assigns that work to an implementation agent in wave 2.
 
@@ -118,7 +118,7 @@ git commit -F /tmp/commit_msg.txt
 
 These minimums are **floors**, not ceilings. A well-structured 15-agent DAG is better than an overloaded 4-agent DAG.
 
-**Systematic quality agents**: CodeReviewer and/or TechWriter in the final wave for any task that produces code or documentation.
+**Systematic quality agents**: code-reviewer and/or tech-writer in the final wave for any task that produces code or documentation.
 
 **Warning signs**:
 
@@ -148,8 +148,8 @@ These minimums are **floors**, not ceilings. A well-structured 15-agent DAG is b
 
 **Process**:
 
-1. SoftwareArchitect produces a comparison matrix
-2. The human decides. SoftwareArchitect **does not decide**
+1. software-architect produces a comparison matrix
+2. The human decides. software-architect **does not decide**
 3. Any task where the technology choice defines the nature of the deliverable is automatically classified at least `L3`
 
 **Escalation criterion**: The migration cost exceeds one person-week if the wrong choice is made.
@@ -195,7 +195,7 @@ git commit -m "feat(game): add player with sprites and animation"
 
 ## ERR-019 — Cyclical review→fix loop
 
-**Rule**: The review wave does not end after a single pass. The `CodeReviewer → DevAgent fix → CodeReviewer re-review` cycle repeats until CodeReviewer issues an **Approve** verdict with zero P0/blocking issues.
+**Rule**: The review wave does not end after a single pass. The `code-reviewer → DevAgent fix → code-reviewer re-review` cycle repeats until code-reviewer issues an **Approve** verdict with zero P0/blocking issues.
 
 **Limits**:
 
@@ -212,13 +212,13 @@ git commit -m "feat(game): add player with sprites and animation"
 **Mandatory agents**:
 
 - CreativeDirector for art direction
-- UXUIDesigner for UI consistency
-- PerformanceEngineer for frame rate and memory
+- ux-ui-designer for UI consistency
+- performance-engineer for frame rate and memory
 
 **Recommended agents**:
 
-- AccessibilityEngineer if the audience is broad
-- FrontendDev for cross-browser compatibility
+- accessibility-engineer if the audience is broad
+- frontend-dev for cross-browser compatibility
 
 **Additional requirement**: The DAG must include at least one wave dedicated to **visual review** using annotated screenshots, graphic consistency checks, and polish.
 
@@ -274,60 +274,60 @@ git commit -m "feat(game): add player with sprites and animation"
 ```text
 
 TECHNICAL TRACK (18 core agents):
-│ BackendDev         — API, business logic, services
-│ FrontendDev        — UI, components, CSS, web performance
-│ FullstackDev       — end-to-end feature, integration
-│ MobileDev          — React Native, Flutter, mobile apps
-│ QAEngineer         — tests, TDD, coverage, test strategy
-│ CodeReviewer       — code review, maintainability, patterns
+│ backend-dev         — API, business logic, services
+│ frontend-dev        — UI, components, CSS, web performance
+│ fullstack-dev       — end-to-end feature, integration
+│ mobile-dev          — React Native, Flutter, mobile apps
+│ qa-engineer         — tests, TDD, coverage, test strategy
+│ code-reviewer       — code review, maintainability, patterns
 │ Debugger           — bug investigation, root cause, reproduction
-│ APIDesigner        — API contracts, OpenAPI, DX
-│ SoftwareArchitect  — patterns, ADR, domain decomposition
-│ PerformanceEngineer— profiling, SLO/SLI, load
-│ DevOpsEngineer     — CI/CD, containers, pipelines
-│ IncidentCommander  — incident management, crisis coordination
-│ InfraArchitect     — IaC, network topology, VPS
-│ CloudEngineer      — cloud, provisioning, HA/DR
-│ PlatformEngineer   — internal DX, self-service, abstractions
-│ ObservabilityEngineer— OTel, tracing, alerting, dashboards
-│ ChaosEngineer      — resilience, failure injection
-│ SecurityEngineer   — OWASP, hardening, audit (primary: GOVERNANCE)
+│ api-designer        — API contracts, OpenAPI, DX
+│ software-architect  — patterns, ADR, domain decomposition
+│ performance-engineer— profiling, SLO/SLI, load
+│ devops-engineer     — CI/CD, containers, pipelines
+│ incident-commander  — incident management, crisis coordination
+│ infra-architect     — IaC, network topology, VPS
+│ cloud-engineer      — cloud, provisioning, HA/DR
+│ platform-engineer   — internal DX, self-service, abstractions
+│ observability-engineer— OTel, tracing, alerting, dashboards
+│ chaos-engineer      — resilience, failure injection
+│ security-engineer   — OWASP, hardening, audit (primary: GOVERNANCE)
 
 PRODUCT TRACK (11 core agents):
-│ ProxyPO            — user stories, backlog, acceptance criteria
-│ ProductManager     — cross-functional steering, MVP, feature roadmap
-│ ProductAnalytics   — adoption, funnel, retention, metrics
-│ ProductStrategist  — vision, OKRs, roadmap, product-market fit
-│ UXUIDesigner       — mockups, journeys, design system
-│ UXWriter           — microcopy, onboarding, tone of voice
-│ GoToMarketSpecialist— pricing, launch, segmentation
-│ ScrumMaster        — facilitation, velocity, continuous improvement
-│ TechWriter         — technical and user documentation
-│ BusinessAnalyst    — business processes, BPMN, gap analysis
-│ ChangeManagement   — change management (primary: GOVERNANCE)
+│ proxy-po            — user stories, backlog, acceptance criteria
+│ product-manager     — cross-functional steering, MVP, feature roadmap
+│ product-analytics   — adoption, funnel, retention, metrics
+│ product-strategist  — vision, OKRs, roadmap, product-market fit
+│ ux-ui-designer       — mockups, journeys, design system
+│ ux-writer           — microcopy, onboarding, tone of voice
+│ go-to-market-specialist— pricing, launch, segmentation
+│ scrum-master        — facilitation, velocity, continuous improvement
+│ tech-writer         — technical and user documentation
+│ business-analyst    — business processes, BPMN, gap analysis
+│ change-management   — change management (primary: GOVERNANCE)
 
 DATA/AI TRACK (8 core agents):
-│ DataScientist      — analysis, modeling, feature engineering
-│ MLEngineer         — training, optimization, model deployment
-│ MLOpsEngineer      — ML pipeline, model serving, monitoring
-│ DataEngineer       — ETL/ELT, data quality, data pipelines
-│ AIResearchScientist— state of the art, experimentation
-│ AIProductManager   — AI product strategy, AI roadmap
-│ DatabaseEngineer   — modeling, optimization, DB migrations
-│ PromptEngineer     — system prompts, evaluation, red teaming
+│ data-scientist      — analysis, modeling, feature engineering
+│ ml-engineer         — training, optimization, model deployment
+│ mlops-engineer      — ML pipeline, model serving, monitoring
+│ data-engineer       — ETL/ELT, data quality, data pipelines
+│ ai-research-scientist— state of the art, experimentation
+│ ai-product-manager   — AI product strategy, AI roadmap
+│ database-engineer   — modeling, optimization, DB migrations
+│ prompt-engineer     — system prompts, evaluation, red teaming
 
 GOVERNANCE TRACK (8 core agents):
-│ SecurityEngineer   — OWASP, hardening, audit (secondary: TECHNICAL)
-│ LegalCompliance    — GDPR, AI Act, OSS licenses, Terms of Service
-│ AIEthicsGovernance — bias, XAI, AI red teaming, model cards
-│ RiskManager        — risk mapping, DPIA, contingency
-│ FinOpsEngineer     — cloud costs, budgeting, rightsizing
-│ ArchitectureReviewer— cross-functional review, consistency, tech debt
-│ AccessibilityEngineer— WCAG, ARIA, RGAA (secondary: TECHNICAL)
-│ ProjectController  — PMO, budget tracking, dependencies
+│ security-engineer   — OWASP, hardening, audit (secondary: TECHNICAL)
+│ legal-compliance    — GDPR, AI Act, OSS licenses, Terms of Service
+│ ai-ethics-governance — bias, XAI, AI red teaming, model cards
+│ risk-manager        — risk mapping, DPIA, contingency
+│ finops-engineer     — cloud costs, budgeting, rightsizing
+│ architecture-reviewer— cross-functional review, consistency, tech debt
+│ accessibility-engineer— WCAG, ARIA, RGAA (secondary: TECHNICAL)
+│ project-controller  — PMO, budget tracking, dependencies
 
 OUT-OF-TRACK AGENTS (1 core agent):
-│ GitExpert          — Git strategy, conflicts, workflows
+│ git-expert          — Git strategy, conflicts, workflows
 
 PLUGIN AGENTS — game-studio (9 agents, under _plugins/game-studio/):
 │ AnimationsEngineer — WebGL, Three.js, GSAP, canvas, shaders, games
@@ -341,13 +341,13 @@ PLUGIN AGENTS — game-studio (9 agents, under _plugins/game-studio/):
 │ GameProducer       — game production, planning, milestones
 
 DUAL AFFILIATIONS:
-│ SecurityEngineer      — primary: GOVERNANCE, secondary: TECHNICAL
-│ AccessibilityEngineer — primary: GOVERNANCE, secondary: TECHNICAL
-│ ChangeManagement      — primary: GOVERNANCE, secondary: PRODUCT
+│ security-engineer      — primary: GOVERNANCE, secondary: TECHNICAL
+│ accessibility-engineer — primary: GOVERNANCE, secondary: TECHNICAL
+│ change-management      — primary: GOVERNANCE, secondary: PRODUCT
 
 ```
 
-For each agent **excluded** from the DAG, note a one-word justification such as `MobileDev — out of scope` or `FinOpsEngineer — no cloud`. For detailed matrices and recommended combinations, consult the track profiles: `orchestrator-tech.agent.md`, `orchestrator-product.agent.md`, `orchestrator-data.agent.md`, and `orchestrator-governance.agent.md`.
+For each agent **excluded** from the DAG, note a one-word justification such as `mobile-dev — out of scope` or `finops-engineer — no cloud`. For detailed matrices and recommended combinations, consult the track profiles: `orchestrator-tech.agent.md`, `orchestrator-product.agent.md`, `orchestrator-data.agent.md`, and `orchestrator-governance.agent.md`.
 
 ---
 

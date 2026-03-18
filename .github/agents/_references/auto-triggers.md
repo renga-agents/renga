@@ -9,24 +9,24 @@
 
 | Detected condition | Added agents | Mode |
 | --- | --- | --- |
-| Personal data **being changed**: creation, modification, exposure, or transmission of `userId`, `email`, `phone`, `ip`, or `address` to new storage or a third party. _Read-only internal display does not trigger this, except for sensitive data such as health, finance, biometrics, or third-party exposure._ | LegalCompliance + RiskManager | parallel |
-| New AI processing, scoring, or automated decision-making | AIEthicsGovernance | sequential (before deployment) |
-| Hosting or country change | LegalCompliance + RiskManager | parallel |
-| AI model deployment or modification | AIEthicsGovernance + MLOpsEngineer | parallel |
-| Delivery affecting non-technical users | ChangeManagement | sequential (before release) |
-| Cloud architecture or sizing decision | FinOpsEngineer | parallel (with CloudEngineer) |
-| New exposure surface (endpoint, auth, third-party integration) | SecurityEngineer | **wave 0** if QAEngineer is planned (ERR-008) |
-| New endpoint or public API contract | APIDesigner + SoftwareArchitect | wave 0 |
-| New module without a product spec | ProxyPO | wave 0 |
-| New table or database migration | DatabaseEngineer | parallel wave 1 |
-| New service or SLO change | ObservabilityEngineer | parallel |
+| Personal data **being changed**: creation, modification, exposure, or transmission of `userId`, `email`, `phone`, `ip`, or `address` to new storage or a third party. _Read-only internal display does not trigger this, except for sensitive data such as health, finance, biometrics, or third-party exposure._ | legal-compliance + risk-manager | parallel |
+| New AI processing, scoring, or automated decision-making | ai-ethics-governance | sequential (before deployment) |
+| Hosting or country change | legal-compliance + risk-manager | parallel |
+| AI model deployment or modification | ai-ethics-governance + mlops-engineer | parallel |
+| Delivery affecting non-technical users | change-management | sequential (before release) |
+| Cloud architecture or sizing decision | finops-engineer | parallel (with cloud-engineer) |
+| New exposure surface (endpoint, auth, third-party integration) | security-engineer | **wave 0** if qa-engineer is planned (ERR-008) |
+| New endpoint or public API contract | api-designer + software-architect | wave 0 |
+| New module without a product spec | proxy-po | wave 0 |
+| New table or database migration | database-engineer | parallel wave 1 |
+| New service or SLO change | observability-engineer | parallel |
 | Added or modified code using a third-party library, not simple reading of existing code | context7 MCP | before generation |
 | Critical validation MCP tool unavailable (ERR-017) | Orchestrator: notify the user and propose either waiting or explicitly accepting the risk | **blocking** |
 | Hook `preToolUse` DENY (`pre-tool-security.sh` exit 1) | Any agent - tool blocked by the Copilot runtime, non-bypassable | Automatic |
 
 > **Note**: `preToolUse` hooks act as a runtime safety net. They operate in defense-in-depth with `.instructions.md` files and the automatic triggers above. A DENY hook is **final**: the Copilot runtime blocks the tool with no agent override possible.
 
-> **Proportionality principle**: automatic triggering must remain proportional to the **actual risk**, defined by mutation × exposure × sensitivity, not by the mere presence of an identifier in code. Reading a `userId` to display a profile does not carry the same risk as sending an `email` to a third-party service or storing a `phone` in a new table. The orchestrator evaluates the **effective risk** before involving compliance agents. In a SaaS codebase where nearly every file touches a `userId`, this principle prevents LegalCompliance from triggering on every trivial task.
+> **Proportionality principle**: automatic triggering must remain proportional to the **actual risk**, defined by mutation × exposure × sensitivity, not by the mere presence of an identifier in code. Reading a `userId` to display a profile does not carry the same risk as sending an `email` to a third-party service or storing a `phone` in a new table. The orchestrator evaluates the **effective risk** before involving compliance agents. In a SaaS codebase where nearly every file touches a `userId`, this principle prevents legal-compliance from triggering on every trivial task.
 
 ---
 
@@ -37,7 +37,7 @@
 | Potentially exposed secret | Security incident |
 | Sensitive or regulated personal data | Legal risk |
 | Irreversible decision, rollback > 2 person-weeks | Strategic risk |
-| SecurityEngineer ↔ LegalCompliance disagreement | Cross-functional risk |
+| security-engineer ↔ legal-compliance disagreement | Cross-functional risk |
 | High-risk or ambiguous AI system in production | Stronger governance |
 | Unexpected budget impact | Financial risk |
 | Framework choice with viable alternatives, migration > 1 person-week (ERR-016) | Irreversible architecture |

@@ -10,7 +10,7 @@ model: ['Claude Opus 4.6 (copilot)']
 # Agent: AnimationsEngineer
 
 **Domain**: WebGL, GLSL shaders, Three.js, R3F/Drei, GSAP, Spline, OGL, canvas 2D, post-processing, Phaser 3, 2D video game, Babylon.js, 3D video game, rendering performance
-**Collaboration**: FrontendDev (React integration), PerformanceEngineer (GPU/CPU budgets), UXUIDesigner (motion design, timeline), QAEngineer (visual smoke tests), CodeReviewer (quality, dispose), Game work (technical level design, physics tuning)
+**Collaboration**: frontend-dev (React integration), performance-engineer (GPU/CPU budgets), ux-ui-designer (motion design, timeline), qa-engineer (visual smoke tests), code-reviewer (quality, dispose), Game work (technical level design, physics tuning)
 
 ---
 
@@ -130,10 +130,10 @@ For each animation or rendering feature, follow this reasoning process in order:
 
 ## Do Not Involve
 
-- Integrate standard React components without 3D rendering or canvas → FrontendDev
-- Design UX journeys or conceptual motion design → UXUIDesigner
+- Integrate standard React components without 3D rendering or canvas → frontend-dev
+- Design UX journeys or conceptual motion design → ux-ui-designer
 - Generate visual assets (sprites, textures, illustrations) → GameAssetGenerator
-- Diagnose backend or network performance issues → PerformanceEngineer
+- Diagnose backend or network performance issues → performance-engineer
 - Design level architecture or game design → LevelDesigner
 
 ---
@@ -206,7 +206,7 @@ For each animation or rendering feature, follow this reasoning process in order:
 - **Fixed decisions**: retained technical regime (showcase/immersive/game 2D/game 3D), library choice, FPS/draw call budget
 - **Open questions**: mobile rendering not tested in real conditions, total bundle size impact
 - **Artifacts to reuse**: canvas/WebGL components, shaders, scene configurations, `prefers-reduced-motion` fallback
-- **Expected next action**: React integration by FrontendDev, performance validation by PerformanceEngineer
+- **Expected next action**: React integration by frontend-dev, performance validation by performance-engineer
 
 ### Secondary handoff to `creative-director` or `ux-ui-designer`
 

@@ -13,33 +13,33 @@ tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.
 
 ## Agents Using This Profile
 
-- AccessibilityEngineer
-- AIResearchScientist
-- APIDesigner
-- ArchitectureReviewer
-- BackendDev
-- CloudEngineer
-- ChaosEngineer
-- CodeReviewer
-- DatabaseEngineer
-- DataEngineer
-- DataScientist
+- accessibility-engineer
+- ai-research-scientist
+- api-designer
+- architecture-reviewer
+- backend-dev
+- cloud-engineer
+- chaos-engineer
+- code-reviewer
+- database-engineer
+- data-engineer
+- data-scientist
 - Debugger
-- DevOpsEngineer
-- FrontendDev
-- FullstackDev
-- GitExpert
-- InfraArchitect
-- MLEngineer
-- MLOpsEngineer
-- MobileDev
-- ObservabilityEngineer
-- PerformanceEngineer
-- PlatformEngineer
-- PromptEngineer _(extended technical profile: has `context7` for LLM API verification)_
-- QAEngineer
-- SecurityEngineer
-- SoftwareArchitect
+- devops-engineer
+- frontend-dev
+- fullstack-dev
+- git-expert
+- infra-architect
+- ml-engineer
+- mlops-engineer
+- mobile-dev
+- observability-engineer
+- performance-engineer
+- platform-engineer
+- prompt-engineer _(extended technical profile: has `context7` for LLM API verification)_
+- qa-engineer
+- security-engineer
+- software-architect
 
 ## Rationale
 

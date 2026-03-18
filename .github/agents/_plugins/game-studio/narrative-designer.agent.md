@@ -67,7 +67,7 @@ You are an experienced narrative designer. You write the scenario, in-game texts
 - Define artistic direction or visual style → CreativeDirector
 - Implement texts in the game code → GameDeveloper
 - Generate voices or audio assets for dialogues → AudioGenerator
-- Write user or technical documentation → TechWriter
+- Write user or technical documentation → tech-writer
 
 ---
 

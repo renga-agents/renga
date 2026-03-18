@@ -34,8 +34,8 @@ VS Code Copilot Agent allows the orchestrator (depth 0) to invoke a sub-agent vi
 | Level | Example | Actual invocation? |
 | --- | --- | --- |
 | depth 0 | orchestrator | n/a - root agent |
-| depth 1 | orchestrator → BackendDev, QAEngineer, SecurityEngineer... | **Yes** - effective `runSubagent` |
-| depth 2 | BackendDev → another agent | **No** - not supported |
+| depth 1 | orchestrator → backend-dev, qa-engineer, security-engineer... | **Yes** - effective `runSubagent` |
+| depth 2 | backend-dev → another agent | **No** - not supported |
 
 Consequence: the orchestrator dispatches specialist agents **directly** (depth 1). No intermediate layer can itself invoke sub-agents.
 
@@ -43,7 +43,7 @@ Consequence: the orchestrator dispatches specialist agents **directly** (depth 1
 
 The notation `‖` expresses **logical independence** AND corresponds to **actually simultaneous execution**: VS Code Copilot Agent opens N agent sessions in parallel when `runSubagent` calls are placed in the **same tool-call block**.
 
-Risk to manage: parallel agents **share the same workspace filesystem**. If BackendDev creates `service.ts` while QAEngineer tries to read it, QAEngineer may read an incomplete state. Mitigation: publish a file plan in the scratchpad before dispatch (see ERR-004).
+Risk to manage: parallel agents **share the same workspace filesystem**. If backend-dev creates `service.ts` while qa-engineer tries to read it, qa-engineer may read an incomplete state. Mitigation: publish a file plan in the scratchpad before dispatch (see ERR-004).
 
 ### Background terminals: lifecycle is mandatory
 
@@ -108,7 +108,7 @@ Use sequential mode when **one agent's output is a required input** for the next
 
 ```text
 
-SoftwareArchitect ──→ BackendDev ──→ QAEngineer
+software-architect ──→ backend-dev ──→ qa-engineer
 
 ```
 
@@ -118,7 +118,7 @@ The architecture must be validated before development starts. The final specs mu
 
 ```text
 
-APIDesigner ──→ BackendDev ──→ TechWriter
+api-designer ──→ backend-dev ──→ tech-writer
 
 ```
 
@@ -128,7 +128,7 @@ The API contract is defined first, implemented next, documented last.
 
 ```text
 
-DatabaseEngineer ──→ BackendDev ──→ QAEngineer ──→ DevOpsEngineer
+database-engineer ──→ backend-dev ──→ qa-engineer ──→ devops-engineer
 
 ```
 
@@ -156,27 +156,27 @@ Use parallel mode when **agents do not create write/read dependencies between ea
 
 | Agent profile | Writes to the workspace? | Rule |
 | --- | --- | --- |
-| SecurityEngineer, LegalCompliance, RiskManager, CodeReviewer, ArchitectureReviewer, AIEthicsGovernance | **No** - read-only | Safe parallel with any other agent |
-| TechWriter, DataScientist (analysis), PerformanceEngineer (audit) | **No** - read-only | Safe parallel |
-| BackendDev, FrontendDev, DatabaseEngineer, DataEngineer | **Yes** - distinct zones | Safe parallel **if** zones differ + file plan published in the scratchpad |
-| QAEngineer mode **TDD** (wave 1) | **Yes** - test files only | Safe parallel with read-only agents; sequential **before** BackendDev |
-| QAEngineer mode **TAD** (after implementation) | **Yes** - tests derived from the code | Sequential **after** the implementation agent - otherwise race condition |
+| security-engineer, legal-compliance, risk-manager, code-reviewer, architecture-reviewer, ai-ethics-governance | **No** - read-only | Safe parallel with any other agent |
+| tech-writer, data-scientist (analysis), performance-engineer (audit) | **No** - read-only | Safe parallel |
+| backend-dev, frontend-dev, database-engineer, data-engineer | **Yes** - distinct zones | Safe parallel **if** zones differ + file plan published in the scratchpad |
+| qa-engineer mode **TDD** (wave 1) | **Yes** - test files only | Safe parallel with read-only agents; sequential **before** backend-dev |
+| qa-engineer mode **TAD** (after implementation) | **Yes** - tests derived from the code | Sequential **after** the implementation agent - otherwise race condition |
 
 ### Common patterns:
 
 ```text
 
 ✅ Safe parallel
-[SecurityEngineer ‖ LegalCompliance ‖ PerformanceEngineer]   ← read-only
-[BackendDev(src/api/) ‖ DatabaseEngineer(src/migrations/)]  ← distinct zones
-[SecurityEngineer ‖ QAEngineer(TDD)]                        ← QA writes tests, SecEng reads
+[security-engineer ‖ legal-compliance ‖ performance-engineer]   ← read-only
+[backend-dev(src/api/) ‖ database-engineer(src/migrations/)]  ← distinct zones
+[security-engineer ‖ qa-engineer(TDD)]                        ← QA writes tests, SecEng reads
 
 ❌ Race condition → make sequential
-[BackendDev ‖ QAEngineer(TAD)]  ← QAEngineer would read incomplete code
-[BackendDev ‖ CodeReviewer]     ← CodeReviewer would read incomplete code
+[backend-dev ‖ qa-engineer(TAD)]  ← qa-engineer would read incomplete code
+[backend-dev ‖ code-reviewer]     ← code-reviewer would read incomplete code
 
 ✅ Mandatory TDD (feature with new code)
-QAEngineer(red) ──→ BackendDev(green) ──→ CodeReviewer
+qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
 
 ```
 
@@ -214,14 +214,14 @@ QAEngineer(red) ──→ BackendDev(green) ──→ CodeReviewer
 
 ```text
 
- ┌─ SoftwareArchitect(architecture consistency, patterns)
- ├─ SecurityEngineer(attack vectors, OWASP)
- ├─ PerformanceEngineer(SLO impact, scalability)
- ├─ LegalCompliance(GDPR implications, personal data)
- ├─ UXUIDesigner(mockups, user journey)
- ├─ AccessibilityEngineer(WCAG, ARIA, colors)
- ├─ APIDesigner(API contract, DX)
- └─ ProxyPO(acceptance criteria, business value)
+ ┌─ software-architect(architecture consistency, patterns)
+ ├─ security-engineer(attack vectors, OWASP)
+ ├─ performance-engineer(SLO impact, scalability)
+ ├─ legal-compliance(GDPR implications, personal data)
+ ├─ ux-ui-designer(mockups, user journey)
+ ├─ accessibility-engineer(WCAG, ARIA, colors)
+ ├─ api-designer(API contract, DX)
+ └─ proxy-po(acceptance criteria, business value)
  ──→ Orchestrator SYNTHESIS (8 consolidated reports)
 
 ```
@@ -230,11 +230,11 @@ QAEngineer(red) ──→ BackendDev(green) ──→ CodeReviewer
 
 ```text
 
- ┌─ CodeReviewer(quality, patterns, maintainability)
- ├─ SecurityEngineer(vulnerabilities, OWASP)
- ├─ PerformanceEngineer(algorithmic complexity, N+1 queries)
- ├─ AccessibilityEngineer(WCAG, HTML semantics)
- └─ TechWriter(inline documentation quality)
+ ┌─ code-reviewer(quality, patterns, maintainability)
+ ├─ security-engineer(vulnerabilities, OWASP)
+ ├─ performance-engineer(algorithmic complexity, N+1 queries)
+ ├─ accessibility-engineer(WCAG, HTML semantics)
+ └─ tech-writer(inline documentation quality)
  ──→ SYNTHESIS: consolidated review report
 
 ```
@@ -243,12 +243,12 @@ QAEngineer(red) ──→ BackendDev(green) ──→ CodeReviewer
 
 ```text
 
- ┌─ TechWriter(user documentation)
- ├─ ChangeManagement(communication plan)
- ├─ GoToMarketSpecialist(messaging, segmentation)
- ├─ UXWriter(microcopy, onboarding)
- ├─ ProxyPO(business release notes)
- └─ DevOpsEngineer(deployment plan, rollback)
+ ┌─ tech-writer(user documentation)
+ ├─ change-management(communication plan)
+ ├─ go-to-market-specialist(messaging, segmentation)
+ ├─ ux-writer(microcopy, onboarding)
+ ├─ proxy-po(business release notes)
+ └─ devops-engineer(deployment plan, rollback)
  ──→ SYNTHESIS: complete launch kit
 
 ```
@@ -257,10 +257,10 @@ QAEngineer(red) ──→ BackendDev(green) ──→ CodeReviewer
 
 ```text
 
- ┌─ BackendDev(src/api/ - endpoint + service)
- ├─ DatabaseEngineer(src/migrations/ - SQL migration)
- ├─ FrontendDev(src/components/ - UI component)
- └─ QAEngineer(tests/ - TDD red tests)
+ ┌─ backend-dev(src/api/ - endpoint + service)
+ ├─ database-engineer(src/migrations/ - SQL migration)
+ ├─ frontend-dev(src/components/ - UI component)
+ └─ qa-engineer(tests/ - TDD red tests)
  ──→ SYNTHESIS: inter-zone consistency check
 
 ```
@@ -314,18 +314,18 @@ Full reference: `agents/consensus-protocol.agent.md`
 Context: 50M items, 90% reads, 10% writes, full-text search required
 
 Wave 1:
- ┌─ DatabaseEngineer→ PostgreSQL + pg_trgm + partitioning
- ├─ SoftwareArchitect→ PostgreSQL + Elasticsearch sidecar
- ├─ PerformanceEngineer→ MongoDB + Atlas Search
- └─ BackendDev→ PostgreSQL + Redis cache layer
+ ┌─ database-engineer→ PostgreSQL + pg_trgm + partitioning
+ ├─ software-architect→ PostgreSQL + Elasticsearch sidecar
+ ├─ performance-engineer→ MongoDB + Atlas Search
+ └─ backend-dev→ PostgreSQL + Redis cache layer
 
 Synthesis: Convergence 3/4 on PostgreSQL, divergence on search strategy
 
 Wave 2:
- ┌─ DatabaseEngineer→ Maintained - pg_trgm is sufficient up to 100M
- ├─ SoftwareArchitect→ Revised - pg_trgm at first, Elasticsearch if latency > 200ms
- ├─ PerformanceEngineer→ Revised → PostgreSQL + pg_trgm, benchmark at 3 months
- └─ BackendDev→ Maintained - PostgreSQL with Redis cache for hot queries
+ ┌─ database-engineer→ Maintained - pg_trgm is sufficient up to 100M
+ ├─ software-architect→ Revised - pg_trgm at first, Elasticsearch if latency > 200ms
+ ├─ performance-engineer→ Revised → PostgreSQL + pg_trgm, benchmark at 3 months
+ └─ backend-dev→ Maintained - PostgreSQL with Redis cache for hot queries
 
 VERDICT: PostgreSQL with pg_trgm, benchmark at 3 months, switch threshold to Elasticsearch defined
 Consensus level: Strong (4/4 converge on PostgreSQL after Wave 2)
@@ -375,10 +375,10 @@ The MOE dispatches specialists **directly** (depth=1) by reading the matrices in
 
 ```text
 
- ┌─ Tech stream : { MLEngineer ⟳ BackendDev } - API integration and latency
- ├─ Product stream : { AIProductManager ⟳ ProxyPO } - roadmap and user stories
- ├─ Data stream : { DataScientist ⟳ MLOpsEngineer } - pipelines and model monitoring
- └─ Governance stream : { LegalCompliance ⟳ AIEthicsGovernance } - AI Act compliance
+ ┌─ Tech stream : { ml-engineer ⟳ backend-dev } - API integration and latency
+ ├─ Product stream : { ai-product-manager ⟳ proxy-po } - roadmap and user stories
+ ├─ Data stream : { data-scientist ⟳ mlops-engineer } - pipelines and model monitoring
+ └─ Governance stream : { legal-compliance ⟳ ai-ethics-governance } - AI Act compliance
  ──→ MOE SYNTHESIS → VERDICT : "Adopt LangGraph as a pilot, AI Act compliance verified"
 
 ```
@@ -425,9 +425,9 @@ Modes can be combined in the same DAG. The orchestrator organizes the phases:
 
 ```text
 
-SoftwareArchitect ──→ [BackendDev ‖ DatabaseEngineer ‖ FrontendDev]
- ──→ {SecurityEngineer ⟳ PerformanceEngineer ⟳ LegalCompliance} CONSENSUS
- ──→ QAEngineer ──→ DevOpsEngineer ──→ TechWriter
+software-architect ──→ [backend-dev ‖ database-engineer ‖ frontend-dev]
+ ──→ {security-engineer ⟳ performance-engineer ⟳ legal-compliance} CONSENSUS
+ ──→ qa-engineer ──→ devops-engineer ──→ tech-writer
 
 ```
 

@@ -90,7 +90,7 @@ Isolation between simultaneous orchestrators is ensured through `scratchpad-<slu
 **Instruction to include verbatim in the prompt of every agent that writes source files**:
 > `All your source files must be created inside the worktree directory: <worktree_path>/. Prefix all absolute paths with this worktree_path. Do not write anything in the root workspace.`
 
-**Exception**: read-only agents in wave 0, such as SecurityEngineer, CodeReviewer, SoftwareArchitect, APIDesigner, ProxyPO, and LegalCompliance, do not need that prefix. They read the main workspace for existing context and do not create files. See ERR-013.
+**Exception**: read-only agents in wave 0, such as security-engineer, code-reviewer, software-architect, api-designer, proxy-po, and legal-compliance, do not need that prefix. They read the main workspace for existing context and do not create files. See ERR-013.
 
 ---
 

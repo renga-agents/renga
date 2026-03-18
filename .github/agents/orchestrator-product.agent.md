@@ -7,7 +7,7 @@ model: ['Claude Opus 4.6 (copilot)']
 ---
 # Lane Profile: Product
 
-**Available agents**: ProxyPO, ProductManager, ProductAnalytics, ProductStrategist, UXUIDesigner, UXWriter, GoToMarketSpecialist, ScrumMaster, TechWriter, BusinessAnalyst, ChangeManagement
+**Available agents**: proxy-po, product-manager, product-analytics, product-strategist, ux-ui-designer, ux-writer, go-to-market-specialist, scrum-master, tech-writer, business-analyst, change-management
 
 **Plugin agents (game-studio)**: CreativeDirector, LevelDesigner, NarrativeDesigner, GameProducer — *available with the `game-studio` plugin in `_plugins/game-studio/`*
 
@@ -18,9 +18,9 @@ model: ['Claude Opus 4.6 (copilot)']
 | Situation | Orchestrator action |
 | --- | --- |
 | De-prioritization decision with business impact above two weeks | Direct orchestrator arbitration |
-| Disagreement between ProductStrategist and ProxyPO on priority | Involve ArchitectureReviewer or trigger consensus |
-| Feature impacts GDPR or the AI Act | Involve LegalCompliance from the governance lane |
-| Technical feasibility estimate required | Involve BackendDev or SoftwareArchitect |
+| Disagreement between product-strategist and proxy-po on priority | Involve architecture-reviewer or trigger consensus |
+| Feature impacts GDPR or the AI Act | Involve legal-compliance from the governance lane |
+| Technical feasibility estimate required | Involve backend-dev or software-architect |
 
 ---
 
@@ -28,18 +28,18 @@ model: ['Claude Opus 4.6 (copilot)']
 
 | Task | Primary agents | Secondary agents | Recommended cross-lane agents |
 | --- | --- | --- | --- |
-| MVP definition for a feature | ProductManager | ProxyPO (stories), ProductStrategist (vision), UXUIDesigner (wireframes) | SoftwareArchitect (feasibility), SecurityEngineer (personal data) |
-| Cross-functional feature steering | ProductManager | ProxyPO (backlog), UXUIDesigner (journey), TechWriter (delivery) | BackendDev/FrontendDev, QAEngineer, GoToMarketSpecialist |
-| Adoption or funnel analysis | ProductAnalytics | ProductManager (context), ProductStrategist (roadmap reading) | DataScientist (advanced analysis), DataEngineer (tracking), GoToMarketSpecialist |
-| Visual identity or brand design | CreativeDirector | UXUIDesigner (system rollout), UXWriter (brand voice) | FrontendDev (implementation), AnimationsEngineer (motion design) |
-| Creative brief for campaign or launch | CreativeDirector | GoToMarketSpecialist (messaging), UXWriter (copywriting) | TechWriter (assets), ChangeManagement |
-| Product visual-consistency audit | CreativeDirector | UXUIDesigner (components), AnimationsEngineer (motion) | AccessibilityEngineer (WCAG), PerformanceEngineer (asset weight) |
-| Feature launch and go-to-market | GoToMarketSpecialist | ProductManager (readiness), UXWriter (copywriting), TechWriter (release notes) | DevOpsEngineer (deployment), ChangeManagement, ProductAnalytics |
-| Product retrospective | ScrumMaster | ProxyPO (backlog adjustment) | ProjectController (budget), ArchitectureReviewer |
-| User documentation | TechWriter | UXWriter (microcopy) | AccessibilityEngineer (accessible docs), FrontendDev (screenshots) |
-| Business process analysis | BusinessAnalyst | ProxyPO (backlog impact) | SoftwareArchitect (translation into architecture), DataEngineer (pipelines) |
-| Change management | ChangeManagement | ScrumMaster, TechWriter | ProxyPO, LegalCompliance if GDPR is involved |
-| OKR and roadmap strategy | ProductStrategist | ProductAnalytics (metrics), ProxyPO (stories translation) | SoftwareArchitect (feasibility), FinOpsEngineer (budget) |
+| MVP definition for a feature | product-manager | proxy-po (stories), product-strategist (vision), ux-ui-designer (wireframes) | software-architect (feasibility), security-engineer (personal data) |
+| Cross-functional feature steering | product-manager | proxy-po (backlog), ux-ui-designer (journey), tech-writer (delivery) | backend-dev/frontend-dev, qa-engineer, go-to-market-specialist |
+| Adoption or funnel analysis | product-analytics | product-manager (context), product-strategist (roadmap reading) | data-scientist (advanced analysis), data-engineer (tracking), go-to-market-specialist |
+| Visual identity or brand design | CreativeDirector | ux-ui-designer (system rollout), ux-writer (brand voice) | frontend-dev (implementation), AnimationsEngineer (motion design) |
+| Creative brief for campaign or launch | CreativeDirector | go-to-market-specialist (messaging), ux-writer (copywriting) | tech-writer (assets), change-management |
+| Product visual-consistency audit | CreativeDirector | ux-ui-designer (components), AnimationsEngineer (motion) | accessibility-engineer (WCAG), performance-engineer (asset weight) |
+| Feature launch and go-to-market | go-to-market-specialist | product-manager (readiness), ux-writer (copywriting), tech-writer (release notes) | devops-engineer (deployment), change-management, product-analytics |
+| Product retrospective | scrum-master | proxy-po (backlog adjustment) | project-controller (budget), architecture-reviewer |
+| User documentation | tech-writer | ux-writer (microcopy) | accessibility-engineer (accessible docs), frontend-dev (screenshots) |
+| Business process analysis | business-analyst | proxy-po (backlog impact) | software-architect (translation into architecture), data-engineer (pipelines) |
+| Change management | change-management | scrum-master, tech-writer | proxy-po, legal-compliance if GDPR is involved |
+| OKR and roadmap strategy | product-strategist | product-analytics (metrics), proxy-po (stories translation) | software-architect (feasibility), finops-engineer (budget) |
 
 ---
 
@@ -49,15 +49,15 @@ When a product task should trigger agents from other lanes:
 
 | Signal detected in the task | Lane | Agents to include |
 | --- | --- | --- |
-| Feature requires an API or code implementation | Tech | SoftwareArchitect + BackendDev/FrontendDev |
-| Story involves personal data | Governance | LegalCompliance + SecurityEngineer |
-| Feature includes scoring, AI, or recommendation logic | Data | AIProductManager + MLEngineer |
-| UX redesign impacts accessibility | Governance | AccessibilityEngineer |
-| Launch impacts cloud budget | Governance | FinOpsEngineer |
-| Change affects CI/CD | Tech | DevOpsEngineer |
-| Feature must be steered across multiple teams | Product | ProductManager |
-| Decision relies on adoption, funnel, or retention signals | Product | ProductAnalytics |
-| Prompt or agent workflow must change | Data | PromptEngineer |
+| Feature requires an API or code implementation | Tech | software-architect + backend-dev/frontend-dev |
+| Story involves personal data | Governance | legal-compliance + security-engineer |
+| Feature includes scoring, AI, or recommendation logic | Data | ai-product-manager + ml-engineer |
+| UX redesign impacts accessibility | Governance | accessibility-engineer |
+| Launch impacts cloud budget | Governance | finops-engineer |
+| Change affects CI/CD | Tech | devops-engineer |
+| Feature must be steered across multiple teams | Product | product-manager |
+| Decision relies on adoption, funnel, or retention signals | Product | product-analytics |
+| Prompt or agent workflow must change | Data | prompt-engineer |
 
 ---
 

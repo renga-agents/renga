@@ -55,7 +55,7 @@ Each agent must structure its handoff according to this template. Only the **spe
 
 ---
 
-## Concrete Example: BackendDev -> QAEngineer
+## Concrete Example: backend-dev -> qa-engineer
 
 ```markdown
 

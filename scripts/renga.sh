@@ -104,6 +104,13 @@ install_hooks() {
   fi
 
   ok "$hook_count fichier(s) hooks installé(s)"
+
+  # Check jq dependency (required by hook scripts)
+  if ! command -v jq &>/dev/null; then
+    warn "jq non trouvé — les hooks de sécurité seront désactivés jusqu'à son installation."
+    warn "  → brew install jq   (macOS)"
+    warn "  → apt-get install jq  (Linux)"
+  fi
 }
 
 ensure_gitignore_reports() {

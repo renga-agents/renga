@@ -119,11 +119,11 @@ Assign each sub-task to the optimal agent, organize into waves, publish the file
 - Require a final **handoff block** (`For`, `Fixed decisions`, `Open questions`, `Artifacts`, `Next action`)
 - Dispatch **before** any reading of business artifacts
 - **`worktree_path`**: prefix writer-agent prompts with it. Read-only agents -> no file creation (ERR-013)
-- **Security brief (ERR-008)**: inject P0 SecurityEngineer constraints into the QAEngineer prompt
+- **Security brief (ERR-008)**: inject P0 security-engineer constraints into the qa-engineer prompt
 - **Report persistence (ERR-025)**: path `.copilot/reports/<slug>/wave-<N>-<agent-name>.md`
-- **Scope validation (ERR-007)**: before wave 2, QAEngineer = tests + pure interfaces only
+- **Scope validation (ERR-007)**: before wave 2, qa-engineer = tests + pure interfaces only
 - **Parallelism**: all independent `runSubagent` calls in the same tool-call block (8-12 agents is normal in a reading wave)
-- **Inter-agent handoff**: Product (ProductStrategist->PM->ProxyPO->devs) | Analytics (PM<->ProductAnalytics<->ProductStrategist) | Incident (IC->Obs->Debugger->DevOps->IC)
+- **Inter-agent handoff**: Product (product-strategist->product-manager->proxy-po->devs) | Analytics (product-manager<->product-analytics<->product-strategist) | Incident (incident-commander->observability-engineer->debugger->devops-engineer->incident-commander)
 - **`kill_terminal`** + closure: see `_references/worktree-lifecycle.md`
 
 ### 5. QUALITY CONTROL

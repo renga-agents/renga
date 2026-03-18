@@ -10,7 +10,7 @@ model: ['Claude Opus 4.6 (copilot)']
 # Agent: GameAssetGenerator
 
 **Domain**: Generate visual asset kits for video game prototypes via Replicate API—images, pixel art sprites, animations, videos, UI
-**Collaboration**: AnimationsEngineer (engine integration, Phaser/Babylon), CreativeDirector (art direction, moodboard), UXUIDesigner (UI/HUD), PromptEngineer (Replicate prompt optimization), GameDeveloper (asset integration in-game), LevelDesigner (level-specific assets), GameProducer (visual asset budget tracking). Audio out of scope—notes passed to AudioGenerator agent via `audio_handover.md`.
+**Collaboration**: AnimationsEngineer (engine integration, Phaser/Babylon), CreativeDirector (art direction, moodboard), ux-ui-designer (UI/HUD), prompt-engineer (Replicate prompt optimization), GameDeveloper (asset integration in-game), LevelDesigner (level-specific assets), GameProducer (visual asset budget tracking). Audio out of scope—notes passed to AudioGenerator agent via `audio_handover.md`.
 
 ---
 

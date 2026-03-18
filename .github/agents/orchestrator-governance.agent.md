@@ -7,7 +7,7 @@ model: ['Claude Opus 4.6 (copilot)']
 ---
 # Lane Profile: Governance
 
-**Available agents**: SecurityEngineer, LegalCompliance, AIEthicsGovernance, RiskManager, FinOpsEngineer, ChangeManagement, ArchitectureReviewer, AccessibilityEngineer, ProjectController
+**Available agents**: security-engineer, legal-compliance, ai-ethics-governance, risk-manager, finops-engineer, change-management, architecture-reviewer, accessibility-engineer, project-controller
 
 > **Usage**: This profile is **read by the orchestrator** during planning. It is not invocable itself. It defines the proactive mandatory triggers and veto criteria that the orchestrator applies directly.
 
@@ -15,20 +15,20 @@ model: ['Claude Opus 4.6 (copilot)']
 
 | Event detected in the task | Orchestrator action |
 | --- | --- |
-| Feature involving personal data (`userId`, `email`, `phone`, `ip`, `address`, communication content, session identifier) | Involve LegalCompliance (DPIA) + SecurityEngineer |
-| AI model moved to production | Involve AIEthicsGovernance (model card) + RiskManager |
-| Cloud budget overrun above 20% | Involve FinOpsEngineer |
-| Major architecture change | Involve ArchitectureReviewer + SecurityEngineer |
-| Public-facing UI or UX feature | Involve AccessibilityEngineer (WCAG audit) |
+| Feature involving personal data (`userId`, `email`, `phone`, `ip`, `address`, communication content, session identifier) | Involve legal-compliance (DPIA) + security-engineer |
+| AI model moved to production | Involve ai-ethics-governance (model card) + risk-manager |
+| Cloud budget overrun above 20% | Involve finops-engineer |
+| Major architecture change | Involve architecture-reviewer + security-engineer |
+| Public-facing UI or UX feature | Involve accessibility-engineer (WCAG audit) |
 
 ## Blocking Alerts and Vetoes Applied by the Orchestrator
 
 | Alert | Priority | Immediate orchestrator action |
 | --- | --- | --- |
-| Critical CVE in a dependency | P0 | Block merge, involve SecurityEngineer, patch in under 4 hours |
-| Personal-data leak | P0 | Full stop, involve LegalCompliance, CNIL notification in under 72 hours |
-| AI Act non-compliance detected | P1 | Suspend feature, involve LegalCompliance + AIEthicsGovernance, remediate in under 48 hours |
-| Risk score above the critical threshold | P1 | Involve RiskManager, trigger multi-agent consensus if impact exceeds two weeks |
+| Critical CVE in a dependency | P0 | Block merge, involve security-engineer, patch in under 4 hours |
+| Personal-data leak | P0 | Full stop, involve legal-compliance, CNIL notification in under 72 hours |
+| AI Act non-compliance detected | P1 | Suspend feature, involve legal-compliance + ai-ethics-governance, remediate in under 48 hours |
+| Risk score above the critical threshold | P1 | Involve risk-manager, trigger multi-agent consensus if impact exceeds two weeks |
 
 ---
 
@@ -36,14 +36,14 @@ model: ['Claude Opus 4.6 (copilot)']
 
 | Task | Primary agents | Secondary agents | Recommended cross-lane agents |
 | --- | --- | --- | --- |
-| Application security audit | SecurityEngineer | ArchitectureReviewer | BackendDev (fixes), QAEngineer (tests for the fixes), CodeReviewer |
-| DPIA for personal data | LegalCompliance | RiskManager | BackendDev (protection implementation), DatabaseEngineer (anonymization) |
-| Model card and AI red teaming | AIEthicsGovernance | RiskManager | MLEngineer (model adjustments), PromptEngineer (robustness), DataScientist (bias metrics) |
-| FinOps audit | FinOpsEngineer | — | CloudEngineer (rightsizing), DevOpsEngineer (CI optimization), InfraArchitect |
-| Cross-cutting architecture review | ArchitectureReviewer | SecurityEngineer | SoftwareArchitect, PerformanceEngineer, DatabaseEngineer |
-| Accessibility compliance (RGAA/WCAG) | AccessibilityEngineer | — | FrontendDev (fixes), UXUIDesigner (journey redesign) |
-| Change-management plan | ChangeManagement | ScrumMaster (via orchestrator) | ProxyPO, TechWriter (training material), ProductStrategist |
-| Global risk mapping | RiskManager | LegalCompliance, AIEthicsGovernance | SoftwareArchitect, DevOpsEngineer, ProjectController |
+| Application security audit | security-engineer | architecture-reviewer | backend-dev (fixes), qa-engineer (tests for the fixes), code-reviewer |
+| DPIA for personal data | legal-compliance | risk-manager | backend-dev (protection implementation), database-engineer (anonymization) |
+| Model card and AI red teaming | ai-ethics-governance | risk-manager | ml-engineer (model adjustments), prompt-engineer (robustness), data-scientist (bias metrics) |
+| FinOps audit | finops-engineer | — | cloud-engineer (rightsizing), devops-engineer (CI optimization), infra-architect |
+| Cross-cutting architecture review | architecture-reviewer | security-engineer | software-architect, performance-engineer, database-engineer |
+| Accessibility compliance (RGAA/WCAG) | accessibility-engineer | — | frontend-dev (fixes), ux-ui-designer (journey redesign) |
+| Change-management plan | change-management | scrum-master (via orchestrator) | proxy-po, tech-writer (training material), product-strategist |
+| Global risk mapping | risk-manager | legal-compliance, ai-ethics-governance | software-architect, devops-engineer, project-controller |
 
 ---
 
@@ -53,12 +53,12 @@ When a governance task should trigger agents from other lanes:
 
 | Signal detected in the task | Lane | Agents to include |
 | --- | --- | --- |
-| Audit identifies vulnerabilities that must be fixed | Tech | BackendDev/FrontendDev + QAEngineer |
-| DPIA reveals data that must be anonymized | Data | DatabaseEngineer + DataEngineer |
-| Accessibility non-compliance detected | Tech + Product | FrontendDev + UXUIDesigner |
-| Model card reveals bias that must be corrected | Data | MLEngineer + DataScientist |
-| FinOps audit recommends rightsizing | Tech | CloudEngineer + DevOpsEngineer |
-| Risk requires a roadmap change | Product | ProductStrategist + ProxyPO |
+| Audit identifies vulnerabilities that must be fixed | Tech | backend-dev/frontend-dev + qa-engineer |
+| DPIA reveals data that must be anonymized | Data | database-engineer + data-engineer |
+| Accessibility non-compliance detected | Tech + Product | frontend-dev + ux-ui-designer |
+| Model card reveals bias that must be corrected | Data | ml-engineer + data-scientist |
+| FinOps audit recommends rightsizing | Tech | cloud-engineer + devops-engineer |
+| Risk requires a roadmap change | Product | product-strategist + proxy-po |
 
 ---
 

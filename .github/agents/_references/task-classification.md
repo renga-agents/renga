@@ -41,7 +41,7 @@ Full checklist in `_references/error-catalog.md §ERR-024`
 
 ### Visual Deliverables (ERR-020)
 
-Visual L3+ work requires CreativeDirector + UXUIDesigner + PerformanceEngineer
+Visual L3+ work requires CreativeDirector + ux-ui-designer + performance-engineer
 
 ---
 
@@ -67,7 +67,7 @@ Check `execution-modes.agent.md §Filesystem Matrix` before parallel dispatch.
 
 ### Default TDD
 
-QAEngineer in wave 1, red tests, then BackendDev or FrontendDev in wave 2, green implementation. Never parallelize QAEngineer and BackendDev.
+qa-engineer in wave 1, red tests, then backend-dev or frontend-dev in wave 2, green implementation. Never parallelize qa-engineer and backend-dev.
 
 ### Commit Checkpoint (ERR-015)
 
@@ -117,9 +117,9 @@ These thresholds are **indicative**. They exist to detect blockers, not to inter
 | Wave type | Warning threshold | Escalation threshold | Action on breach |
 | --- | --- | --- | --- |
 | Read-only wave, exploration or research | 10 min | 20 min | Check available MCP tools, reduce scope |
-| Source-writing wave, BackendDev, FrontendDev, and similar agents | 30 min | 60 min | Check progress, split the subtask |
+| Source-writing wave, backend-dev, frontend-dev, and similar agents | 30 min | 60 min | Check progress, split the subtask |
 | Consensus wave, 3 or more agents disagreeing | 15 min | 30 min | HITL escalation if no convergence |
-| Review or validation wave, QAEngineer, CodeReviewer | 20 min | 40 min | Retry with a smaller scope |
+| Review or validation wave, qa-engineer, code-reviewer | 20 min | 40 min | Retry with a smaller scope |
 | Final wave, synthesis and logging | 10 min | 20 min | HITL escalation |
 
 > **Rule**: if a wave exceeds the escalation threshold without producing output, the orchestrator must notify the human instead of continuing silently. Record that in the scratchpad.

@@ -77,7 +77,7 @@ On a multi-wave task, a commit must be produced at the end of each wave that gen
 
 ### TDD Red Checkpoint (Special Case)
 
-The prompt sent to QAEngineer must include this instruction:
+The prompt sent to qa-engineer must include this instruction:
 > `At the end of your mission, commit the specs plus empty stubs with: git -C <worktree_path> commit -m 'test(<scope>): add failing tests (TDD red)'. This commit must exist before wave 2 starts.`
 
 The red commit IS the wave 1 commit in a TDD DAG.

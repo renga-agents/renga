@@ -144,7 +144,7 @@ The orchestrator **must** escalate to a human if:
 - The decision is irreversible AND both sides' arguments have High confidence
 - The disagreement concerns a regulatory topic (AI Act, GDPR) - the orchestrator has no authority
 - The financial impact exceeds an estimated 10,000 EUR
-- The security risk is classified as critical by the SecurityEngineer
+- The security risk is classified as critical by the security-engineer
 
 ---
 
@@ -217,7 +217,7 @@ If arbitration is needed after Wave 3:
 
 ## Cross-stream consensus
 
-When the disagreement opposes agents from **two different streams** (example: SecurityEngineer vs ProductManager), the standard 3-wave protocol is not enough: the evaluation criteria diverge fundamentally and none of the conflicting agents has authority over the other's domain.
+When the disagreement opposes agents from **two different streams** (example: security-engineer vs product-manager), the standard 3-wave protocol is not enough: the evaluation criteria diverge fundamentally and none of the conflicting agents has authority over the other's domain.
 
 > This protocol covers conflicts involving **exactly 2 streams**. For conflicts affecting ≥ 3 streams simultaneously, see the [Super-wave](#super-wave---cross-stream-cross-disciplinary-consensus) section.
 
@@ -250,10 +250,10 @@ A veto must be **justified in writing** in the consensus verdict. An unjustified
 
 | Conflict | Streams | Recommended resolution |
 | --- | --- | --- |
-| SecurityEngineer vs ProductManager (risky feature) | Governance vs Product | Stream orchestrator vote - governance has P0 veto right |
-| DataScientist vs BackendDev (ML architecture) | Data vs Tech | Vote + SoftwareArchitect arbitration in case of tie |
-| LegalCompliance vs GTMSpecialist (launch) | Governance vs Product | Mandatory HITL escalation |
-| FrontendDev vs UXDesigner (UX technical tradeoff) | Tech vs Product | Stream orchestrator vote - escalate in case of tie |
+| security-engineer vs product-manager (risky feature) | Governance vs Product | Stream orchestrator vote - governance has P0 veto right |
+| data-scientist vs backend-dev (ML architecture) | Data vs Tech | Vote + software-architect arbitration in case of tie |
+| legal-compliance vs GTMSpecialist (launch) | Governance vs Product | Mandatory HITL escalation |
+| frontend-dev vs UXDesigner (UX technical tradeoff) | Tech vs Product | Stream orchestrator vote - escalate in case of tie |
 
 ---
 

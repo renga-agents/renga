@@ -22,7 +22,7 @@ Each subagent creates its own report file and returns a structured summary with 
 
 - **Satisfactory** -> accept and move to the next step
 - **Insufficient** -> send back with precise criticism. Maximum 2 retries, then record it in `error-patterns.md` and choose an alternative approach
-- **Review loop (ERR-019)**: cycle CodeReviewer -> DevAgent fix -> re-review until Approve with 0 P0 items. Maximum 3 iterations, then human escalation
+- **Review loop (ERR-019)**: cycle code-reviewer -> DevAgent fix -> re-review until Approve with 0 P0 items. Maximum 3 iterations, then human escalation
 - **Disagreement** -> consensus via `consensus-protocol.agent.md`
 - **Blocker** -> human escalation with a structured summary
 - **Browser validation (ERR-021)**: every interactive deliverable MUST be validated with Playwright before closure

@@ -7,7 +7,7 @@ model: ['Claude Opus 4.6 (copilot)']
 ---
 # Lane Profile: Data/AI
 
-**Available agents**: DataScientist, MLEngineer, MLOpsEngineer, DataEngineer, AIResearchScientist, AIProductManager, DatabaseEngineer, PromptEngineer
+**Available agents**: data-scientist, ml-engineer, mlops-engineer, data-engineer, ai-research-scientist, ai-product-manager, database-engineer, prompt-engineer
 
 > **Usage**: This profile is **read by the orchestrator** during planning to select agents and define dispatch order. It is not invocable itself. The orchestrator dispatches the specialists directly at depth 1. It also carries the project-level Data/AI conventions.
 
@@ -15,9 +15,9 @@ model: ['Claude Opus 4.6 (copilot)']
 
 | Situation | Orchestrator action |
 | --- | --- |
-| Personal-data violation detected | Immediate stop, involve LegalCompliance + RiskManager |
-| Model bias detected | Involve AIEthicsGovernance first |
-| Production data infrastructure failure | Involve MLOpsEngineer + DevOpsEngineer |
+| Personal-data violation detected | Immediate stop, involve legal-compliance + risk-manager |
+| Model bias detected | Involve ai-ethics-governance first |
+| Production data infrastructure failure | Involve mlops-engineer + devops-engineer |
 | Feature engineering blocked by missing data | Direct orchestrator arbitration on prioritization |
 
 ---
@@ -26,17 +26,17 @@ model: ['Claude Opus 4.6 (copilot)']
 
 | Task | Sequential agents | Parallel agents | Recommended cross-lane agents |
 | --- | --- | --- | --- |
-| ETL pipeline | DataEngineer | DatabaseEngineer (schema) | SecurityEngineer (sensitive data), LegalCompliance (GDPR) |
-| Data exploration | DataScientist | DataEngineer (data quality) | LegalCompliance (personal data), RiskManager |
-| Model training | MLEngineer | DataScientist (features) | AIEthicsGovernance (bias), PerformanceEngineer (latency) |
-| ML production rollout | MLOpsEngineer | MLEngineer (packaging), ObservabilityEngineer (monitoring) | DevOpsEngineer (CI/CD), AIEthicsGovernance (model card), SecurityEngineer |
-| AI architecture research | AIResearchScientist | MLEngineer (feasibility) | SoftwareArchitect, PerformanceEngineer |
-| AI product strategy | AIProductManager | DataScientist (metrics) | ProductStrategist (roadmap), ProxyPO (stories) |
-| Adoption analysis for a data/AI feature | DataScientist | ProductAnalytics (product reading) | ProductManager, DataEngineer (tracking) |
-| Vector database optimization | DatabaseEngineer | DataEngineer | PerformanceEngineer (benchmarks), SoftwareArchitect |
-| System or agent prompt design/optimization | PromptEngineer | MLEngineer (model context) | QAEngineer (test suites), SecurityEngineer (injection) |
-| Prompt quality evaluation with PromptFoo or RAGAS | PromptEngineer | QAEngineer (test suites) | AIEthicsGovernance (bias), TechWriter (documentation) |
-| LLM red teaming and robustness audit | PromptEngineer | SecurityEngineer (injection), MLEngineer | AIEthicsGovernance, RiskManager |
+| ETL pipeline | data-engineer | database-engineer (schema) | security-engineer (sensitive data), legal-compliance (GDPR) |
+| Data exploration | data-scientist | data-engineer (data quality) | legal-compliance (personal data), risk-manager |
+| Model training | ml-engineer | data-scientist (features) | ai-ethics-governance (bias), performance-engineer (latency) |
+| ML production rollout | mlops-engineer | ml-engineer (packaging), observability-engineer (monitoring) | devops-engineer (CI/CD), ai-ethics-governance (model card), security-engineer |
+| AI architecture research | ai-research-scientist | ml-engineer (feasibility) | software-architect, performance-engineer |
+| AI product strategy | ai-product-manager | data-scientist (metrics) | product-strategist (roadmap), proxy-po (stories) |
+| Adoption analysis for a data/AI feature | data-scientist | product-analytics (product reading) | product-manager, data-engineer (tracking) |
+| Vector database optimization | database-engineer | data-engineer | performance-engineer (benchmarks), software-architect |
+| System or agent prompt design/optimization | prompt-engineer | ml-engineer (model context) | qa-engineer (test suites), security-engineer (injection) |
+| Prompt quality evaluation with PromptFoo or RAGAS | prompt-engineer | qa-engineer (test suites) | ai-ethics-governance (bias), tech-writer (documentation) |
+| LLM red teaming and robustness audit | prompt-engineer | security-engineer (injection), ml-engineer | ai-ethics-governance, risk-manager |
 
 ---
 
@@ -46,21 +46,21 @@ When a Data/AI task should trigger agents from other lanes:
 
 | Signal detected in the task | Lane | Agents to include |
 | --- | --- | --- |
-| Model deployed to production | Governance | AIEthicsGovernance (model card) + RiskManager |
-| Personal data in the pipeline | Governance | LegalCompliance + SecurityEngineer |
-| API or endpoint needed to serve the model | Tech | APIDesigner + BackendDev + DevOpsEngineer |
-| ML monitoring dashboard | Tech | FrontendDev + ObservabilityEngineer |
-| User-visible scoring or recommendation | Product | UXUIDesigner + ProxyPO |
-| Feature requires adoption KPIs or funnel analysis | Product | ProductAnalytics + ProductManager |
-| Expensive data pipeline using GPU or storage | Governance | FinOpsEngineer |
-| System prompt exposed to end users | Governance | SecurityEngineer (injection) |
+| Model deployed to production | Governance | ai-ethics-governance (model card) + risk-manager |
+| Personal data in the pipeline | Governance | legal-compliance + security-engineer |
+| API or endpoint needed to serve the model | Tech | api-designer + backend-dev + devops-engineer |
+| ML monitoring dashboard | Tech | frontend-dev + observability-engineer |
+| User-visible scoring or recommendation | Product | ux-ui-designer + proxy-po |
+| Feature requires adoption KPIs or funnel analysis | Product | product-analytics + product-manager |
+| Expensive data pipeline using GPU or storage | Governance | finops-engineer |
+| System prompt exposed to end users | Governance | security-engineer (injection) |
 
 ---
 
 ## Project Data/AI Conventions
 
 - Every ML experiment is tracked in MLflow or an equivalent tool
-- Every deployed model has a **model card** managed with AIEthicsGovernance
+- Every deployed model has a **model card** managed with ai-ethics-governance
 - Sensitive data never travels in plaintext inside prompts
 - Embeddings are stored in `agent_memory.observations` through pgvector according to the project's relevant internal ADR
 

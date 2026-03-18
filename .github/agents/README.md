@@ -47,7 +47,7 @@ La syntaxe est la même pour tous les agents invocables :
 ### Conventions de nommage
 
 - Les noms d'agents invocables utilisent le **kebab-case** en minuscules.
-- La forme attendue est `@backend-dev:` et non `@BackendDev:` ou `@BACKEND_DEV:`.
+- La forme attendue est `@backend-dev:` et non `@backend-dev:` ou `@BACKEND_DEV:`.
 - Les noms de fichiers suivent la même convention : `backend-dev.agent.md`, `security-engineer.agent.md`, etc.
 
 ### Choisir le bon point d'entrée
@@ -246,9 +246,9 @@ Le cerveau opérationnel de l'équipe. À invoquer pour toute tâche nécessitan
 | Agent | Rôle | Fichier |
 | --- | --- | --- |
 | **orchestrator** | Tour de contrôle de l'équipe — décompose la tâche, construit le DAG d'exécution (séquentiel / parallèle / vagues), dispatche les agents, contrôle la qualité des outputs et journalise les décisions dans `.github/logs/decisions-<slug>.md` | [orchestrator.agent.md](orchestrator.agent.md) |
-| **orchestrator-tech** *(référence)* | Matrice de dispatch filière technique — aide l'orchestrateur à choisir entre BackendDev, FrontendDev, QAEngineer, DevOps, etc. | [orchestrator-tech.agent.md](orchestrator-tech.agent.md) |
-| **orchestrator-product** *(référence)* | Matrice de dispatch filière produit — ProxyPO, UXUIDesigner, BusinessAnalyst, GTM | [orchestrator-product.agent.md](orchestrator-product.agent.md) |
-| **orchestrator-data** *(référence)* | Matrice de dispatch filière Data/AI — DataScientist, MLEngineer, MLOps, DataEngineer | [orchestrator-data.agent.md](orchestrator-data.agent.md) |
+| **orchestrator-tech** *(référence)* | Matrice de dispatch filière technique — aide l'orchestrateur à choisir entre backend-dev, frontend-dev, qa-engineer, DevOps, etc. | [orchestrator-tech.agent.md](orchestrator-tech.agent.md) |
+| **orchestrator-product** *(référence)* | Matrice de dispatch filière produit — proxy-po, ux-ui-designer, business-analyst, GTM | [orchestrator-product.agent.md](orchestrator-product.agent.md) |
+| **orchestrator-data** *(référence)* | Matrice de dispatch filière Data/AI — data-scientist, ml-engineer, MLOps, data-engineer | [orchestrator-data.agent.md](orchestrator-data.agent.md) |
 | **orchestrator-governance** *(référence)* | Triggers proactifs + critères de VETO pour la sécurité, la conformité, l'éthique IA et la gestion des risques | [orchestrator-governance.agent.md](orchestrator-governance.agent.md) |
 
 ---
@@ -290,7 +290,7 @@ Agents qui testent, auditent et améliorent le code existant. Ils n'écrivent pa
 | **qa-engineer** | Stratégie de test (TDD/BDD), écriture des specs Vitest/Playwright, couverture de code, automatisation des tests E2E. En mode TDD, il est en **wave 1** (tests `red`) avant le développeur (wave 2). | [qa-engineer.agent.md](qa-engineer.agent.md) |
 | **debugger** | Investigation de bugs complexes : analyse root cause, reproduction minimale, lecture de stack traces, isolation du comportement inattendu. Escalade avec un rapport structuré. | [debugger.agent.md](debugger.agent.md) |
 | **code-reviewer** | Revue de code ciblée : maintenabilité, respect des conventions, complexité cyclomatique, dette technique, cohérence des nommages. Produit des commentaires actionnables. | [code-reviewer.agent.md](code-reviewer.agent.md) |
-| **security-engineer** | Audit OWASP : injection, broken auth, exposition de données, SSRF, misconfiguration. Toujours placé en **wave 0** quand QAEngineer est prévu — ses contraintes P0 alimentent les specs de test. | [security-engineer.agent.md](security-engineer.agent.md) |
+| **security-engineer** | Audit OWASP : injection, broken auth, exposition de données, SSRF, misconfiguration. Toujours placé en **wave 0** quand qa-engineer est prévu — ses contraintes P0 alimentent les specs de test. | [security-engineer.agent.md](security-engineer.agent.md) |
 | **performance-engineer** | Profiling, optimisation des goulots d'étranglement, définition des SLO/SLI, tests de charge, identification des régressions de performance. | [performance-engineer.agent.md](performance-engineer.agent.md) |
 | **accessibility-engineer** | Conformité WCAG 2.2, ARIA, RGAA. Tests avec screen readers réels (NVDA, VoiceOver, JAWS). Audit des couleurs, du focus, des labels, des animations. | [accessibility-engineer.agent.md](accessibility-engineer.agent.md) |
 
@@ -412,8 +412,8 @@ Les profils définissent les **droits d'outils** accordés par catégorie d'agen
 
 | Profil | Agents concernés | Fichier |
 | --- | --- | --- |
-| **advisory** | Agents de conseil sans exécution de code (AIEthicsGovernance, BusinessAnalyst, ChangeManagement, FinOpsEngineer, GoToMarketSpecialist, LegalCompliance, ProductStrategist) — accès lecture, recherche web et délégation uniquement | [_profiles/advisory.profile.md](_profiles/advisory.profile.md) |
-| **technical** | Agents d'implémentation technique (BackendDev, FrontendDev, CloudEngineer, DatabaseEngineer, DataEngineer, etc.) — accès complet lecture/écriture/exécution + context7 | [_profiles/technical.profile.md](_profiles/technical.profile.md) |
+| **advisory** | Agents de conseil sans exécution de code (ai-ethics-governance, business-analyst, change-management, finops-engineer, go-to-market-specialist, legal-compliance, product-strategist) — accès lecture, recherche web et délégation uniquement | [_profiles/advisory.profile.md](_profiles/advisory.profile.md) |
+| **technical** | Agents d'implémentation technique (backend-dev, frontend-dev, cloud-engineer, database-engineer, data-engineer, etc.) — accès complet lecture/écriture/exécution + context7 | [_profiles/technical.profile.md](_profiles/technical.profile.md) |
 
 ---
 

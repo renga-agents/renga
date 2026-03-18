@@ -12,26 +12,26 @@
 ```text
 
 Wave 0 (parallel — 8 read-only agents):
- [SoftwareArchitect ‖ APIDesigner ‖ ProxyPO ‖ LegalCompliance
-  ‖ SecurityEngineer ‖ UXUIDesigner ‖ PerformanceEngineer ‖ AccessibilityEngineer]
+ [software-architect ‖ api-designer ‖ proxy-po ‖ legal-compliance
+  ‖ security-engineer ‖ ux-ui-designer ‖ performance-engineer ‖ accessibility-engineer]
            ↓
-⚠️ Summary: extract P0 constraints from SecurityEngineer + acceptance criteria from ProxyPO
+⚠️ Summary: extract P0 constraints from security-engineer + acceptance criteria from proxy-po
            ↓
 Wave 1 (safe parallel — separate write zones):
- [QAEngineer(tests/ — TDD red) ‖ DatabaseEngineer(migrations/) ‖ RiskManager]
+ [qa-engineer(tests/ — TDD red) ‖ database-engineer(migrations/) ‖ risk-manager]
            ↓
 ⚠️ CHECKPOINT: mandatory TDD red commit before wave 2
            ↓
 Wave 2 (sequential — depends on wave 1 tests):
- BackendDev(src/api/) ──→ FrontendDev(src/components/)
+ backend-dev(src/api/) ──→ frontend-dev(src/components/)
            ↓
 Wave 3 (safe parallel):
- [CodeReviewer ‖ TechWriter ‖ ObservabilityEngineer ‖ DevOpsEngineer ‖ AccessibilityEngineer(re-check)]
+ [code-reviewer ‖ tech-writer ‖ observability-engineer ‖ devops-engineer ‖ accessibility-engineer(re-check)]
 
 ```text
 
 **Agents involved**: 12 agents across 3 lanes (Tech, Product, Governance)
-**Excluded agents with rationale**: MobileDev (no mobile), MLEngineer (no AI), FinOpsEngineer (no cloud impact), GameAssetGenerator (out of scope)
+**Excluded agents with rationale**: mobile-dev (no mobile), ml-engineer (no AI), finops-engineer (no cloud impact), GameAssetGenerator (out of scope)
 
 ---
 
@@ -42,20 +42,20 @@ Wave 3 (safe parallel):
 ```text
 
 Wave 0 (parallel — 10 read-only agents, cross-lane):
- [SoftwareArchitect ‖ SecurityEngineer ‖ LegalCompliance ‖ RiskManager
-  ‖ APIDesigner ‖ ProxyPO ‖ UXUIDesigner ‖ AccessibilityEngineer
-  ‖ PerformanceEngineer ‖ ArchitectureReviewer]
+ [software-architect ‖ security-engineer ‖ legal-compliance ‖ risk-manager
+  ‖ api-designer ‖ proxy-po ‖ ux-ui-designer ‖ accessibility-engineer
+  ‖ performance-engineer ‖ architecture-reviewer]
            ↓
 ⚠️ Cross-lane summary: target architecture + GDPR constraints + UX journey
            ↓
 Wave 1 (safe parallel — separate zones):
- [QAEngineer(tests/ — TDD red) ‖ DatabaseEngineer(migrations/) ‖ UXWriter(microcopy)]
+ [qa-engineer(tests/ — TDD red) ‖ database-engineer(migrations/) ‖ ux-writer(microcopy)]
            ↓
 Wave 2 (sequential):
- BackendDev(src/auth/) ──→ FrontendDev(src/components/login/)
+ backend-dev(src/auth/) ──→ frontend-dev(src/components/login/)
            ↓
 Wave 3 (parallel — review + documentation):
- [CodeReviewer ‖ SecurityEngineer(re-audit) ‖ TechWriter ‖ DevOpsEngineer ‖ ChangeManagement]
+ [code-reviewer ‖ security-engineer(re-audit) ‖ tech-writer ‖ devops-engineer ‖ change-management]
 
 ```
 
@@ -70,17 +70,17 @@ Wave 3 (parallel — review + documentation):
 ```
 
 Wave 0 (parallel — 8 read-only agents):
- [AIResearchScientist ‖ SoftwareArchitect ‖ SecurityEngineer ‖ LegalCompliance
-  ‖ AIEthicsGovernance ‖ AIProductManager ‖ PerformanceEngineer ‖ RiskManager]
+ [ai-research-scientist ‖ software-architect ‖ security-engineer ‖ legal-compliance
+  ‖ ai-ethics-governance ‖ ai-product-manager ‖ performance-engineer ‖ risk-manager]
            ↓
 Wave 1 (safe parallel — separate zones):
- [DataScientist(features/) ‖ DatabaseEngineer(migrations/ — pgvector) ‖ MLEngineer(models/)]
+ [data-scientist(features/) ‖ database-engineer(migrations/ — pgvector) ‖ ml-engineer(models/)]
            ↓
 Wave 2 (sequential):
- MLOpsEngineer(infra ML) ──→ DevOpsEngineer(CI/CD pipeline) ──→ ObservabilityEngineer(monitoring)
+ mlops-engineer(infra ML) ──→ devops-engineer(CI/CD pipeline) ──→ observability-engineer(monitoring)
            ↓
 Wave 3 (parallel — review):
- [CodeReviewer ‖ AIEthicsGovernance(model card) ‖ TechWriter]
+ [code-reviewer ‖ ai-ethics-governance(model card) ‖ tech-writer]
 
 ```
 
@@ -94,10 +94,10 @@ All DAGs follow this pattern:
 
 | Wave | Role | Typical agents |
 | --- | --- | --- |
-| **Wave 0** | Framing, constraints, architecture | SoftwareArchitect, SecurityEngineer, APIDesigner, ProxyPO, LegalCompliance, UXUIDesigner |
-| **Wave 1** | Tests (TDD red), migrations, complementary specifications | QAEngineer, DatabaseEngineer, RiskManager, UXWriter |
-| **Wave 2** | Implementation | BackendDev, FrontendDev, MLEngineer, DataScientist |
-| **Wave 3** | Review, documentation, observability | CodeReviewer, TechWriter, DevOpsEngineer, ObservabilityEngineer |
+| **Wave 0** | Framing, constraints, architecture | software-architect, security-engineer, api-designer, proxy-po, legal-compliance, ux-ui-designer |
+| **Wave 1** | Tests (TDD red), migrations, complementary specifications | qa-engineer, database-engineer, risk-manager, ux-writer |
+| **Wave 2** | Implementation | backend-dev, frontend-dev, ml-engineer, data-scientist |
+| **Wave 3** | Review, documentation, observability | code-reviewer, tech-writer, devops-engineer, observability-engineer |
 
 **Checkpoints**:
 

@@ -13,24 +13,24 @@ tools: ["read", "search", "web", "agent", "todo"]
 
 ## Agents Using This Profile
 
-- AIEthicsGovernance
-- AIProductManager
-- BusinessAnalyst
-- ChangeManagement
-- FinOpsEngineer
-- GoToMarketSpecialist
-- IncidentCommander
-- LegalCompliance
-- ProductAnalytics
-- ProductManager
-- ProductStrategist
-- ProjectController
-- ProxyPO
-- RiskManager
-- ScrumMaster
-- TechWriter
-- UXUIDesigner _(extended advisory profile: has `chrome-devtools` and `context7` for render inspection, without `execute` or `edit`)_
-- UXWriter
+- ai-ethics-governance
+- ai-product-manager
+- business-analyst
+- change-management
+- finops-engineer
+- go-to-market-specialist
+- incident-commander
+- legal-compliance
+- product-analytics
+- product-manager
+- product-strategist
+- project-controller
+- proxy-po
+- risk-manager
+- scrum-master
+- tech-writer
+- ux-ui-designer _(extended advisory profile: has `chrome-devtools` and `context7` for render inspection, without `execute` or `edit`)_
+- ux-writer
 
 ## Rationale
 

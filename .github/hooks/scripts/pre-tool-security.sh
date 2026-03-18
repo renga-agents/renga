@@ -9,8 +9,8 @@ INPUT="$(cat)"
 
 # Validate jq is available
 if ! command -v jq &>/dev/null; then
-  echo "jq required but not found" >&2
-  exit 1
+  echo "Security hook disabled: jq not found. Install with: brew install jq (macOS) or apt-get install jq (Linux)" >&2
+  exit 0
 fi
 
 # Validate JSON
