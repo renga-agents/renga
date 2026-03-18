@@ -2,7 +2,7 @@
 name: game-asset-generator
 plugin: game-studio
 filiere: tech
-user-invocable: true
+user-invocable: false
 description: "Generate visual asset kits for video game prototypes via Replicate API—images, pixel art sprites, animations, videos, UI"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "replicate/*"]
 model: ['Claude Opus 4.6 (copilot)']

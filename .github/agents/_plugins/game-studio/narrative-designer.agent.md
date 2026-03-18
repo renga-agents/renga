@@ -2,7 +2,7 @@
 name: narrative-designer
 plugin: game-studio
 filiere: product
-user-invocable: true
+user-invocable: false
 description: "Narrative writing, in-game texts, dialogues, narrative economy and internal consistency for video games"
 tools: ["read", "edit", "search", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

@@ -2,7 +2,7 @@
 name: game-developer
 plugin: game-studio
 filiere: tech
-user-invocable: true
+user-invocable: false
 description: "Video game development — game loop, physics, collisions, integration of audio/visual assets, functional and playable source code"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']

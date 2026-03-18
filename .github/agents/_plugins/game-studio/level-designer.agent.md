@@ -2,7 +2,7 @@
 name: level-designer
 plugin: game-studio
 filiere: product
-user-invocable: true
+user-invocable: false
 description: "Level architecture design, difficulty curve, gameplay element placement, and spatial balancing for video games"
 tools: ["read", "edit", "search", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

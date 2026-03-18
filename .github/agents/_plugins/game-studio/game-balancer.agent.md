@@ -2,7 +2,7 @@
 name: game-balancer
 plugin: game-studio
 filiere: tech
-user-invocable: true
+user-invocable: false
 description: "Testing, analysis and gameplay balancing — bug detection, difficulty/enjoyment balance, prioritized QA report for video games"
 tools: ["read", "edit", "search", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

@@ -2,7 +2,7 @@
 name: game-producer
 plugin: game-studio
 filiere: product
-user-invocable: true
+user-invocable: false
 description: "Video game production management — budget, planning, resource arbitration, progress tracking, and budget alerts"
 tools: ["read", "edit", "search", "agent", "todo"]
 model: ['Claude Opus 4.6 (copilot)']

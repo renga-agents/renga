@@ -2,7 +2,7 @@
 name: animations-engineer
 plugin: game-studio
 filiere: tech
-user-invocable: true
+user-invocable: false
 description: "WebGL, GLSL shaders, Three.js, R3F/Drei, GSAP, Spline, OGL, canvas 2D, post-processing, Phaser 3, 2D video game, Babylon.js, 3D video game, rendering performance"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']
