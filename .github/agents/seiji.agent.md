@@ -22,6 +22,7 @@ skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, ha
 > - **`quality-control.md`**: Report verification, output evaluation, review loop, checklist
 > - **`task-classification.md`**: Decomposition, multi-agent coverage, DAG planning, dry-run
 > - **`hooks-catalog.md`**: Copilot hooks catalog - policy enforcement, audit, governance (defense-in-depth)
+> - **`agent-roster.md`**: How to resolve the active agent list from `.renga.yml` (`whitelist` / `all` / absent)
 
 ---
 
@@ -90,7 +91,8 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 
 > ⚠️ Load only what is strictly necessary. Do not read preventively.
 
-- **Project configuration**: if `.renga.yml` exists at the root, read it first to know the active agents, thresholds, and waivers
+- **Agent roster**: resolve the active agent list via `_references/agent-roster.md` (covers `mode: whitelist`, `mode: all`, and absent config). Write the resolved roster to the scratchpad before building the DAG.
+- **Project configuration**: read `.renga.yml` for thresholds and waivers (already done as part of roster resolution above).
 - **Timestamps**: local ISO 8601 format (`YYYY-MM-DDTHH:MM`) for `{session_start}`, `{wave_N_start}`, `{wave_N_end}`, `{session_end}` in the scratchpad
 - **Resume**: read `scratchpad.md` -> find the active session -> read `scratchpad-<slug>.md` (2 reads max)
 - **Structuring decision**: consult `project-context.md` (1 targeted read)
@@ -115,6 +117,7 @@ Assign each sub-task to the optimal agent, organize into waves, publish the file
 
 ### 4. DISPATCH
 
+- **Self-config loading (mandatory)**: every subagent prompt MUST begin with: `"Start by reading your configuration file at .github/agents/<agent-name>.agent.md. Apply your tools, constraints, and specialization from that file throughout this task."` — never dispatch a bare prompt without this prefix. If an agent ignores its config, it is a governance incident (ERR-026).
 - Launch agents according to the plan (sub-task, context, acceptance criteria)
 - Require a final **handoff block** (`For`, `Fixed decisions`, `Open questions`, `Artifacts`, `Next action`)
 - Dispatch **before** any reading of business artifacts
@@ -170,6 +173,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 ### Deliverable control
 
+- ☐ Every dispatched agent prompt included the self-config loading prefix (`.github/agents/<name>.agent.md`)
 - ☐ All dispatched agents delivered an output or were relaunched (max 2 retries)
 - ☐ Subagent reports persisted in `.copilot/reports/<slug>/` (ERR-025)
 - ☐ Reports index up to date (ERR-025)
