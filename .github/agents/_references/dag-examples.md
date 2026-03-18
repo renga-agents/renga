@@ -11,9 +11,10 @@
 
 ```text
 
-Wave 0 (parallel — 8 read-only agents):
+Wave 0 (parallel — 9 read-only agents):
  [software-architect ‖ api-designer ‖ proxy-po ‖ legal-compliance
-  ‖ security-engineer ‖ ux-ui-designer ‖ performance-engineer ‖ accessibility-engineer]
+  ‖ security-engineer ‖ ux-ui-designer ‖ performance-engineer ‖ accessibility-engineer
+  ‖ frontend-dev(stack-consultant — verify versions via context7, no file writes)]
            ↓
 ⚠️ Summary: extract P0 constraints from security-engineer + acceptance criteria from proxy-po
            ↓
@@ -94,7 +95,7 @@ All DAGs follow this pattern:
 
 | Wave | Role | Typical agents |
 | --- | --- | --- |
-| **Wave 0** | Framing, constraints, architecture | software-architect, security-engineer, api-designer, proxy-po, legal-compliance, ux-ui-designer |
+| **Wave 0** | Framing, constraints, architecture | software-architect, security-engineer, api-designer, proxy-po, legal-compliance, ux-ui-designer — **+ frontend-dev (read-only, stack-consultant) for any task with a frontend component** |
 | **Wave 1** | Tests (TDD red), migrations, complementary specifications | qa-engineer, database-engineer, risk-manager, ux-writer |
 | **Wave 2** | Implementation | backend-dev, frontend-dev, ml-engineer, data-scientist |
 | **Wave 3** | Review, documentation, observability | code-reviewer, tech-writer, devops-engineer, observability-engineer |

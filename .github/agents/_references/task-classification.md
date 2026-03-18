@@ -39,6 +39,20 @@ Scan the 4 lanes and produce an include/exclude list with justification:
 
 Full checklist in `_references/error-catalog.md §ERR-024`
 
+### Stack-Domain Consultants in Wave 0
+
+Domain experts must be included **read-only in Wave 0** for any task touching their stack — not just in the implementation wave. They provide version anchoring and prevent `software-architect` from falling back on stale training-data versions.
+
+| Domain trigger | Required Wave 0 consultant |
+| --- | --- |
+| Frontend / fullstack (React, Next.js, CSS) | `frontend-dev` |
+| Mobile (iOS, Android, React Native) | `mobile-dev` |
+| Data pipeline / warehouse | `data-engineer` |
+| ML / AI feature | `ai-research-scientist` |
+| Database schema | `database-engineer` |
+
+> **Why Wave 0, not just Wave 2?** software-architect selects stack and versions during planning. If the domain expert only arrives in Wave 2 (implementation), version choices are already locked in the ADR and the scaffolding.
+
 ### Visual Deliverables (ERR-020)
 
 Visual L3+ work requires CreativeDirector + ux-ui-designer + performance-engineer
