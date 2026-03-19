@@ -32,7 +32,7 @@ TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"
 ARGS_KEYS="$(echo "$INPUT" | jq -r '(.tool_input // {}) | keys | join(",")' 2>/dev/null || echo "")"
 EXIT_CODE="$(echo "$INPUT" | jq -r '.exit_code // "N/A"' 2>/dev/null || echo "N/A")"
 
-# Primary value: filePath > command > query > filePaths[] > replacements[].filePath > prompt length
+# Primary value per tool type
 TARGET="$(echo "$INPUT" | jq -r '
   .tool_input.filePath //
   .tool_input.path //
@@ -40,9 +40,17 @@ TARGET="$(echo "$INPUT" | jq -r '
   .tool_input.command //
   .tool_input.query //
   (try (.tool_input.filePaths | join(",")) catch null) //
-  (try (.tool_input.replacements | map(.filePath // .file_path) | unique | join(",")) catch null) //
+  (try (.tool_input.replacements | map(.filePath) | unique | join(",")) catch null) //
   (if .hook_event_name == "UserPromptSubmit" then ("prompt:" + (.prompt | length | tostring) + "chars") else null end) //
   ""
+' 2>/dev/null || echo "")"
+
+# Line range for read_file
+LINES="$(echo "$INPUT" | jq -r '
+  if .tool_input.startLine != null then
+    (.tool_input.startLine | tostring) + "-" + (.tool_input.endLine | tostring)
+  else ""
+  end
 ' 2>/dev/null || echo "")"
 
 SESSION_FILE="$RENGA_BASE/reports/.current-session"
@@ -51,8 +59,10 @@ SESSION_ID="${SESSION_ID:-default}"
 REPORT_DIR="${AUDIT_LOG_DIR:-$RENGA_BASE/reports/$SESSION_ID}"
 mkdir -p "$REPORT_DIR" 2>/dev/null || true
 
-jq -n --arg tool "$TOOL" --arg ts "$TIMESTAMP" --arg target "$TARGET" --arg keys "$ARGS_KEYS" --arg exit "$EXIT_CODE" \
-  '{tool: $tool, timestamp: $ts, target: $target, args_keys: $keys, exit_code: $exit}' \
+jq -n --arg tool "$TOOL" --arg ts "$TIMESTAMP" --arg target "$TARGET" --arg lines "$LINES" --arg keys "$ARGS_KEYS" --arg exit "$EXIT_CODE" \
+  '{tool: $tool, timestamp: $ts, target: $target} +
+   (if $lines != "" then {lines: $lines} else {} end) +
+   {args_keys: $keys, exit_code: $exit}' \
   >> "$REPORT_DIR/tool-audit.jsonl" 2>/dev/null || true
 
 exit 0
