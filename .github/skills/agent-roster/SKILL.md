@@ -81,14 +81,43 @@ Compare every role or agent persona named by the user against the resolved roste
 
 ### Pass B — Proactive domain gap detection
 
-Even when the user names no specific agents, ask: *does this task's domain require expertise not covered by the current roster?* Examples of gaps seiji should detect proactively:
+For each deliverable in the task, apply this test:
 
-- Smart Grid / electrical systems → no electrical-engineer or SCADA-specialist in core roster
-- Pharmaceutical / clinical research → no clinical-data-manager or regulatory-affairs-specialist
-- IoT firmware / embedded systems → no iot-engineer or embedded-developer
-- Energy markets / carbon economics → no energy-economist or carbon-analyst
+> **"If I dispatch an existing agent on this deliverable, can it produce output that meets the domain-specific standards, certifications, or regulatory frameworks named — without needing to learn that domain from scratch?"**
 
-If yes, treat the missing specialization as a domain gap and apply the policy below.
+If the answer is **no** for any deliverable → domain gap.
+
+#### Hard test: certification / standard coverage
+
+Scan the task description for any domain-specific standard, certification, or regulatory body (e.g. IEC 60880, DO-178C, IAEA NSS-17, FDA 21 CFR Part 11, ISO 26262, ASME, IMO, AS9100). For each one: verify that at least one existing agent has that standard listed as a core competency. If none does → **domain gap, regardless of how close a generic agent looks**.
+
+#### False mapping anti-patterns — never make these mappings
+
+These are the most common incorrect remappings. Each one produces an agent that can name the standard but cannot actually apply it:
+
+| Requested specialization | Wrong mapping | Why it is wrong |
+|---|---|---|
+| Nuclear safety engineer (IEC 60880, SIL4, PSA) | `security-engineer` | security-engineer is cybersecurity; it cannot perform probabilistic safety assessment or reactor protection certification |
+| Nuclear / ICS cybersecurity (IAEA NSS-17, IEC 62443 nuclear) | `security-engineer` | security-engineer covers IT/web security; nuclear ICS security requires reactor domain knowledge on top |
+| Software qualification (IEC 60880, DO-178C, IEC 62138) | `qa-engineer` | qa-engineer performs software testing; qualification to safety standards requires independent V&V and specific certification methodology |
+| Probabilistic safety assessment / HAZOP | `risk-manager` | risk-manager handles project and business risk; PSA and HAZOP require nuclear/chemical process engineering |
+| Medical device regulatory (FDA 21 CFR, MDR, ISO 13485) | `legal-compliance` | legal-compliance covers GDPR/HIPAA/contracts; medical device regulation requires clinical and engineering domain knowledge |
+| Avionics / DO-178C | `devops-engineer` | devops-engineer handles CI/CD; avionics certification requires dedicated safety lifecycle (PSAC, SDP, SVP) |
+| Marine classification (IMO, DNV-GL) | `infra-architect` | infra-architect handles cloud/network topology; maritime classification requires hull, propulsion, and stability engineering |
+
+#### Domain examples (non-exhaustive)
+
+- Nuclear I&C / reactor protection → no `nuclear-safety-engineer`, no `isc-qualification-specialist`
+- Safety-critical software (IEC 61508 / DO-178C / ISO 26262) → no `functional-safety-engineer`
+- Medical devices (FDA, MDR, ISO 13485) → no `medical-device-engineer`, no `regulatory-affairs-specialist`
+- Pharmaceutical manufacturing (GMP, FDA process validation) → no `process-validation-engineer`
+- Avionics / aerospace (DO-178C, ARP4754A) → no `avionics-engineer`
+- Maritime / naval (IMO, DNV-GL, SOLAS) → no `naval-architect`
+- Smart Grid / electrical systems → no `electrical-engineer`, no `scada-specialist`
+- IoT firmware / embedded → no `embedded-engineer`
+- Energy markets / carbon economics → no `energy-economist`
+
+If yes to any gap above, treat the missing specialization as a domain gap and apply the policy below.
 
 ### Domain gap policy
 
