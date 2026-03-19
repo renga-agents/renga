@@ -15,6 +15,7 @@ This skill identifies the conditions that require automatically consulting speci
 | Detected condition | Added agents | Mode |
 | --- | --- | --- |
 | Personal data **being changed** (creation, modification, exposure, or transmission of `userId`, `email`, `phone`, `ip`, `address` to new storage or a third party) | LegalCompliance + RiskManager | parallel |
+| Personal data **already exposed** to unauthorized parties or found in logs/external systems (breach, leak, misconfiguration) | LegalCompliance + RiskManager + SecurityEngineer | **L4 — human escalation mandatory** — GDPR 72h notification window may be running |
 | New AI processing, scoring, or automated decision-making | AIEthicsGovernance | sequential (before deployment) |
 | Hosting or country change | LegalCompliance + RiskManager | parallel |
 | AI model deployment/modification | AIEthicsGovernance + MLOpsEngineer | parallel |
