@@ -85,13 +85,57 @@ Default: `git merge --no-ff feat/<slug>`
 
 > An empty dashboard = missed retrospectives. The retrospective is a quality gate, not optional.
 
-1. Score each dispatched agent via `.renga/memory/rubric.md` (raw + weighted)
+1. Score each dispatched agent using the rubric below (raw + weighted)
 2. Update `agent-performance-<slug>.md` with this session's scores
 3. Log error patterns in `error-patterns-<slug>.md` if any retry or failure occurred
 4. Add entry in `prompt-improvements.md` if an agent failed ≥2 times
 5. Run `python scripts/generate_dashboard.py` after `consolidate_memory.py`
 
 L0-L1 tasks: no formal retrospective, but error patterns are still logged if a retry occurred.
+
+---
+
+## Scoring Rubric
+
+### Complexity Coefficients
+
+| Level | Description | Coefficient |
+| --- | --- | --- |
+| L0 | Trivial single-file task (< 15 min) | × 0.5 |
+| L1 | Simple multi-file task (< 1h) | × 1.0 |
+| L2 | Coordinated complex task (< 4h) | × 1.5 |
+| L3 | Multi-wave project (< 1 day) | × 2.0 |
+| L4 | Extended multi-session project | × 3.0 |
+
+**Weighted score** = Raw score × Complexity coefficient
+Example: agent scores 4/5 on an L3 task → weighted score = 4 × 2.0 = **8.0**
+
+### Evaluation Scale (raw score 0–5)
+
+| Score | Criterion |
+| --- | --- |
+| 5 | Output matches acceptance criteria on first try, complete handoff |
+| 4 | Output compliant, 1 minor retry or incomplete but fixed handoff |
+| 3 | Output partially compliant, 1 substantial retry required |
+| 2 | Output non-compliant, 2 retries or partial escalation |
+| 1 | Output failed, HITL escalation required |
+| 0 | Circuit breaker triggered (≥ 2 consecutive failures) |
+
+### Evaluation Dimensions
+
+Score these 3 dimensions per agent and average them:
+
+1. **Compliance** — does the output meet the acceptance criteria?
+2. **Completeness** — is the handoff complete, all required artifacts delivered?
+3. **Autonomy** — did the agent handle ambiguity without unnecessary escalation?
+
+### Output Format
+
+```markdown
+| Agent | Task | Level | Raw Score | Weighted Score | Notes |
+| --- | --- | --- | --- | --- | --- |
+| backend-dev | Auth API | L2 | 4/5 | 6.0 | 1 retry on tests |
+```
 
 ---
 

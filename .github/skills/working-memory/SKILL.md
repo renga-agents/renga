@@ -23,7 +23,7 @@ The `.renga/` directory is the agent team's persistent working memory for a give
     agent-performance[-<slug>].md    # Agent scoring: consolidated (read-only) / current session
     error-patterns[-<slug>].md       # Error patterns: consolidated (read-only) / current session
     prompt-improvements.md           # Prompt improvement changelog (append-only)
-    rubric.md                        # Scoring rubric and weighting coefficients
+    rubric.md                        # (optional) project overrides — rubric is in skill quality-control
     vps-access.md                    # (project-specific) SSH/infra access, server topology
     <any>.md                         # Project-specific context files added by the team
   reports/
@@ -42,7 +42,7 @@ The `.renga/` directory is the agent team's persistent working memory for a give
 ## Read vs Write by Agent Type
 
 ### Seiji (orchestrator)
-**Reads**: `scratchpad.md`, `scratchpad-<slug>.md`, `project-context.md`, `rubric.md`, report `index.md`
+**Reads**: `scratchpad.md`, `scratchpad-<slug>.md`, `project-context.md`, report `index.md`
 **Writes**: `scratchpad-<slug>.md`, `decisions-<slug>.md`, `agent-performance-<slug>.md`, `error-patterns-<slug>.md`, `prompt-improvements.md`, report `index.md`
 **Never reads**: full wave reports (reads summaries only — ERR-025)
 

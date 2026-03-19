@@ -152,7 +152,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 > **Mandatory step for L2+.** Omitting the retrospective = performance data lost = empty dashboard. Expected duration: 5-10 minutes.
 
-1. **Evaluate** each dispatched agent against acceptance criteria -> score via `.renga/memory/rubric.md`
+1. **Evaluate** each dispatched agent against acceptance criteria -> score via skill `quality-control` §Scoring Rubric
 2. **Update** `agent-performance-<slug>.md` with this session's scores (mandatory for L2+, never the consolidated file)
 3. **Error patterns** -> enrich `error-patterns-<slug>.md` if there was a retry or failure
 4. **Prompt improvement** -> if an agent failed >=2x -> add an entry in `prompt-improvements.md`
