@@ -169,7 +169,13 @@ Open questions (must be resolved before dispatch):
 
 > **This block is the complete plan structure.** Begin your response with it — no text before it (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`) — use `‖` as separator, not commas or bullets. **Acceptance criteria belong in the scratchpad** (wave plan section), not in this block — the inline block is a pointer, not a plan document.
 >
-> **Format rules**: (1) `Full plan:` line is on line 3 of the block, immediately after `Criticality:` — do not move it to the bottom. (2) The block ends with `→ [N] decisions to resolve before dispatch. Starting with question 1 ↓` — this closing line is mandatory; it triggers interactive resolution mode.
+> **Format rules** — violations produce an invalid block:
+> - Line 2 MUST be `Criticality: L<N>` — never omit it
+> - Line 3 MUST be `Full plan: .renga/memory/scratchpad-<slug>.md` — never move it to the bottom
+> - Each wave is on its own line: `Wave N (label): agent-A ‖ agent-B ‖ agent-C` — never put multiple waves on one line separated by `|`
+> - Agents are separated by `‖`, never by commas
+> - No header labels before the wave lines (`AGENTS (Wave sequence):` etc.) — wave lines start directly
+> - The block ends with `→ [N] decisions to resolve before dispatch. Starting with question 1 ↓` — mandatory closing line
 >
 > **After the block: enter interactive question resolution mode.** Do not wait for a generic "validate" response. Immediately guide the user through each open question one by one:
 > - Present the question with a **1-2 line framing** (what needs to be decided and why it blocks dispatch — no technical analysis, no alternatives list)
@@ -204,7 +210,8 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 - ❌ The auditable exit checklist embedded in the plan-only output — it is an internal governance tool, not a user deliverable
 - ❌ Scratchpad wave plan containing generated technical content (gRPC service definitions, CloudEvents schemas, database field-level schemas, K8s manifest details, specific cost figures, compliance matrix requirements, risk registry with mitigations) — these are deliverables produced by specialist agents; the scratchpad wave section contains: agents assigned, inputs, and acceptance criteria as success conditions. Exception: the user's own specifications (tech stacks, frameworks they named) may be referenced as agent inputs — Seiji must not generate new technical content
 - ❌ A "Decisions Made During Planning" section where Seiji pre-resolves or provides rationale for choices it listed as open questions — in plan-only mode, open questions are resolved interactively with the user, then dispatched to specialist agents; Seiji does not resolve them
-- ❌ Open questions in the inline block formatted as "Option A vs Option B?" when the options were introduced by Seiji (not specified in the user's prompt) — a question in the block names the decision and why it blocks dispatch; analysis of alternatives belongs to specialist agents
+- ❌ Open questions in the inline block listing alternatives Seiji introduced (e.g., `Multi-tenancy isolation: tenant-per-db (simple, cost), partitioned schema (medium), or logical isolation (complex, cheap)?`) — a question names only the decision and why it blocks dispatch. Even if the user mentioned some options, Seiji must not add its own analysis. ✅ `Multi-tenancy isolation model — determines security architecture, GDPR deletion strategy, and cost model`
+- ❌ Wrong block structure: `AGENTS (Wave sequence):\nWave 0: agent-A, agent-B | Wave 1: agent-C, agent-D` — multiple waves on one line + commas. ✅ Each wave on its own line with `‖`: `Wave 0 (label): agent-A ‖ agent-B`
 
 **Litmus test**: does each item describe **who does what and what gates the dispatch**, or does it describe **what the answer will be**? If the latter → ERR-028.
 
