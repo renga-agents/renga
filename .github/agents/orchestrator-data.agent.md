@@ -3,7 +3,7 @@ name: orchestrator-data
 user-invocable: false
 description: "Data/AI lane reference — non-invocable internal profile read by the orchestrator to route data science, ML, MLOps, and data engineering specialists"
 tools: ["read"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Lane Profile: Data/AI
 

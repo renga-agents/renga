@@ -5,7 +5,7 @@ filiere: tech
 user-invocable: false
 description: "Testing, analysis and gameplay balancing — bug detection, difficulty/enjoyment balance, prioritized QA report for video games"
 tools: ["read", "edit", "search", "agent", "todo"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Agent: GameBalancer
 

@@ -5,13 +5,13 @@
 # Then run  `renga install`  or  `renga models apply`  to apply.
 #
 # Supported model names (VS Code Copilot):
-#   Claude Opus 4.6 (copilot)
+#   Claude Haiku 4.5 (copilot)
 #   Claude Sonnet 4 (copilot)
 #   gpt-4o
 #   o3
 
 # --- Default model for ALL agents ---
-default: "Claude Opus 4.6 (copilot)"
+default: "Claude Haiku 4.5 (copilot)"
 
 # --- Per-agent overrides (optional) ---
 # Uncomment and add entries below to use a different model for specific agents.

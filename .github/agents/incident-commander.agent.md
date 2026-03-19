@@ -3,7 +3,7 @@ name: incident-commander
 user-invocable: false
 description: "Incident management, war rooms, severity, coordination, postmortems"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 skills: [auto-triggers]
 ---
 

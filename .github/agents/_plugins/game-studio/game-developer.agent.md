@@ -5,7 +5,7 @@ filiere: tech
 user-invocable: false
 description: "Video game development — game loop, physics, collisions, integration of audio/visual assets, functional and playable source code"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.upstash/context7/*"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Agent: GameDeveloper
 

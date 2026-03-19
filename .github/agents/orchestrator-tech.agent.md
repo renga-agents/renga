@@ -3,7 +3,7 @@ name: orchestrator-tech
 user-invocable: false
 description: "Tech lane reference — non-invocable internal profile read by the orchestrator to route backend, frontend, QA, DevOps, and infrastructure specialists"
 tools: ["read"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Lane Profile: Tech
 

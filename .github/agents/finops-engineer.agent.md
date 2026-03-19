@@ -3,7 +3,7 @@ name: finops-engineer
 user-invocable: false
 description: "Cloud costs, budgeting, rightsizing, reservations, cost allocation"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 
 # Agent: finops-engineer

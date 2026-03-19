@@ -3,7 +3,7 @@ name: orchestrator-product
 user-invocable: false
 description: "Product lane reference — non-invocable internal profile read by the orchestrator to route product, UX/UI, business, analytics, and GTM specialists"
 tools: ["read"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Lane Profile: Product
 

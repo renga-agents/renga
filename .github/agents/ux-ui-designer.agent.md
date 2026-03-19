@@ -3,7 +3,7 @@ name: ux-ui-designer
 user-invocable: false
 description: "Interface design, user experience, design systems, prototyping"
 tools: ["read", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Agent: ux-ui-designer
 

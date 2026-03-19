@@ -3,7 +3,7 @@ name: ai-ethics-governance
 user-invocable: false
 description: "Algorithmic bias, explainability (XAI), AI red teaming, model cards, AI governance"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 
 # Agent: ai-ethics-governance

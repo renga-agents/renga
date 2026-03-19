@@ -3,7 +3,7 @@ name: scrum-master
 user-invocable: false
 description: "Agile facilitation, velocity, continuous improvement, ceremonies"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 skills: [working-memory]
 ---
 # Agent: scrum-master

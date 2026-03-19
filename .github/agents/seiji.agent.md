@@ -4,7 +4,7 @@ user-invocable: true
 description: "Operational steering of all agents - decomposition, planning, dispatch, and quality control"
 tools: [execute, read, agent/runSubagent, edit, search, web/fetch, todo, agent, "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 agents: ["*"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, handoff-protocol, commit-discipline, quality-control, dispatch-protocol, hooks-catalog, agent-roster, working-memory]
 ---
 # Agent: Seiji (MOE - Lead Coordinator)

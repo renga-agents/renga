@@ -3,7 +3,7 @@ name: ai-product-manager
 user-invocable: false
 description: "AI product strategy, AI roadmap, model evaluation, AI ROI"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 
 # Agent: ai-product-manager

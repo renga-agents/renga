@@ -3,7 +3,7 @@ name: accessibility-engineer
 user-invocable: false
 description: "WCAG 2.2, ARIA, RGAA, screen reader testing, inclusive design"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "playwright/*", "io.github.upstash/context7/*"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Agent: accessibility-engineer
 

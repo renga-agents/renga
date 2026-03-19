@@ -3,7 +3,7 @@ name: product-strategist
 user-invocable: false
 description: "Product vision, OKRs, strategic roadmap, product-market fit"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 
 # Agent: product-strategist

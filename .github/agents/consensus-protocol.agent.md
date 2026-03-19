@@ -3,7 +3,7 @@ name: consensus-protocol
 user-invocable: false
 description: "Internal non-invocable reference for the multi-wave consensus protocol for critical decisions"
 tools: ["read"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Multi-wave consensus protocol
 

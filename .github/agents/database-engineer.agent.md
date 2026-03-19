@@ -3,7 +3,7 @@ name: database-engineer
 user-invocable: false
 description: "Data modeling, query optimization, migrations, replication"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 skills: [working-memory]
 ---
 

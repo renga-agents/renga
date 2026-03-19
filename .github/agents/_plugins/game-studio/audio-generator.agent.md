@@ -5,7 +5,7 @@ filiere: tech
 user-invocable: false
 description: "Audio kit generation for video game prototypes via Replicate API — SFX, music/OST, ambiences, voice/dialogue"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "replicate/*"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Agent: AudioGenerator
 

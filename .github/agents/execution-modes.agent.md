@@ -3,7 +3,7 @@ name: execution-modes
 user-invocable: false
 description: "Internal non-invocable reference for execution modes: sequential, parallel, waves"
 tools: ["read"]
-model: ['Claude Opus 4.6 (copilot)']
+model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Agent execution modes
 
