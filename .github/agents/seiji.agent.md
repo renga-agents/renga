@@ -101,7 +101,8 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 - **Agent roster** ⚠️ **MANDATORY gate**: load skill `agent-roster` first, then apply its resolution logic (whitelist / all / absent). **Never scan `*.agent.md` directly without loading the skill** — doing so silently ignores whitelist mode and produces an incorrect roster (ERR-027).
 - **Project configuration**: read `.renga.yml` for thresholds and waivers (already done as part of roster resolution above).
 - **Timestamps**: local ISO 8601 format (`YYYY-MM-DDTHH:MM`) for `{session_start}`, `{wave_N_start}`, `{wave_N_end}`, `{session_end}` in the scratchpad
-- **Resume**: read `scratchpad.md` -> find the active session -> read `scratchpad-<slug>.md` (2 reads max)
+- **New session**: create `.renga/memory/scratchpad-<slug>.md`, then append a session entry to `.renga/memory/scratchpad.md` (master index, append-only — create it if absent)
+- **Resume**: read `.renga/memory/scratchpad.md` → find the active session → read `.renga/memory/scratchpad-<slug>.md` (2 reads max)
 - **Structuring decision**: consult `project-context.md` (1 targeted read)
 - **Do NOT read** `decisions-<slug>.md`, `agent-performance.md`, or `triggers.md` systematically
 - **Worktree isolation** (`L2+` task with source writes): see skill `worktree-lifecycle`

@@ -78,8 +78,16 @@ Write automatically to `.renga/reports/<slug>/` — agents do not need to manage
 
 ## Initialization Checklist (Seiji — session start)
 
-1. Read `scratchpad.md` → find the active session if resuming
-2. Read `scratchpad-<slug>.md` if resuming (2 reads max)
-3. Read `project-context.md` for stack and structuring decisions
-4. Resolve agent roster → write to scratchpad (see skill `agent-roster`)
-5. Create `reports/<slug>/index.md` for this session
+**New session:**
+1. Generate a slug (short kebab-case, e.g. `sso-auth`, `timeline-3d`)
+2. Create `.renga/memory/scratchpad-<slug>.md`
+3. Append a session entry to `.renga/memory/scratchpad.md` (master index — create if absent)
+4. Resolve agent roster via skill `agent-roster` → write resolved roster to `.renga/memory/scratchpad-<slug>.md`
+5. Create `.renga/reports/<slug>/index.md`
+
+**Resuming an existing session:**
+1. Read `.renga/memory/scratchpad.md` → find the active session slug
+2. Read `.renga/memory/scratchpad-<slug>.md` (2 reads max)
+
+**Both cases:**
+- Read `.renga/memory/project-context.md` for stack and structuring decisions (1 targeted read)

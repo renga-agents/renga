@@ -53,6 +53,7 @@ Reading a `userId` to display a profile is not the same as sending an `email` to
 | High-risk or ambiguous AI system in production | Stronger governance required |
 | Unexpected budget impact | Financial risk |
 | Framework choice with viable alternatives, migration > 1 person-week (ERR-016) | Irreversible architecture |
+| Authentication or authorization architecture (SSO provider, token strategy JWT/opaque, session store, 2FA model) with viable alternatives | Irreversible at scale — L4 candidate |
 | Critical validation tool unavailable (ERR-017) | Delivery without validation |
 
 ---
