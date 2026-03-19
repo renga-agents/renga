@@ -7,7 +7,7 @@
         "description": "Initialize session — create reports directory, generate session ID, check jq dependency"
       }
     ],
-    "sessionEnd": [
+    "agentStop": [
       {
         "command": "bash .github/hooks/scripts/session-cleanup.sh",
         "description": "Finalize session — log session end timestamp"
