@@ -16,8 +16,10 @@ _tmp="${TMPDIR:-/tmp}"
 printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
   >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
 
-[[ -f "$PROJECT_ROOT/.hook-debug" ]] && \
+if [[ -f "$PROJECT_ROOT/.hook-debug" ]]; then
+  mkdir -p "$RENGA_BASE" 2>/dev/null || true
   printf '[quality-check] %s\n' "$INPUT" >> "$RENGA_BASE/hook-debug.log" 2>/dev/null || true
+fi
 
 if ! command -v jq &>/dev/null; then exit 0; fi
 
