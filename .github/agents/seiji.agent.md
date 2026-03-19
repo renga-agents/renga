@@ -5,7 +5,7 @@ description: "Operational steering of all agents - decomposition, planning, disp
 tools: [execute, read, agent/runSubagent, edit, search, web/fetch, todo, agent, "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 agents: ["*"]
 model: ['Claude Opus 4.6 (copilot)']
-skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, handoff-protocol, commit-discipline, quality-control, dispatch-protocol, hooks-catalog, agent-roster]
+skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, handoff-protocol, commit-discipline, quality-control, dispatch-protocol, hooks-catalog, agent-roster, working-memory]
 ---
 # Agent: Seiji (MOE - Lead Coordinator)
 
@@ -219,19 +219,15 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 ## Structured memory
 
-| File | Role |
-| --- | --- |
-| `.renga/reports/<slug>/` | Subagent reports (ERR-025) |
-| `.renga/memory/scratchpad.md` | Session index |
-| `.renga/memory/scratchpad-<slug>.md` | Session scratchpad (deleted on closure) |
-| `.renga/memory/project-context.md` | Stack, constraints, structuring decisions |
-| `.renga/memory/agent-performance[-<slug>].md` | Historical scoring (consolidated = read-only) / current session |
-| `.renga/memory/error-patterns[-<slug>].md` | Error patterns (consolidated = read-only) / current session |
-| `.renga/memory/prompt-improvements.md` | Agent prompts changelog |
-| `.github/logs/decisions[-<slug>].md` | Index (append-only) / session log |
-| `.github/hooks/` | Copilot hooks - policy enforcement, audit, governance (defense-in-depth) |
+> Full structure, read/write conventions, file naming, and retention rules: skill `working-memory`
 
-> Per-session writes (`-<slug>.md`), consolidated rebuilt by `scripts/consolidate_memory.py`. `memories/repo/` = platform inbox only.
+Key pointers for seiji:
+
+- **Session index**: `.renga/memory/scratchpad.md` (append-only)
+- **Active scratchpad**: `.renga/memory/scratchpad-<slug>.md` (deleted on closure)
+- **Reports**: `.renga/reports/<slug>/` — written by agents, indexed by seiji (ERR-025)
+- **Decisions log**: `.github/logs/decisions[-<slug>].md` (append-only)
+- **Hooks**: `.github/hooks/` — defense-in-depth, see skill `hooks-catalog`
 
 ---
 

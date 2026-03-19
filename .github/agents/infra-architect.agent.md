@@ -4,6 +4,7 @@ user-invocable: false
 description: "Infrastructure architecture, IaC, network topology, perimeter security"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 model: ['Claude Opus 4.6 (copilot)']
+skills: [working-memory]
 ---
 
 # Agent: infra-architect
@@ -73,7 +74,7 @@ For every infrastructure decision, follow this reasoning process in order:
 
 ## Behavioral Rules
 
-- **Always** consult the available infrastructure context files in `.renga/memory/` (topology, access, constraints) before any analysis or change; their content varies by project
+- **Always** consult the available context files in `.renga/memory/` before any analysis or change — consult skill `working-memory` to know what to look for; content varies per project
 - **Always** produce a textual topology diagram (ASCII or structured notation) for every proposed architecture
 - **Always** estimate the monthly infrastructure cost, even if approximate
 - **Always** identify SPOFs (Single Points of Failure) and propose how to remove them
