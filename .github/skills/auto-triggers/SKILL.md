@@ -16,10 +16,10 @@ This skill identifies the conditions that require automatically consulting speci
 | --- | --- | --- |
 | Personal data **being changed** (creation, modification, exposure, or transmission of `userId`, `email`, `phone`, `ip`, `address` to new storage or a third party) | LegalCompliance + RiskManager | parallel |
 | Personal data **already exposed** to unauthorized parties or found in logs/external systems (breach, leak, misconfiguration) | LegalCompliance + RiskManager + SecurityEngineer | **L4 — human escalation mandatory** — GDPR 72h notification window may be running |
-| New AI processing, scoring, or automated decision-making | AIEthicsGovernance | sequential (before deployment) |
+| New AI processing via external API or rules-based automation (no custom model training) | AIEthicsGovernance | sequential (before deployment) |
 | Hosting or country change | LegalCompliance + RiskManager | parallel |
-| AI model deployment/modification | AIEthicsGovernance + MLOpsEngineer | parallel |
-| Delivery affecting non-technical users | ChangeManagement | sequential (before release) |
+| Custom AI model: training, fine-tuning, or deployment (includes semantic search, embeddings, NLP pipelines, recommendation engines — any custom ML pipeline, not just an API call) | AIEthicsGovernance + MLOpsEngineer | parallel |
+| Delivery reaching end-users (researchers, business users, customers — anyone who is not a developer on the project, regardless of their technical expertise) | ChangeManagement | sequential (before release) |
 | Cloud architecture / sizing decision | FinOpsEngineer + CloudEngineer | parallel |
 | New exposure surface (endpoint, auth, third-party integration) | SecurityEngineer | wave 0 if QAEngineer is planned (ERR-008) |
 | New endpoint or public API contract | APIDesigner + SoftwareArchitect | wave 0 |
@@ -28,6 +28,8 @@ This skill identifies the conditions that require automatically consulting speci
 | **L4 task** OR multi-wave L3+ execution with ≥ 3 agent domains | ScrumMaster | **mandatory for every L4 task** — **Wave 0** (parallel — defines DoD for all waves + phase gate criteria upfront, before agents start) ‖ **final synthesis wave** (go/no-go gate, inter-wave impediment review, retrospective). Both placements are required. Not optional. Excluding scrum-master from Wave 0 or the final synthesis wave without a scratchpad waiver = ERR-017. |
 | New table or DB migration | DatabaseEngineer | parallel wave 1 |
 | New service or SLO change | ObservabilityEngineer + PerformanceEngineer | parallel — ObservabilityEngineer: wave 0 or 1; PerformanceEngineer: wave 3 (load testing, SLO validation pre-release) |
+| Implementation wave with agent-generated code (L2+) | CodeReviewer | wave immediately after implementation — before the release/validation wave |
+| Regulated platform deployment (health, financial, biometric, or legally sensitive data — HDS, HIPAA, RGPD, PCI-DSS, etc.) | LegalCompliance + SecurityEngineer | final validation wave — mandatory pre-production sign-off before release |
 | Code using a third-party library (not simply reading existing code) | — | _(tool, not agent)_ context7 MCP required before generation — verify package API and version before coding |
 | Critical validation MCP tool unavailable (ERR-017) | — | _(seiji handles directly)_ escalate to user — **blocking** |
 | Incident response or security breach | Load skill `handoff-protocol` during PLANNING — apply the incident chain order: `IncidentCommander → ObservabilityEngineer → Debugger → DevOpsEngineer → IncidentCommander` | sequential (defines wave order) |
