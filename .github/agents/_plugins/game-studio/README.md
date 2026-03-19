@@ -13,7 +13,6 @@ Pack d'agents spécialisés pour le développement de jeux vidéo.
 | audio-generator | Génération audio (SFX, musique, voix) via Replicate |
 | level-designer | Conception d'architecture de niveaux |
 | narrative-designer | Écriture scénaristique et dialogues |
-| creative-director | Direction artistique et créative |
 | animations-engineer | WebGL, shaders, Three.js, animations |
 
 ## Activation

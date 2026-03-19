@@ -1,6 +1,5 @@
 ---
 name: creative-director
-plugin: game-studio
 filiere: product
 user-invocable: false
 description: "Hybrid creative and artistic direction — global strategic vision (narrative, thematic coherence) and visual execution (graphic language, assets) for digital products such as websites or video games"

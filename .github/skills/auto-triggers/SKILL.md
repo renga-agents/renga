@@ -20,16 +20,16 @@ This skill identifies the conditions that require automatically consulting speci
 | Hosting or country change | LegalCompliance + RiskManager | parallel |
 | AI model deployment/modification | AIEthicsGovernance + MLOpsEngineer | parallel |
 | Delivery affecting non-technical users | ChangeManagement | sequential (before release) |
-| Cloud architecture / sizing decision | FinOpsEngineer | parallel (with CloudEngineer) |
+| Cloud architecture / sizing decision | FinOpsEngineer + CloudEngineer | parallel |
 | New exposure surface (endpoint, auth, third-party integration) | SecurityEngineer | wave 0 if QAEngineer is planned (ERR-008) |
 | New endpoint or public API contract | APIDesigner + SoftwareArchitect | wave 0 |
 | New service, major feature, or multi-phase module (L2+) without validated user stories | ProxyPO | wave 1 (after Wave 0 architecture and product decisions — translates architecture outcomes into user stories; in plan-only mode: proxy-po must appear in Wave 1 of the DAG even if story writing happens at dispatch time) |
 | Multi-phase roadmap or plan with ≥ 3 waves (L3+) | ProductManager | wave 0 (parallel) — validates phase sequencing by user value, defines success metrics per phase, arbitrates scope vs engineering constraints |
 | **L4 task** OR multi-wave L3+ execution with ≥ 3 agent domains | ScrumMaster | **mandatory for every L4 task** — **Wave 0** (parallel — defines DoD for all waves + phase gate criteria upfront, before agents start) ‖ **final synthesis wave** (go/no-go gate, inter-wave impediment review, retrospective). Both placements are required. Not optional. Excluding scrum-master from Wave 0 or the final synthesis wave without a scratchpad waiver = ERR-017. |
 | New table or DB migration | DatabaseEngineer | parallel wave 1 |
-| New service or SLO change | ObservabilityEngineer | parallel |
-| Code using a third-party library (not simply reading existing code) | context7 MCP | before generation |
-| Critical validation MCP tool unavailable (ERR-017) | Orchestrator: notify the user | **blocking** |
+| New service or SLO change | ObservabilityEngineer + PerformanceEngineer | parallel — ObservabilityEngineer: wave 0 or 1; PerformanceEngineer: wave 3 (load testing, SLO validation pre-release) |
+| Code using a third-party library (not simply reading existing code) | — | _(tool, not agent)_ context7 MCP required before generation — verify package API and version before coding |
+| Critical validation MCP tool unavailable (ERR-017) | — | _(seiji handles directly)_ escalate to user — **blocking** |
 | Incident response or security breach | Load skill `handoff-protocol` during PLANNING — apply the incident chain order: `IncidentCommander → ObservabilityEngineer → Debugger → DevOpsEngineer → IncidentCommander` | sequential (defines wave order) |
 | Product feature requiring vision → prioritization → specs → dev | Load skill `handoff-protocol` during PLANNING — apply the product chain: `ProductStrategist → ProductManager → ProxyPO → Devs` | sequential |
 
