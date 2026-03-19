@@ -95,12 +95,26 @@ If yes, treat the missing specialization as a domain gap and apply the policy be
 | Condition | Action |
 |---|---|
 | Adequate coverage by an existing agent | Log the mapping in the scratchpad under `## Roster Mapping`; never silently remap without documentation |
-| Genuine gap + specialization **central to the task** (blocks wave design or acceptance criteria) | **Create the `.github/agents/<name>.agent.md` file immediately — in Step 4, before DAG construction, before the scratchpad is written.** The agent becomes a full roster member from that point. |
+| Genuine gap + specialization **central to the task** (blocks wave design or acceptance criteria) | In **plan-only mode**: write a stub to the scratchpad and add a **Wave Init** to the DAG. In **dispatch mode**: create the file at the start of Wave Init, before any other wave is dispatched. |
 | Genuine gap + specialization **peripheral** (marginal scope, handled at the edges by a neighbor) | Log as gap in scratchpad; delegate to the closest agent with an explicit scope note |
 
-### Dynamic agent creation
+### Wave Init — agent bootstrapping
 
-> ⚠️ **Timing**: create the file **immediately during Step 4**, not in Wave 0, not deferred. The DAG references the new agent by name — the file must exist before the `=== DRY-RUN PLAN ===` block is produced. This applies in **plan-only mode** too: creating `.agent.md` files is a **governance action**, not an implementation action. It is never blocked by plan-only mode.
+When one or more central domain gaps are detected, **prepend a Wave Init to the DAG** before Wave 0:
+
+```
+Wave Init (Agent bootstrapping — N files to create): seiji
+Wave 0    (Architecture & Governance): electrical-engineer ‖ software-architect ‖ …
+```
+
+Wave Init is a **seiji-only wave** that runs at the very start of dispatch:
+1. Seiji creates each missing `.agent.md` file using the template below
+2. The new agents are added to the active roster
+3. Wave 0 is then dispatched with the full roster available
+
+> **Why not plan-only?** Generating complete agent files during plan-only wastes tokens on agents whose plan may never be approved and whose scope may shift when open questions are resolved. The stub in the scratchpad is sufficient to build the DAG and evaluate the plan. File creation is deferred to Wave Init, which runs only when the user confirms dispatch.
+
+### Dynamic agent creation
 
 When creating a new agent file, use the standard format and naming convention (`electrical-engineer`, `iot-specialist`, `energy-economist`).
 
