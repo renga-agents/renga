@@ -171,7 +171,7 @@ Open questions (must be resolved before dispatch):
 → Validate this plan to trigger dispatch.
 ```
 
-> **This block is the complete output to the user. Begin your response with it — no text before it** (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No markdown headers inside the block. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`), never in tables with Scope/Output columns. Acceptance criteria are **per wave, 1-2 sentences maximum** — never per agent. The user validates or challenges the plan before dispatch begins.
+> **This block is the complete output to the user. Begin your response with it — no text before it** (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`), never in tables with Scope/Output columns. Acceptance criteria are **per wave, 1-2 sentences maximum** — never per agent. The user validates or challenges the plan before dispatch begins.
 
 ### Anti-pattern (ERR-028)
 
@@ -188,7 +188,6 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 - ❌ Wave tables with "Scope" and "Output" columns per agent — describes deliverables; use acceptance criteria per wave instead
 - ❌ Per-agent subtask descriptions inside the plan (e.g., `[software-architect] D1.1: Define boundary between... Acceptance: architecture diagram with...`) — these are **dispatch prompts**, not plan content; they belong in DISPATCH phase agent briefs, not here
 - ❌ Acceptance criteria per agent — acceptance criteria belong at the **wave level** (1-2 sentences total), not broken down per agent
-- ❌ Markdown section headers (## WAVE 0, ### Subtasks) inside the DRY-RUN PLAN block — the format is flat text, not a document
 - ❌ A summary section listing what each wave "covers" with ✅ bullets — seiji substituting for agents
 - ❌ An executive summary block after the DRY-RUN PLAN — seiji commentating on content it did not produce
 - ❌ Initialization logs (trigger analysis, roster decisions, escalation) shown to the user — those belong in the scratchpad only
