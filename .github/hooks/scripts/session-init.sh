@@ -22,8 +22,12 @@ if [[ -f "$PROJECT_ROOT/.hook-debug" ]]; then
   printf '[session-init] %s\n' "$INPUT" >> "$RENGA_BASE/hook-debug.log" 2>/dev/null || true
 fi
 
-# Generate session ID
-SESSION_ID="$(python3 -c 'import uuid; print(uuid.uuid4())' 2>/dev/null || date +%s)"
+# Use Copilot's session_id from payload (consistent across all hook payloads in this session)
+SESSION_ID="$(echo "$INPUT" | jq -r '.session_id // empty' 2>/dev/null)"
+# Fallback: generate a UUID if payload session_id is absent
+if [[ -z "$SESSION_ID" ]]; then
+  SESSION_ID="$(python3 -c 'import uuid; print(uuid.uuid4())' 2>/dev/null || date +%s)"
+fi
 
 # Create reports directory and persist SESSION_ID to file
 REPORT_DIR="$RENGA_BASE/reports/$SESSION_ID"
