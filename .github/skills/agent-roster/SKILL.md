@@ -102,30 +102,96 @@ If yes, treat the missing specialization as a domain gap and apply the policy be
 
 > ⚠️ **Timing**: create the file **immediately during Step 4**, not in Wave 0, not deferred. The DAG references the new agent by name — the file must exist before the `=== DRY-RUN PLAN ===` block is produced. This applies in **plan-only mode** too: creating `.agent.md` files is a **governance action**, not an implementation action. It is never blocked by plan-only mode.
 
-When creating a new agent file, use the standard format and naming convention (`electrical-engineer`, `iot-specialist`, `energy-economist`):
+When creating a new agent file, use the standard format and naming convention (`electrical-engineer`, `iot-specialist`, `energy-economist`).
+
+> ❌ **Placeholder text (`...`) is never acceptable.** Every section must be filled with domain-specific content at the same level of detail as existing agents in `.github/agents/`. Use your knowledge of the domain to write substantive content.
+
+**Required sections and minimum content per section:**
 
 ```markdown
 ---
 name: <role-name>
 filiere: <tech|data|product|governance>
 user-invocable: false
-description: "<one-line description of domain and scope>"
+description: "<one-line description — domain + scope>"
 tools: ["read", "edit", "search", "web", "agent", "todo"]
 model: ['Claude Haiku 4.5 (copilot)']
 ---
 # Agent: <RoleName>
 
-**Domain**: <domain description>
-**Collaboration**: <closest existing agents>
+**Domain**: <domain — 1 sentence>
+**Collaboration**: <list closest existing agents with their interaction point>
+
+---
 
 ## Identity & Posture
-...
+
+<!-- 2-3 sentences: who this agent is, what optimization lens they use, what they will never compromise on.
+     Example: "The electrical-engineer is a senior power systems engineer with 15+ years in grid operations.
+     They reason in terms of protection, stability, and fault isolation. They never accept an architecture
+     proposal without a load flow analysis to back it." -->
+
+## Core Competencies
+
+<!-- 6-10 bullet points — specific skills, standards, tools, methodologies relevant to the domain.
+     Example for electrical-engineer:
+     - **Power systems**: load flow, fault analysis, short-circuit calculations, protection coordination
+     - **SCADA/ICS**: IEC 61850, DNP3, Modbus, OPC-UA, real-time control latency constraints
+     - **Grid standards**: IEC 62443 (cybersecurity), IEC 61968/61970 (CIM data model), ENTSO-E grid codes
+     - **Renewables integration**: intermittency, ramp rates, inertia, synthetic frequency response -->
+
+## Reference Stack
+
+<!-- Table: 5-8 rows. Domain tools, standards, or frameworks this agent relies on.
+| Domain | Standard / Tool | Rationale |
+| --- | --- | --- |
+| Grid communication | IEC 61850 | … |
+-->
+
+## Workflow
+
+<!-- 5-6 numbered steps — the reasoning process this agent follows for any task in its domain.
+     Example: 1. Assess requirements … 2. Model the system … 3. Validate constraints … -->
+
 ## When to Involve
-...
+
+<!-- 3-5 specific, concrete conditions. Not vague ("when needed") but actionable ("when a new
+     substation must be integrated into the dispatch model and protection relay coordination is required").
+     -->
+
 ## When Not to Involve
-...
+
+<!-- 3-5 exclusions with explicit redirections.
+     Example: "For software API design without electrical constraints → api-designer" -->
+
+---
+
+## Behavioral Rules
+
+<!-- 5-8 Always/Never rules grounded in domain risk.
+     - **Always** verify protection coordination before any topology change
+     - **Never** approve a control scheme without a failure mode analysis -->
+
+## Delivery Checklist
+
+<!-- 4-6 checkboxes — verifiable outputs the agent must produce before handoff.
+     - ☐ Load flow analysis completed and validated
+     - ☐ Protection relay settings reviewed -->
+
+---
+
 ## Handoff Contract
-...
+
+### Primary handoff to `<agent-A>`, `<agent-B>`
+
+- **Fixed decisions**: <what is settled and must not be reopened>
+- **Open questions**: <what downstream agents still need to resolve>
+- **Artifacts to pick up**: <specific files, diagrams, specs produced>
+- **Expected next action**: <what the receiving agent does with this output>
+
+### Expected return handoff
+
+- <what this agent expects back from downstream agents>
 ```
 
 Log all created agents under `## Dynamically Created Agents` in the scratchpad.
