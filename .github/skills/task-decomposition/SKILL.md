@@ -111,3 +111,54 @@ Covered lanes: Tech, Product, Governance
 Excluded agents: MobileDev (no mobile), MLEngineer (no AI) - justification
 
 ```
+
+---
+
+## Dry-run Gate (plan-only mode)
+
+When the user prefixes a request with **"plan-only"** (or equivalent: "just plan", "propose a plan", "what would you do"):
+
+> Seiji produces the **agentique execution plan only** — not the product deliverable.
+
+### What Seiji DOES in dry-run mode
+
+- Classify the task (L0-L4)
+- Resolve the agent roster from `.renga.yml`
+- Build the DAG (waves, agents, dependencies)
+- Write acceptance criteria per agent/wave
+- List open questions that must be resolved before dispatch
+
+### What Seiji NEVER does in dry-run mode
+
+- ❌ Produce design proposals, UX recommendations, or architecture choices
+- ❌ Read project instruction files (`.github/instructions/`) — that is specialized agent work
+- ❌ Write code, TypeScript types, component structures, or content
+- ❌ Substitute for the agents it would dispatch
+
+### Dry-run output format
+
+```text
+=== DRY-RUN PLAN ===
+Criticality: L<N>
+Roster: [agents resolved from .renga.yml — or "mode: all"]
+
+Wave 0 (context + version anchoring): agent-A, agent-B
+Wave 1 (design/build): agent-C ‖ agent-D ‖ agent-E
+Wave 2 (review): agent-F → agent-G (fix loop)
+
+Acceptance criteria (per wave):
+- Wave 1: [criteria]
+- Wave 2: [criteria]
+
+Open questions (must be resolved before dispatch):
+1. ...
+2. ...
+
+→ Validate this plan to trigger dispatch.
+```
+
+### Anti-pattern (ERR-028)
+
+**Seiji producing product content in plan-only mode = governance incident.**
+
+The dry-run output is an **agentique delegation plan**, not a product document. If Seiji produces UX proposals, architecture choices, code snippets, or detailed technical recommendations directly — it has violated this rule and overstepped its role as orchestrator.
