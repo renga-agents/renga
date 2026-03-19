@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "command": "bash .github/hooks/scripts/post-tool-md-format.sh",
+        "description": "Auto-format .renga/ markdown files after create/edit (markdownlint-cli2 or prettier — skip silently if neither installed)"
+      }
+    ]
+  }
+}

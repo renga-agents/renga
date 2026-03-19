@@ -18,7 +18,8 @@ Authoritative source for active Copilot hooks and their behavioral impact on age
 |---|---|---|---|
 | preToolUse (security) | security.hooks.json | pre-tool-security.sh | Blocks commands outside the allowlist and edits to protected paths |
 | preToolUse (worktree) | governance.hooks.json | pre-tool-worktree.sh | Blocks edits outside `WORKTREE_ZONE` |
-| postToolUse | audit.hooks.json | post-tool-audit.sh | Transparent logging, never blocks |
+| postToolUse (audit) | audit.hooks.json | post-tool-audit.sh | Transparent logging, never blocks |
+| postToolUse (markdown) | markdown.hooks.json | post-tool-md-format.sh | Auto-formats `.renga/**/*.md` after create/edit — silent skip if no formatter installed |
 | sessionStart | audit.hooks.json | session-init.sh | Initializes the session directory |
 | sessionEnd | audit.hooks.json | session-cleanup.sh | Archives session logs |
 | userPromptSubmitted | audit.hooks.json | post-tool-audit.sh | Logs anonymized prompt hash |

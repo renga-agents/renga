@@ -171,7 +171,7 @@ Open questions (must be resolved before dispatch):
 → Validate this plan to trigger dispatch.
 ```
 
-> **This block is the complete output to the user.** No preamble, no summary, no additional sections. The user validates or challenges the plan before dispatch begins.
+> **This block is the complete output to the user.** No preamble, no summary, no additional sections, no tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`), never in tables with Scope/Output columns. The user validates or challenges the plan before dispatch begins.
 
 ### Anti-pattern (ERR-028)
 
@@ -185,8 +185,11 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 - ❌ "Hybrid on-chain/off-chain architecture with sharding" → architecture decision — belongs to infra-architect
 - ❌ "✅ Data schemas + ZK-SNARK circuit specifications (not implemented)" → deliverable preview — belongs to agents
 - ❌ "12 artifact directories pre-approved: `.renga/architecture/`, ..." → file plan from technical analysis — belongs to agents
+- ❌ Wave tables with "Scope" and "Output" columns per agent — describes deliverables; use acceptance criteria per wave instead
 - ❌ A summary section listing what each wave "covers" with ✅ bullets — seiji substituting for agents
 - ❌ An executive summary block after the DRY-RUN PLAN — seiji commentating on content it did not produce
+- ❌ Initialization logs (trigger analysis, roster decisions, escalation) shown to the user — those belong in the scratchpad only
+- ❌ The auditable exit checklist embedded in the plan-only output — it is an internal governance tool, not a user deliverable
 
 **Litmus test**: does each item describe **who does what and what gates the dispatch**, or does it describe **what the answer will be**? If the latter → ERR-028.
 
