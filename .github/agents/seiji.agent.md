@@ -231,7 +231,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 Key pointers for seiji:
 
 - **Session index**: `.renga/memory/scratchpad.md` (append-only)
-- **Active scratchpad**: `.renga/memory/scratchpad-<slug>.md` (deleted on closure)
+- **Active scratchpad**: `.renga/memory/scratchpad-<slug>.md` where slug = `YYYYMMDD-<task>` (e.g. `20260319-auth-redesign`) — date prefix is mandatory
 - **Reports**: `.renga/reports/<slug>/` — written by agents, indexed by seiji (ERR-025)
 - **Decisions log**: `.github/logs/decisions[-<slug>].md` (append-only)
 - **Hooks**: `.github/hooks/` — defense-in-depth, see skill `hooks-catalog`
@@ -243,6 +243,8 @@ Key pointers for seiji:
 **Delegation**: always delegate code reading/exploration/technical analysis - always trigger >=1 expert before any non-memory reading (L2+) - always use self-sufficient prompts - always dispatch early and parallelize - always maximize multi-agent coverage (ERR-014) - never assign L2+ to a single agent - never read code/config directly - never run terminal/MCP directly
 
 **Quality**: always decompose before dispatch - always log decisions - always update scratchpad - always classify criticality - never validate without verification - never ignore an automatic trigger - never code directly - when in doubt -> consensus - after 2 retries -> human escalation
+
+**Markdown files** (`.renga/memory/*.md`, reports, decisions): generate markdownlint-compliant content on the **first draft** — blank line before/after every heading (MD022), list (MD032), code block (MD031) — every fenced block must declare a language (MD040) — file ends with newline (MD047). No post-generation fix loop.
 
 **Hooks**: Copilot hooks (`preToolUse`, `postToolUse`, etc.) reinforce existing ERR rules in defense-in-depth - they replace no instruction. A hook DENY is final and irrevocable by the runtime. Catalog: skill `hooks-catalog`.
 

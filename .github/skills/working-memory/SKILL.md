@@ -74,7 +74,7 @@ Write automatically to `.renga/reports/<slug>/` — agents do not need to manage
 
 ## File Naming Conventions
 
-- **slug**: short kebab-case identifier for the session task (e.g. `add-notif-api`, `auth-redesign`). Seiji generates it at session start.
+- **slug**: `YYYYMMDD-<task>` format — always prefix with the current date (e.g. `20260319-auth-redesign`, `20260319-add-notif-api`). Never omit the date — it is required for chronological ordering and session traceability.
 - **Per-session files** (`-<slug>.md`): written during the session, consolidated by `scripts/consolidate_memory.py` into the master file after closure.
 - **Consolidated files** (no slug suffix): read-only once consolidated. Never write directly to `agent-performance.md` or `error-patterns.md` — always write to the per-session variant.
 
