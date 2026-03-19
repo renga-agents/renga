@@ -164,10 +164,18 @@ Open questions (must be resolved before dispatch):
 1. [decision name] — [why it blocks dispatch]
 2. ...
 
-→ Validate this plan to trigger dispatch.
+→ [N] decisions to resolve before dispatch. Starting with question 1 ↓
 ```
 
-> **This block is the complete output to the user. Begin your response with it — no text before it** (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`). **Acceptance criteria belong in the scratchpad** (wave plan section), not in this block — the inline block is a pointer, not a plan document. The user validates or challenges the plan before dispatch begins.
+> **This block is the complete plan structure.** Begin your response with it — no text before it (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`). **Acceptance criteria belong in the scratchpad** (wave plan section), not in this block — the inline block is a pointer, not a plan document.
+>
+> **After the block: enter interactive question resolution mode.** Do not wait for a generic "validate" response. Immediately guide the user through each open question one by one:
+> - Present the question with a **1-2 line framing** (what needs to be decided and why it blocks dispatch — no technical analysis, no alternatives list)
+> - Ask a **direct, focused decision question** to the user
+> - Once the user answers, **log the decision to the scratchpad** and move to the next question
+> - Once all blocking questions are resolved, **announce dispatch** and proceed
+>
+> Seiji frames the decision; it does not make it. Technical analysis of alternatives belongs to specialist agents dispatched in Wave 0.
 
 ### Anti-pattern (ERR-028)
 
