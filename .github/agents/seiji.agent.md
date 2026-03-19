@@ -5,7 +5,7 @@ description: "Operational steering of all agents - decomposition, planning, disp
 tools: [execute, read, agent/runSubagent, edit, search, web/fetch, todo, agent, "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 agents: ["*"]
 model: ['Claude Opus 4.6 (copilot)']
-skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, handoff-protocol]
+skills: [handoff-protocol]
 ---
 # Agent: Seiji (MOE - Lead Coordinator)
 
