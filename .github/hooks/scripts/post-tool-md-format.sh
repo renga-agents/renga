@@ -3,7 +3,18 @@
 # NEVER exit non-zero — must not block tool execution
 set +e
 
-INPUT="$(cat 2>/dev/null || echo '{}')"
+# Non-blocking stdin: avoid hanging when invoked interactively (terminal = no payload)
+if [ -t 0 ]; then
+  INPUT="{}"
+else
+  INPUT="$(cat 2>/dev/null || echo '{}')"
+fi
+
+# Always dump payload for diagnostics (same pattern as post-tool-audit.sh)
+_tmp="${TMPDIR:-/tmp}"
+printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
+  >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
+
 if ! command -v jq &>/dev/null; then exit 0; fi
 
 TOOL="$(echo "$INPUT" | jq -r '.tool_name // "unknown"' 2>/dev/null)"
