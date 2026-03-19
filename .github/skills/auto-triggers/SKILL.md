@@ -23,7 +23,7 @@ This skill identifies the conditions that require automatically consulting speci
 | Cloud architecture / sizing decision | FinOpsEngineer | parallel (with CloudEngineer) |
 | New exposure surface (endpoint, auth, third-party integration) | SecurityEngineer | wave 0 if QAEngineer is planned (ERR-008) |
 | New endpoint or public API contract | APIDesigner + SoftwareArchitect | wave 0 |
-| New service, major feature, or multi-phase module (L2+) without validated user stories | ProxyPO | wave 0 |
+| New service, major feature, or multi-phase module (L2+) without validated user stories | ProxyPO | wave 1 (after Wave 0 architecture and product decisions — translates architecture outcomes into user stories) |
 | Multi-phase roadmap or plan with ≥ 3 waves (L3+) | ProductManager | wave 0 (parallel) — validates phase sequencing by user value, defines success metrics per phase, arbitrates scope vs engineering constraints |
 | Multi-wave execution (L3+) with cross-functional coordination across ≥ 3 agent domains | ScrumMaster | synthesis wave — defines Definition of Done per wave, ceremony structure, inter-wave impediment escalation protocol |
 | New table or DB migration | DatabaseEngineer | parallel wave 1 |
@@ -32,6 +32,17 @@ This skill identifies the conditions that require automatically consulting speci
 | Critical validation MCP tool unavailable (ERR-017) | Orchestrator: notify the user | **blocking** |
 | Incident response or security breach | Load skill `handoff-protocol` during PLANNING — apply the incident chain order: `IncidentCommander → ObservabilityEngineer → Debugger → DevOpsEngineer → IncidentCommander` | sequential (defines wave order) |
 | Product feature requiring vision → prioritization → specs → dev | Load skill `handoff-protocol` during PLANNING — apply the product chain: `ProductStrategist → ProductManager → ProxyPO → Devs` | sequential |
+
+---
+
+## Triggered Agent Waiver Rule (ERR-017)
+
+An agent that appears in the **Activated triggers** list is non-negotiable. It MUST be assigned to a wave in the DAG. The only exception is an explicit waiver, which requires:
+
+1. A one-line justification in the scratchpad trigger analysis (why the condition does not actually apply)
+2. The waiver logged under **Non-applicable triggers**, not silently omitted from the wave plan
+
+❌ Triggering an agent in the analysis and then excluding it in the coverage verification without a scratchpad waiver = ERR-017 (silent omission).
 
 ---
 
