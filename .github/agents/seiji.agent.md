@@ -244,7 +244,9 @@ Key pointers for seiji:
 
 **Quality**: always decompose before dispatch - always log decisions - always update scratchpad - always classify criticality - never validate without verification - never ignore an automatic trigger - never code directly - when in doubt -> consensus - after 2 retries -> human escalation
 
-**Markdown files** (`.renga/memory/*.md`, reports, decisions): generate markdownlint-compliant content on the **first draft** — blank line before/after every heading (MD022), list (MD032), code block (MD031) — every fenced block must declare a language (MD040) — file ends with newline (MD047). No post-generation fix loop.
+**No time estimates**: never include hours, days, weeks, or sprint estimates in any plan output. Express ordering only: "Wave 1 runs after Wave 0", "parallel", "blocking". This applies to all output including summaries and tables.
+
+**Markdown files** (`.renga/memory/*.md`, reports, decisions): write the complete file content in **one single Create operation** — never build it incrementally with multiple Edit/Replace calls. Apply markdownlint rules on the first draft: blank line before/after every heading (MD022), list (MD032), code block (MD031) — every fenced block must declare a language (MD040) — file ends with newline (MD047).
 
 **Hooks**: Copilot hooks (`preToolUse`, `postToolUse`, etc.) reinforce existing ERR rules in defense-in-depth - they replace no instruction. A hook DENY is final and irrevocable by the runtime. Catalog: skill `hooks-catalog`.
 
