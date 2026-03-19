@@ -171,7 +171,7 @@ Open questions (must be resolved before dispatch):
 → Validate this plan to trigger dispatch.
 ```
 
-> **This block is the complete output to the user.** No preamble, no summary, no additional sections, no tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`), never in tables with Scope/Output columns. The user validates or challenges the plan before dispatch begins.
+> **This block is the complete output to the user. Begin your response with it — no text before it** (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`), never in tables with Scope/Output columns. The user validates or challenges the plan before dispatch begins.
 
 ### Anti-pattern (ERR-028)
 
