@@ -95,10 +95,12 @@ If yes, treat the missing specialization as a domain gap and apply the policy be
 | Condition | Action |
 |---|---|
 | Adequate coverage by an existing agent | Log the mapping in the scratchpad under `## Roster Mapping`; never silently remap without documentation |
-| Genuine gap + specialization **central to the task** (blocks wave design or acceptance criteria) | Create a new `.github/agents/<name>.agent.md` — the agent becomes a full roster member for this and future sessions |
+| Genuine gap + specialization **central to the task** (blocks wave design or acceptance criteria) | **Create the `.github/agents/<name>.agent.md` file immediately — in Step 4, before DAG construction, before the scratchpad is written.** The agent becomes a full roster member from that point. |
 | Genuine gap + specialization **peripheral** (marginal scope, handled at the edges by a neighbor) | Log as gap in scratchpad; delegate to the closest agent with an explicit scope note |
 
 ### Dynamic agent creation
+
+> ⚠️ **Timing**: create the file **immediately during Step 4**, not in Wave 0, not deferred. The DAG references the new agent by name — the file must exist before the `=== DRY-RUN PLAN ===` block is produced. This applies in **plan-only mode** too: creating `.agent.md` files is a **governance action**, not an implementation action. It is never blocked by plan-only mode.
 
 When creating a new agent file, use the standard format and naming convention (`electrical-engineer`, `iot-specialist`, `energy-economist`):
 
