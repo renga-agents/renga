@@ -32,14 +32,27 @@ TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"
 ARGS_KEYS="$(echo "$INPUT" | jq -r '(.tool_input // {}) | keys | join(",")' 2>/dev/null || echo "")"
 EXIT_CODE="$(echo "$INPUT" | jq -r '.exit_code // "N/A"' 2>/dev/null || echo "N/A")"
 
+# Primary value: filePath > command > query > filePaths[] > replacements[].filePath > prompt length
+TARGET="$(echo "$INPUT" | jq -r '
+  .tool_input.filePath //
+  .tool_input.path //
+  .tool_input.file_path //
+  .tool_input.command //
+  .tool_input.query //
+  (try (.tool_input.filePaths | join(",")) catch null) //
+  (try (.tool_input.replacements | map(.filePath // .file_path) | unique | join(",")) catch null) //
+  (if .hook_event_name == "UserPromptSubmit" then ("prompt:" + (.prompt | length | tostring) + "chars") else null end) //
+  ""
+' 2>/dev/null || echo "")"
+
 SESSION_FILE="$RENGA_BASE/reports/.current-session"
 SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
 REPORT_DIR="${AUDIT_LOG_DIR:-$RENGA_BASE/reports/$SESSION_ID}"
 mkdir -p "$REPORT_DIR" 2>/dev/null || true
 
-jq -n --arg tool "$TOOL" --arg ts "$TIMESTAMP" --arg keys "$ARGS_KEYS" --arg exit "$EXIT_CODE" \
-  '{tool: $tool, timestamp: $ts, args_keys: $keys, exit_code: $exit}' \
+jq -n --arg tool "$TOOL" --arg ts "$TIMESTAMP" --arg target "$TARGET" --arg keys "$ARGS_KEYS" --arg exit "$EXIT_CODE" \
+  '{tool: $tool, timestamp: $ts, target: $target, args_keys: $keys, exit_code: $exit}' \
   >> "$REPORT_DIR/tool-audit.jsonl" 2>/dev/null || true
 
 exit 0
