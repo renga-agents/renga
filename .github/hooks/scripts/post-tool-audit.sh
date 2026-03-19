@@ -19,13 +19,15 @@ printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")"
   >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
 
 # Debug mode: full dump when .hook-debug exists at project root
-[[ -f "$PROJECT_ROOT/.hook-debug" ]] && \
+if [[ -f "$PROJECT_ROOT/.hook-debug" ]]; then
+  mkdir -p "$RENGA_BASE" 2>/dev/null || true
   printf '[post-tool-audit] %s\n' "$INPUT" >> "$RENGA_BASE/hook-debug.log" 2>/dev/null || true
+fi
 
 # Require jq for safe parsing
 if ! command -v jq &>/dev/null; then exit 0; fi
 
-TOOL="$(echo "$INPUT" | jq -r '.tool_name // "unknown"' 2>/dev/null || echo "unknown")"
+TOOL="$(echo "$INPUT" | jq -r '.tool_name // .hook_event_name // "unknown"' 2>/dev/null || echo "unknown")"
 TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"
 ARGS_KEYS="$(echo "$INPUT" | jq -r '(.tool_input // {}) | keys | join(",")' 2>/dev/null || echo "")"
 EXIT_CODE="$(echo "$INPUT" | jq -r '.exit_code // "N/A"' 2>/dev/null || echo "N/A")"
