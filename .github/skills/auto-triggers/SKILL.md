@@ -23,7 +23,9 @@ This skill identifies the conditions that require automatically consulting speci
 | Cloud architecture / sizing decision | FinOpsEngineer | parallel (with CloudEngineer) |
 | New exposure surface (endpoint, auth, third-party integration) | SecurityEngineer | wave 0 if QAEngineer is planned (ERR-008) |
 | New endpoint or public API contract | APIDesigner + SoftwareArchitect | wave 0 |
-| New module without a product spec | ProxyPO | wave 0 |
+| New service, major feature, or multi-phase module (L2+) without validated user stories | ProxyPO | wave 0 |
+| Multi-phase roadmap or plan with ≥ 3 waves (L3+) | ProductManager | wave 0 (parallel) — validates phase sequencing by user value, defines success metrics per phase, arbitrates scope vs engineering constraints |
+| Multi-wave execution (L3+) with cross-functional coordination across ≥ 3 agent domains | ScrumMaster | synthesis wave — defines Definition of Done per wave, ceremony structure, inter-wave impediment escalation protocol |
 | New table or DB migration | DatabaseEngineer | parallel wave 1 |
 | New service or SLO change | ObservabilityEngineer | parallel |
 | Code using a third-party library (not simply reading existing code) | context7 MCP | before generation |
