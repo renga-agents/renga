@@ -1,27 +1,33 @@
 #!/usr/bin/env bash
-# NEVER exit non-zero — error tracking must not cause additional errors
 set +e
 
 INPUT="$(cat 2>/dev/null || echo '{}')"
 
-# Derive project root from script location — robust against CWD variations
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+_self="${BASH_SOURCE[0]:-$0}"
+_dir="$(cd "$(dirname "$_self")" 2>/dev/null && pwd)"
+PROJECT_ROOT="$(cd "$_dir/../../.." 2>/dev/null && pwd)"
+if [[ ! -f "$PROJECT_ROOT/.renga.yml" ]]; then
+  _d="$(pwd)"
+  while [[ "$_d" != "/" ]]; do
+    [[ -f "$_d/.renga.yml" ]] && PROJECT_ROOT="$_d" && break
+    _d="$(dirname "$_d")"
+  done
+fi
 RENGA_BASE="${RENGA_DIR:-$PROJECT_ROOT/.renga}"
 
-# Unconditional trace
-echo "[$(date -u +%T)] error-tracker.sh pid=$$ cwd=$(pwd)" >> /tmp/renga-hooks-trace.log 2>/dev/null || true
+_tmp="${TMPDIR:-/tmp}"
+printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
+  >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
 
-# Debug mode: dump raw payload if .hook-debug exists in project root
-[[ -f "$PROJECT_ROOT/.hook-debug" ]] && echo "[error-tracker] $INPUT" >> /tmp/renga-hook-debug.log 2>/dev/null || true
+[[ -f "$PROJECT_ROOT/.hook-debug" ]] && \
+  printf '[error-tracker] %s\n' "$INPUT" >> "$_tmp/renga-hook-debug.log" 2>/dev/null || true
 
 if ! command -v jq &>/dev/null; then exit 0; fi
 
-ERROR_TYPE="$(echo "$INPUT" | jq -r '.error // .errorType // .message // "unknown"' 2>/dev/null || echo "unknown")"
-TOOL="$(echo "$INPUT" | jq -r '.tool // .toolName // .name // "unknown"' 2>/dev/null || echo "unknown")"
+ERROR_TYPE="$(echo "$INPUT" | jq -r '.error // .errorType // .error_type // .message // .data.error // "unknown"' 2>/dev/null || echo "unknown")"
+TOOL="$(echo "$INPUT" | jq -r '.tool // .toolName // .tool_name // .name // .data.tool // "unknown"' 2>/dev/null || echo "unknown")"
 TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"
 
-# Session directory (read from file — env vars don't survive across hook subprocess calls)
 SESSION_FILE="$RENGA_BASE/reports/.current-session"
 SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
