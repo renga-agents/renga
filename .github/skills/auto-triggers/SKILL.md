@@ -67,6 +67,18 @@ Reading a `userId` to display a profile is not the same as sending an `email` to
 
 ---
 
+## Mandatory Agents for Visual/Interactive Deliverables (ERR-020)
+
+For any deliverable classified as `L3+` (video game, interactive animation, complex dashboard, highly visual UI):
+
+**Mandatory**: CreativeDirector (art direction) + ux-ui-designer (UI consistency) + performance-engineer (frame rate and memory)
+
+**Recommended**: accessibility-engineer (if broad audience) + frontend-dev (cross-browser compatibility)
+
+**Additional requirement**: the DAG must include at least one wave dedicated to **visual review** (annotated screenshots, graphic consistency checks, polish).
+
+---
+
 ## Expected Output Format
 
 ```
