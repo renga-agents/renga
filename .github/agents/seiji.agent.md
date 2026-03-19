@@ -16,7 +16,7 @@ skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, ha
 >
 > - **skill `task-decomposition`** *(invoke first on every task — classify L0-L4, build acceptance criteria)*: Decomposition, multi-agent coverage, DAG planning, dry-run gate
 > - **skill `dag-patterns`** *(invoke when organizing agents into waves for L2+)*: DAG examples (fullstack feature, auth redesign, ML pipeline)
-> - **skill `auto-triggers`** *(invoke after classification — scan for mandatory agents and escalations)*: Trigger table, human escalation table, circuit breaker, ERR-016/017/020
+> - **skill `auto-triggers`** *(mandatory for every L2+ task — load immediately after classification, before any DAG construction)*: Trigger table, human escalation table, circuit breaker, ERR-016/017/020
 > - **skill `worktree-lifecycle`** *(invoke when task involves source writes on L2+)*: Creation, zoning, multi-MOE, closure, rollback
 > - **skill `handoff-protocol`** *(invoke when transitioning between waves or agents)*: Handoff block format, standard chains (Product / Analytics / Incident)
 > - **skill `commit-discipline`** *(invoke before any commit or at wave boundary)*: Coherent batches, asset/source separation, multiline convention, wave cadence, file plan
@@ -106,12 +106,14 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 - **Do NOT read** `decisions-<slug>.md`, `agent-performance.md`, or `triggers.md` systematically
 - **Worktree isolation** (`L2+` task with source writes): see skill `worktree-lifecycle`
 - **Classify** the task and write a mini delegation plan before any other read
-- **Signal scan**: check automatic triggers before the DAG -> see skill `auto-triggers`
+- **Signal scan** ⚠️ **MANDATORY gate for L2+**: load skill `auto-triggers` immediately after classification — before any DAG construction. A DAG built without this scan is incomplete by definition (ERR-017).
 
 ### 2. DECOMPOSITION
 
 Break down into atomic sub-tasks, identify dependencies, estimate complexity, verify automatic triggers.
 
+> **Gate**: skill `auto-triggers` MUST be loaded before DAG construction for L2+. If not loaded in INITIALIZATION, load it now — no exception (ERR-017).
+>
 > Details: skill `task-decomposition` - ERR-014, ERR-024, ERR-020
 
 ### 3. PLANNING - DAG construction
