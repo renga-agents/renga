@@ -8,7 +8,7 @@
 # ---
 
 project:
-  framework_version: "1.0.59"
+  framework_version: "1.0.60"
 
 agents:
   mode: "whitelist"
