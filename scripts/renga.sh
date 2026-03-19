@@ -6,7 +6,7 @@
 # Usage: ./scripts/renga.sh <command>
 #
 # Commands:
-#   init      — Copie .renga.example.yml → .renga.yml + crée .copilot/memory/
+#   init      — Copie .renga.example.yml → .renga.yml + crée .renga/memory/
 #   install   — Installe les agents depuis une release GitHub
 #   update    — Met à jour les agents vers la dernière version
 #   list      — Liste les agents et plugins installés
@@ -116,13 +116,13 @@ install_hooks() {
 ensure_gitignore_reports() {
   local gitignore="$ROOT_DIR/.gitignore"
   if [[ -f "$gitignore" ]]; then
-    if ! grep -qF '.copilot/reports/' "$gitignore"; then
-      printf '\n# renga reports\n.copilot/reports/\n' >> "$gitignore"
-      ok "Added .copilot/reports/ to .gitignore"
+    if ! grep -qF '.renga/reports/' "$gitignore"; then
+      printf '\n# renga reports\n.renga/reports/\n' >> "$gitignore"
+      ok "Added .renga/reports/ to .gitignore"
     fi
   else
-    printf '# renga reports\n.copilot/reports/\n' > "$gitignore"
-    ok "Created .gitignore with .copilot/reports/"
+    printf '# renga reports\n.renga/reports/\n' > "$gitignore"
+    ok "Created .gitignore with .renga/reports/"
   fi
 }
 
@@ -472,9 +472,9 @@ cmd_dashboard() {
   fi
 
   python3 "$script" \
-    --memory-dir "$ROOT_DIR/.copilot/memory" \
-    --output "$ROOT_DIR/.copilot/reports/dashboard.md"
-  ok "Dashboard généré dans .copilot/reports/dashboard.md"
+    --memory-dir "$ROOT_DIR/.renga/memory" \
+    --output "$ROOT_DIR/.renga/reports/dashboard.md"
+  ok "Dashboard généré dans .renga/reports/dashboard.md"
 }
 
 cmd_build() {

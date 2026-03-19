@@ -33,9 +33,9 @@ Any `L2+` task that creates or modifies source files requires an isolated worktr
 
    ```
 
-3. **Create the scratchpad**: `.copilot/memory/scratchpad-<slug>.md`
-4. **Update the index**: `.copilot/memory/scratchpad.md`
-5. **Create the reports directory**: `.copilot/reports/<slug>/index.md`
+3. **Create the scratchpad**: `.renga/memory/scratchpad-<slug>.md`
+4. **Update the index**: `.renga/memory/scratchpad.md`
+5. **Create the reports directory**: `.renga/reports/<slug>/index.md`
 
 ---
 

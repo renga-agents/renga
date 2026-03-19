@@ -10,7 +10,7 @@ Usage:
     python scripts/consolidate_memory.py
     python scripts/consolidate_memory.py --dry-run
     python scripts/consolidate_memory.py --keep
-    python scripts/consolidate_memory.py --memory-dir .copilot/memory/
+    python scripts/consolidate_memory.py --memory-dir .renga/memory/
 """
 
 from __future__ import annotations
@@ -225,8 +225,8 @@ def main() -> None:
     parser.add_argument(
         "--memory-dir",
         type=Path,
-        default=Path(".copilot/memory"),
-        help="Path to the memory directory (default: .copilot/memory/)",
+        default=Path(".renga/memory"),
+        help="Path to the memory directory (default: .renga/memory/)",
     )
     parser.add_argument(
         "--dry-run",

@@ -312,7 +312,7 @@ SESSION_INIT_SCRIPT="$SCRIPT_DIR/session-init.sh"
 test_session_init_exits_zero() {
     skip_if_missing "$SESSION_INIT_SCRIPT" || return 0
     setup_tmpdir
-    COPILOT_DIR="$TEST_TMPDIR/.copilot" run_hook "$SESSION_INIT_SCRIPT" '{}'
+    RENGA_DIR="$TEST_TMPDIR/.copilot" run_hook "$SESSION_INIT_SCRIPT" '{}'
     assert_exit_code "session-init exits 0" 0 $HOOK_EXIT
     teardown_tmpdir
 }
@@ -321,13 +321,13 @@ test_session_init_exits_zero
 test_session_init_creates_reports_dir() {
     skip_if_missing "$SESSION_INIT_SCRIPT" || return 0
     setup_tmpdir
-    COPILOT_DIR="$TEST_TMPDIR/.copilot" run_hook "$SESSION_INIT_SCRIPT" '{}'
+    RENGA_DIR="$TEST_TMPDIR/.copilot" run_hook "$SESSION_INIT_SCRIPT" '{}'
     # Vérifie qu'un sous-répertoire reports/ a été créé
-    if [[ -d "$TEST_TMPDIR/.copilot/reports" ]]; then
+    if [[ -d "$TEST_TMPDIR/.renga/reports" ]]; then
         echo "  ✅ PASS: session-init creates reports directory"
         ((PASS++)) || true
     else
-        echo "  ❌ FAIL: session-init did not create .copilot/reports/"
+        echo "  ❌ FAIL: session-init did not create .renga/reports/"
         ((FAIL++)) || true
     fi
     teardown_tmpdir

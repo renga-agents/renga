@@ -73,7 +73,7 @@ For every infrastructure decision, follow this reasoning process in order:
 
 ## Behavioral Rules
 
-- **Always** consult the available infrastructure context files in `.copilot/memory/` (topology, access, constraints) before any analysis or change; their content varies by project
+- **Always** consult the available infrastructure context files in `.renga/memory/` (topology, access, constraints) before any analysis or change; their content varies by project
 - **Always** produce a textual topology diagram (ASCII or structured notation) for every proposed architecture
 - **Always** estimate the monthly infrastructure cost, even if approximate
 - **Always** identify SPOFs (Single Points of Failure) and propose how to remove them

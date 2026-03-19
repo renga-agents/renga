@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set +e
 
-SESSION_FILE=".copilot/reports/.current-session"
+SESSION_FILE=".renga/reports/.current-session"
 SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
-REPORT_DIR=".copilot/reports/${SESSION_ID}"
+REPORT_DIR=".renga/reports/${SESSION_ID}"
 
 # Check jq dependency
 if ! command -v jq &>/dev/null; then

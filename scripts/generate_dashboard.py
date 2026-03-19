@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Generate a performance dashboard from memory files.
 
-Parses `.copilot/memory/agent-performance.md` and `.copilot/memory/error-patterns.md`
+Parses `.renga/memory/agent-performance.md` and `.renga/memory/error-patterns.md`
 to produce a Markdown report with KPIs, rankings and trends.
 
 Usage:
     python3 scripts/generate_dashboard.py [--memory-dir PATH] [--output PATH]
 
 Options:
-    --memory-dir    Directory containing memory files (default: .copilot/memory)
+    --memory-dir    Directory containing memory files (default: .renga/memory)
     --output        Path to the generated report (default: reports/dashboard.md)
 
 Works with empty or missing files (displays "No data").
@@ -159,8 +159,8 @@ def generate_dashboard(
             "## No data",
             "",
             "No performance or error data has been recorded.",
-            "Populate `.copilot/memory/agent-performance.md` and "
-            "`.copilot/memory/error-patterns.md` to generate a dashboard.",
+            "Populate `.renga/memory/agent-performance.md` and "
+            "`.renga/memory/error-patterns.md` to generate a dashboard.",
             "",
         ]
         return "\n".join(lines)
@@ -285,8 +285,8 @@ def main() -> None:
     parser.add_argument(
         "--memory-dir",
         type=Path,
-        default=Path(".copilot/memory"),
-        help="Memory directory (default: .copilot/memory)",
+        default=Path(".renga/memory"),
+        help="Memory directory (default: .renga/memory)",
     )
     parser.add_argument(
         "--output",

@@ -12,10 +12,10 @@ AGENT="$(echo "$INPUT" | jq -r '.agent // .agentName // .name // "unknown"' 2>/d
 REASON="$(echo "$INPUT" | jq -r '.reason // .stopReason // .stop_reason // "unknown"' 2>/dev/null || echo "unknown")"
 
 # Session directory (read from file — env vars don't survive across hook subprocess calls)
-SESSION_FILE=".copilot/reports/.current-session"
+SESSION_FILE=".renga/reports/.current-session"
 SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
-REPORT_DIR=".copilot/reports/${SESSION_ID}"
+REPORT_DIR=".renga/reports/${SESSION_ID}"
 mkdir -p "$REPORT_DIR" 2>/dev/null || true
 
 TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"

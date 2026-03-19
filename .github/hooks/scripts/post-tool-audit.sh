@@ -17,10 +17,10 @@ ARGS_KEYS="$(echo "$INPUT" | jq -r '(.args // .input // .parameters) | keys | jo
 EXIT_CODE="$(echo "$INPUT" | jq -r '.result.exitCode // .exitCode // "N/A"' 2>/dev/null || echo "N/A")"
 
 # Session directory (read from file — env vars don't survive across hook subprocess calls)
-SESSION_FILE=".copilot/reports/.current-session"
+SESSION_FILE=".renga/reports/.current-session"
 SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
-REPORT_DIR="${AUDIT_LOG_DIR:-.copilot/reports/${SESSION_ID}}"
+REPORT_DIR="${AUDIT_LOG_DIR:-.renga/reports/${SESSION_ID}}"
 mkdir -p "$REPORT_DIR" 2>/dev/null || true
 
 # Append JSONL (jq ensures proper escaping)

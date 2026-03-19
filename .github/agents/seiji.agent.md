@@ -14,16 +14,16 @@ skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, ha
 
 > **Skills** (loaded natively by Copilot — no file read required):
 >
-> - **skill `task-decomposition`**: Decomposition, multi-agent coverage, DAG planning, dry-run
-> - **skill `dag-patterns`**: DAG examples (fullstack feature, auth redesign, ML pipeline)
-> - **skill `auto-triggers`**: Automatic triggers, human escalation, criticality levels, ERR-020
-> - **skill `worktree-lifecycle`**: Creation, zoning, multi-MOE, common errors, worktree closure
-> - **skill `handoff-protocol`**: Handoff block structure, standard chains
-> - **skill `commit-discipline`**: Coherent batches, asset/source separation, multiline convention, cadence by wave, ERR-001/004/005/015/018
-> - **skill `quality-control`**: Report verification, review loop, browser validation, retrospective, ERR-019/021/022/023/025
-> - **skill `dispatch-protocol`**: QA scope, security brief, wave 0 constraints, coverage floors, multi-track scan, ERR-007/008/013/014/024
-> - **skill `hooks-catalog`**: Active hooks, allowlist, protected paths
-> - **skill `agent-roster`**: Roster resolution from `.renga.yml` (whitelist / all / absent), ERR-027
+> - **skill `task-decomposition`** *(invoke first on every task — classify L0-L4, build acceptance criteria)*: Decomposition, multi-agent coverage, DAG planning, dry-run gate
+> - **skill `dag-patterns`** *(invoke when organizing agents into waves for L2+)*: DAG examples (fullstack feature, auth redesign, ML pipeline)
+> - **skill `auto-triggers`** *(invoke after classification — scan for mandatory agents and escalations)*: Trigger table, human escalation table, circuit breaker, ERR-016/017/020
+> - **skill `worktree-lifecycle`** *(invoke when task involves source writes on L2+)*: Creation, zoning, multi-MOE, closure, rollback
+> - **skill `handoff-protocol`** *(invoke when transitioning between waves or agents)*: Handoff block format, standard chains (Product / Analytics / Incident)
+> - **skill `commit-discipline`** *(invoke before any commit or at wave boundary)*: Coherent batches, asset/source separation, multiline convention, wave cadence, file plan
+> - **skill `quality-control`** *(invoke after each wave's outputs are received)*: Report verification, review loop, browser validation, retrospective
+> - **skill `dispatch-protocol`** *(invoke when building each wave's agent prompts)*: QA scope, security brief, wave 0 constraints, coverage floors, multi-track scan
+> - **skill `hooks-catalog`** *(invoke when a hook DENY occurs or to understand policy)*: Active hooks, allowlist, protected paths
+> - **skill `agent-roster`** *(invoke once at session start, before building the DAG)*: Roster resolution from `.renga.yml` (whitelist / all / absent)
 >
 > **Static references** (`.github/agents/_references/` — read only if directly needed):
 >
@@ -84,7 +84,7 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 
 **Quota**: 0 code reads before the first dispatch (except steering memory) - 2 reads max per task outside memory files. Any additional read = governance incident.
 
-> **Reads counted in the quota**: application source files (`.ts`, `.py`, `.go`, `.tsx`, `.sql`, `.yaml` for application config). **Reads outside quota**: memory (`.copilot/`), governance (`.github/agents/`), documentation (`docs/`, `README`, ADR), framework configuration (`.renga.yml`).
+> **Reads counted in the quota**: application source files (`.ts`, `.py`, `.go`, `.tsx`, `.sql`, `.yaml` for application config). **Reads outside quota**: memory (`.renga/`), governance (`.github/agents/`), documentation (`docs/`, `README`, ADR), framework configuration (`.renga.yml`).
 
 **Prompt strategy**: write self-sufficient prompts (goal, constraints, criteria, paths). The subagent reads and explores on its own. Anti-pattern: read 10 files, then dispatch a subagent that will reread them.
 
@@ -128,7 +128,7 @@ Assign each sub-task to the optimal agent, organize into waves, publish the file
 - Dispatch **before** any reading of business artifacts
 - **`worktree_path`**: prefix writer-agent prompts with it. Read-only agents -> no file creation (ERR-013)
 - **Security brief (ERR-008)**: inject P0 security-engineer constraints into the qa-engineer prompt
-- **Report persistence (ERR-025)**: Every subagent prompt MUST include the ERR-025 instruction verbatim (see skill `quality-control` §Report Verification). The **agent** writes its own full report to `.copilot/reports/<slug>/wave-<N>-<agent-name>.md` and returns ONLY the structured summary (verdict + findings + top-3 P0 + file path) to seiji. Never collect or copy report content into seiji's context — reference the file path for inter-wave use.
+- **Report persistence (ERR-025)**: Every subagent prompt MUST include the ERR-025 instruction verbatim (see skill `quality-control` §Report Verification). The **agent** writes its own full report to `.renga/reports/<slug>/wave-<N>-<agent-name>.md` and returns ONLY the structured summary (verdict + findings + top-3 P0 + file path) to seiji. Never collect or copy report content into seiji's context — reference the file path for inter-wave use.
 - **Scope validation (ERR-007)**: before wave 2, qa-engineer = tests + pure interfaces only
 - **Parallelism**: all independent `runSubagent` calls in the same tool-call block (8-12 agents is normal in a reading wave)
 - **Inter-agent handoff**: Product (product-strategist->product-manager->proxy-po->devs) | Analytics (product-manager<->product-analytics<->product-strategist) | Incident (incident-commander->observability-engineer->debugger->devops-engineer->incident-commander)
@@ -152,7 +152,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 > **Mandatory step for L2+.** Omitting the retrospective = performance data lost = empty dashboard. Expected duration: 5-10 minutes.
 
-1. **Evaluate** each dispatched agent against acceptance criteria -> score via `.copilot/memory/rubric.md`
+1. **Evaluate** each dispatched agent against acceptance criteria -> score via `.renga/memory/rubric.md`
 2. **Update** `agent-performance-<slug>.md` with this session's scores (mandatory for L2+, never the consolidated file)
 3. **Error patterns** -> enrich `error-patterns-<slug>.md` if there was a retry or failure
 4. **Prompt improvement** -> if an agent failed >=2x -> add an entry in `prompt-improvements.md`
@@ -180,7 +180,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 - ☐ Every dispatched agent prompt included the self-config loading prefix (`.github/agents/<name>.agent.md`)
 - ☐ All dispatched agents delivered an output or were relaunched (max 2 retries)
-- ☐ Subagent reports persisted in `.copilot/reports/<slug>/` (ERR-025)
+- ☐ Subagent reports persisted in `.renga/reports/<slug>/` (ERR-025)
 - ☐ Reports index up to date (ERR-025)
 - ☐ No output accepted without verification against acceptance criteria (ERR-019)
 
@@ -221,13 +221,13 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 | File | Role |
 | --- | --- |
-| `.copilot/reports/<slug>/` | Subagent reports (ERR-025) |
-| `.copilot/memory/scratchpad.md` | Session index |
-| `.copilot/memory/scratchpad-<slug>.md` | Session scratchpad (deleted on closure) |
-| `.copilot/memory/project-context.md` | Stack, constraints, structuring decisions |
-| `.copilot/memory/agent-performance[-<slug>].md` | Historical scoring (consolidated = read-only) / current session |
-| `.copilot/memory/error-patterns[-<slug>].md` | Error patterns (consolidated = read-only) / current session |
-| `.copilot/memory/prompt-improvements.md` | Agent prompts changelog |
+| `.renga/reports/<slug>/` | Subagent reports (ERR-025) |
+| `.renga/memory/scratchpad.md` | Session index |
+| `.renga/memory/scratchpad-<slug>.md` | Session scratchpad (deleted on closure) |
+| `.renga/memory/project-context.md` | Stack, constraints, structuring decisions |
+| `.renga/memory/agent-performance[-<slug>].md` | Historical scoring (consolidated = read-only) / current session |
+| `.renga/memory/error-patterns[-<slug>].md` | Error patterns (consolidated = read-only) / current session |
+| `.renga/memory/prompt-improvements.md` | Agent prompts changelog |
 | `.github/logs/decisions[-<slug>].md` | Index (append-only) / session log |
 | `.github/hooks/` | Copilot hooks - policy enforcement, audit, governance (defense-in-depth) |
 

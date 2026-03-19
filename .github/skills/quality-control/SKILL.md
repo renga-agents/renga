@@ -12,12 +12,12 @@ Authoritative source for output verification, review loops, validation gates, an
 
 ## Report Verification (ERR-025)
 
-Each subagent writes its own full report to `.copilot/reports/<slug>/wave-<N>-<agent-name>.md` and returns only a structured summary (verdict + findings + top-3 P0 + file path).
+Each subagent writes its own full report to `.renga/reports/<slug>/wave-<N>-<agent-name>.md` and returns only a structured summary (verdict + findings + top-3 P0 + file path).
 
 After receipt of each summary:
 
 1. Verify the file exists at the specified path
-2. Update `.copilot/reports/<slug>/index.md`
+2. Update `.renga/reports/<slug>/index.md`
 3. Evaluate: `BLOCKING` or ≥1 critical → read the full report | `RISKS` → assess P0 items | `OK` → summary sufficient
 4. Update status: `Accepted` / `Rejected` / `Retry N`
 
@@ -85,7 +85,7 @@ Default: `git merge --no-ff feat/<slug>`
 
 > An empty dashboard = missed retrospectives. The retrospective is a quality gate, not optional.
 
-1. Score each dispatched agent via `.copilot/memory/rubric.md` (raw + weighted)
+1. Score each dispatched agent via `.renga/memory/rubric.md` (raw + weighted)
 2. Update `agent-performance-<slug>.md` with this session's scores
 3. Log error patterns in `error-patterns-<slug>.md` if any retry or failure occurred
 4. Add entry in `prompt-improvements.md` if an agent failed ≥2 times

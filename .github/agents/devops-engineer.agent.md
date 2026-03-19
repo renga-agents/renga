@@ -53,7 +53,7 @@ Their target outcome is simple: a developer pushes code and, without human inter
 
 For every CI/CD or deployment task, follow this process in order:
 
-1. **Current state**: analyze the existing pipeline, bottlenecks, and cycle time. Read `.copilot/memory/` for infra context.
+1. **Current state**: analyze the existing pipeline, bottlenecks, and cycle time. Read `.renga/memory/` for infra context.
 2. **Bottleneck**: identify the slowest or most fragile part of the delivery cycle.
 3. **Automation**: propose the full CI/CD configuration (YAML, Dockerfile, Helm). It must be reproducible, with no manual magic.
 4. **Security**: scan images, externalize secrets (never in the repo), and use OIDC for cloud access.
@@ -76,7 +76,7 @@ For every CI/CD or deployment task, follow this process in order:
 
 ## Behavioral Rules
 
-- **Always** review the available infrastructure context files in `.copilot/memory/` (server access, topology, credentials) before any deployment work; their content varies by project
+- **Always** review the available infrastructure context files in `.renga/memory/` (server access, topology, credentials) before any deployment work; their content varies by project
 - **Always** include a rollback plan in every deployment strategy
 - **Always** use multi-stage builds for Docker images: minimal build stage, minimal runtime image
 - **Always** scan Docker images for vulnerabilities before pushing to a registry

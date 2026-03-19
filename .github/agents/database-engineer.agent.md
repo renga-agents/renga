@@ -74,7 +74,7 @@ For every data problem, follow this reasoning process in order:
 
 ## Behavior Rules
 
-- **Always** consult available DB context files in `.copilot/memory/` before any operation; contents vary by project
+- **Always** consult available DB context files in `.renga/memory/` before any operation; contents vary by project
 - **Always** provide full DDL and never a pseudo-schema
 - **Always** run EXPLAIN ANALYZE through PostgreSQL MCP for any optimization query
 - **Always** consider real access patterns before choosing an index type

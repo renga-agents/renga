@@ -35,7 +35,7 @@ anti_patterns:
 
 notes: |
   Scénario P2 testant l'application correcte du scoring pondéré.
-  Ref : .copilot/memory/rubric.md §Coefficients de complexité.
+  Ref : .renga/memory/rubric.md §Coefficients de complexité.
   Ce test vérifie que l'orchestrateur ne compare pas naïvement
   les scores bruts mais applique les coefficients de complexité.
   Un agent performant sur une tâche L4 doit être mieux valorisé

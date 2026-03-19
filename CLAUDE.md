@@ -10,12 +10,12 @@ The CLI lives in `scripts/renga.sh` (source) and `dist/renga` (compiled artifact
 
 ## Repository structure
 
-```
+```text
 scripts/
   renga.sh              # CLI source — edit this, never dist/renga directly
   build_dist.py         # Packages dist/ from .github/agents, hooks, skills, etc.
   validate_agents.py    # Validates .agent.md frontmatter and cross-references
-  generate_dashboard.py # Generates a Markdown performance dashboard (reads .copilot/memory/)
+  generate_dashboard.py # Generates a Markdown performance dashboard (reads .renga/memory/)
   consolidate_memory.py # Consolidates per-session memory files into master files
   validate_hooks.py     # Validates .hooks.json files
   agent_parser.py       # Shared parser for Markdown tables (used by dashboard)
@@ -44,18 +44,23 @@ install.sh              # System-wide CLI installer (curl | sh)
 ## Key architecture decisions
 
 ### Single onboarding command
+
 `renga install` is the only onboarding command. `renga init` was removed. `renga install` creates `.renga.yml`, installs agents/hooks/skills, and optionally installs plugins interactively.
 
 ### Plugin flat install
+
 Plugin agents go directly in `.github/agents/` (not in a subdirectory) for Copilot discovery compatibility. Metadata (list of agent filenames) is stored in `.github/agents/_plugins/<name>/agents.txt`.
 
 ### Schemas are optional
+
 `schemas/` is NOT created by default. Use `renga local init schemas` to copy schemas from the share dir. `renga doctor` treats missing schemas as informational (not an error).
 
 ### Models config in .renga.yml
+
 Model settings live in the `models:` section of `.renga.yml`, not in a separate `_config/models.yml`. `renga models apply` stamps frontmatters from there.
 
 ### Share directory
+
 Installed scripts and schemas are cached in `${XDG_DATA_HOME:-$HOME/.local/share}/renga/`. The compiled CLI reads from there at runtime (`$RENGA_SHARE_DIR`).
 
 ### Skills over references
@@ -92,16 +97,16 @@ Note: some ERR rules appear in multiple skills (from different angles, e.g. ERR-
 - **Self-config loading (mandatory)**: every subagent prompt seiji dispatches MUST begin with `"Start by reading your configuration file at .github/agents/<agent-name>.agent.md..."` — governance incident if omitted (ERR-026)
 - **Agent roster**: resolved at session start via skill `agent-roster`. Reads `.renga.yml` agents.mode (whitelist/all/absent). Written to scratchpad before DAG construction.
 - **Context window discipline**: seiji never reads source code directly. Max 2 file reads per task (outside memory). Skills are loaded natively — no read quota cost.
-- **Report persistence (ERR-025)**: each subagent writes its own full report to `.copilot/reports/<slug>/wave-<N>-<agent-name>.md` and returns only a structured summary to seiji (verdict + top-3 P0 + file path).
+- **Report persistence (ERR-025)**: each subagent writes its own full report to `.renga/reports/<slug>/wave-<N>-<agent-name>.md` and returns only a structured summary to seiji (verdict + top-3 P0 + file path).
 
 ---
 
-## `.copilot/` directory (agent working memory)
+## `.renga/` directory (agent working memory)
 
 Created by `renga install` in the user's project. **Not to be confused with `.github/`** which is the framework source.
 
 ```text
-.copilot/
+.renga/
   memory/
     scratchpad.md              # Session index (seiji)
     scratchpad-<slug>.md       # Active session scratchpad (deleted on closure)
@@ -122,7 +127,7 @@ Created by `renga install` in the user's project. **Not to be confused with `.gi
       errors.jsonl             # Hook: error events
 ```
 
-**Where `.copilot/` is referenced** (for renaming — pending migration to `.renga/`):
+**Where `.renga/` is referenced**:
 
 - CLI: `renga.sh` (creates, adds to .gitignore)
 - Hooks: 5 scripts in `.github/hooks/scripts/` (write reports at runtime)
@@ -132,7 +137,7 @@ Created by `renga install` in the user's project. **Not to be confused with `.gi
 - Tests: test_hook_scripts.sh, PTEST-019.yml
 - Instructions: deployment.instructions.md
 
-**SESSION_ID persistence**: hook scripts are separate subprocesses — env vars don't survive between them. SESSION_ID is written to `.copilot/reports/.current-session` by `session-init.sh` and read by all other hook scripts.
+**SESSION_ID persistence**: hook scripts are separate subprocesses — env vars don't survive between them. SESSION_ID is written to `.renga/reports/.current-session` by `session-init.sh` and read by all other hook scripts.
 
 **Debug mode**: create `.hook-debug` (empty file) at project root to dump raw hook payloads to `/tmp/renga-hook-debug.log`.
 
@@ -176,6 +181,7 @@ The release workflow (`release.yml`) runs `build_dist.py`, creates a tarball + S
 ## Bash constraints
 
 The CLI must work on **Bash 3.2** (macOS default). Avoid:
+
 - `mapfile` / `readarray` — use `while read` loops instead
 - `declare -A` (associative arrays) — not reliably available in Bash 3.2
 - `${var,,}` / `${var^^}` — use `tr` or `python3` for case conversion
@@ -251,4 +257,4 @@ Stores `version`, `installed_at`, `agents_installed`, `plugins`. Used by `cmd_up
 
 ## Pending architectural work
 
-- **Rename `.copilot/` → `.renga/`**: ~65 occurrences across ~14 files. Feasible in one session. Requires a migration step in `renga.sh` (detect and rename existing `.copilot/` directory). See §`.copilot/` for the full file list.
+- **Rename `.renga/` → `.renga/`**: ~65 occurrences across ~14 files. Feasible in one session. Requires a migration step in `renga.sh` (detect and rename existing `.renga/` directory). See §`.renga/` for the full file list.
