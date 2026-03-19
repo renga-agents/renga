@@ -24,8 +24,8 @@ fi
 if ! command -v jq &>/dev/null; then exit 0; fi
 
 # Stop event payload: {hook_event_name, session_id, transcript_path, cwd, stop_hook_active}
-# agent and reason fields are not present — log as "unknown"
-AGENT="unknown"
+# agent name is not provided by Copilot in this payload
+COPILOT_SESSION="$(echo "$INPUT" | jq -r '.session_id // ""' 2>/dev/null || echo "")"
 REASON="$(echo "$INPUT" | jq -r 'if .stop_hook_active == false then "end_of_turn" else "unknown" end' 2>/dev/null || echo "unknown")"
 
 SESSION_FILE="$RENGA_BASE/reports/.current-session"
@@ -35,8 +35,8 @@ REPORT_DIR="$RENGA_BASE/reports/$SESSION_ID"
 mkdir -p "$REPORT_DIR" 2>/dev/null || true
 
 TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo "unknown")"
-jq -n --arg agent "$AGENT" --arg reason "$REASON" --arg ts "$TIMESTAMP" \
-  '{event: "agent_stop", agent: $agent, reason: $reason, timestamp: $ts}' \
+jq -n --arg reason "$REASON" --arg ts "$TIMESTAMP" --arg sid "$COPILOT_SESSION" \
+  '{event: "agent_stop", reason: $reason, timestamp: $ts, session_id: $sid}' \
   >> "$REPORT_DIR/quality.jsonl" 2>/dev/null || true
 
 exit 0
