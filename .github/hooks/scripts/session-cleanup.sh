@@ -28,11 +28,9 @@ REPORT_DIR="$RENGA_BASE/reports/$SESSION_ID"
 if ! command -v jq &>/dev/null; then exit 0; fi
 
 if [[ -d "$REPORT_DIR" ]]; then
-  jq -n --arg event "session_end" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg sid "$SESSION_ID" \
+  jq -n --arg event "agent_stop" --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg sid "$SESSION_ID" \
     '{event: $event, timestamp: $ts, session_id: $sid}' \
     >> "$REPORT_DIR/session.log" 2>/dev/null || true
 fi
-
-rm -f "$SESSION_FILE" 2>/dev/null || true
 
 exit 0
