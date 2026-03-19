@@ -18,7 +18,7 @@ skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, ha
 > - **skill `dag-patterns`** *(invoke when organizing agents into waves for L2+)*: DAG examples (fullstack feature, auth redesign, ML pipeline)
 > - **skill `auto-triggers`** *(mandatory for every L2+ task — load immediately after classification, before any DAG construction)*: Trigger table, human escalation table, circuit breaker, ERR-016/017/020
 > - **skill `worktree-lifecycle`** *(invoke when task involves source writes on L2+)*: Creation, zoning, multi-MOE, closure, rollback
-> - **skill `handoff-protocol`** *(invoke when transitioning between waves or agents)*: Handoff block format, standard chains (Product / Analytics / Incident)
+> - **skill `handoff-protocol`** *(mandatory during PLANNING when task involves incident response, product chain, or analytics chain — load before DAG construction to apply the correct agent sequence)*: Handoff block format, standard chains (Product / Analytics / Incident)
 > - **skill `commit-discipline`** *(invoke before any commit or at wave boundary)*: Coherent batches, asset/source separation, multiline convention, wave cadence, file plan
 > - **skill `quality-control`** *(invoke after each wave's outputs are received)*: Report verification, review loop, browser validation, retrospective
 > - **skill `dispatch-protocol`** *(invoke when building each wave's agent prompts)*: QA scope, security brief, wave 0 constraints, coverage floors, multi-track scan
@@ -101,7 +101,8 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 - **Agent roster** ⚠️ **MANDATORY gate**: load skill `agent-roster` first, then apply its resolution logic (whitelist / all / absent). **Never scan `*.agent.md` directly without loading the skill** — doing so silently ignores whitelist mode and produces an incorrect roster (ERR-027).
 - **Project configuration**: read `.renga.yml` for thresholds and waivers (already done as part of roster resolution above).
 - **Timestamps**: local ISO 8601 format (`YYYY-MM-DDTHH:MM`) for `{session_start}`, `{wave_N_start}`, `{wave_N_end}`, `{session_end}` in the scratchpad
-- **New session**: create `.renga/memory/scratchpad-<slug>.md`, then append a session entry to `.renga/memory/scratchpad.md` (master index, append-only — create it if absent)
+- **New session (1/2)**: create `.renga/memory/scratchpad-<slug>.md`
+- **New session (2/2)** ⚠️ **mandatory**: append a session entry to `.renga/memory/scratchpad.md` (master index — create the file if absent). Without this step the session is invisible to future resumes.
 - **Resume**: read `.renga/memory/scratchpad.md` → find the active session → read `.renga/memory/scratchpad-<slug>.md` (2 reads max)
 - **Structuring decision**: consult `project-context.md` (1 targeted read)
 - **Do NOT read** `decisions-<slug>.md`, `agent-performance.md`, or `triggers.md` systematically

@@ -27,6 +27,8 @@ This skill identifies the conditions that require automatically consulting speci
 | New service or SLO change | ObservabilityEngineer | parallel |
 | Code using a third-party library (not simply reading existing code) | context7 MCP | before generation |
 | Critical validation MCP tool unavailable (ERR-017) | Orchestrator: notify the user | **blocking** |
+| Incident response or security breach | Load skill `handoff-protocol` during PLANNING — apply the incident chain order: `IncidentCommander → ObservabilityEngineer → Debugger → DevOpsEngineer → IncidentCommander` | sequential (defines wave order) |
+| Product feature requiring vision → prioritization → specs → dev | Load skill `handoff-protocol` during PLANNING — apply the product chain: `ProductStrategist → ProductManager → ProxyPO → Devs` | sequential |
 
 ---
 
