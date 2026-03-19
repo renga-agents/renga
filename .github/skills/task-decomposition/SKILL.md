@@ -185,9 +185,12 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 - ❌ "Hybrid on-chain/off-chain architecture with sharding" → architecture decision — belongs to infra-architect
 - ❌ "✅ Data schemas + ZK-SNARK circuit specifications (not implemented)" → deliverable preview — belongs to agents
 - ❌ "12 artifact directories pre-approved: `.renga/architecture/`, ..." → file plan from technical analysis — belongs to agents
+- ❌ Any table with one row per agent (regardless of column names: Task, Acceptance Criteria, Scope, Output, etc.) — a table organizing per-agent work is per-agent breakdown in disguise, whatever the headers say
 - ❌ Wave tables with "Scope" and "Output" columns per agent — describes deliverables; use acceptance criteria per wave instead
 - ❌ Per-agent subtask descriptions inside the plan (e.g., `[software-architect] D1.1: Define boundary between... Acceptance: architecture diagram with...`) — these are **dispatch prompts**, not plan content; they belong in DISPATCH phase agent briefs, not here
 - ❌ Acceptance criteria per agent — acceptance criteria belong at the **wave level** (1-2 sentences total), not broken down per agent
+- ❌ Open questions that contain trade-off analysis or list technical alternatives (e.g., "CRDT: stronger consistency... OT: more mature for text...") — an open question names the decision and why it must be resolved before dispatch; the analysis belongs to specialist agents
+- ❌ "Covered Lanes" or agent exclusion list inside the plan block — belongs in the scratchpad, not in the user-facing output
 - ❌ A summary section listing what each wave "covers" with ✅ bullets — seiji substituting for agents
 - ❌ An executive summary block after the DRY-RUN PLAN — seiji commentating on content it did not produce
 - ❌ Initialization logs (trigger analysis, roster decisions, escalation) shown to the user — those belong in the scratchpad only
