@@ -19,7 +19,7 @@ if ! echo "$INPUT" | jq empty 2>/dev/null; then
   exit 1
 fi
 
-TOOL="$(echo "$INPUT" | jq -r '.tool // .tool_name // .toolName // empty')"
+TOOL="$(echo "$INPUT" | jq -r '.tool_name // .tool // empty')"
 
 # If tool name is empty, log the input keys to help diagnose then pass through
 if [[ -z "$TOOL" ]]; then
@@ -53,7 +53,7 @@ fi
 
 # --- EXEC tools: check command whitelist ---
 if in_list "$TOOL" $EXEC_TOOLS; then
-  COMMAND="$(echo "$INPUT" | jq -r '.args.command // empty')"
+  COMMAND="$(echo "$INPUT" | jq -r '.tool_input.command // empty')"
 
   if [[ -z "$COMMAND" ]]; then
     exit 1  # Empty command = deny
@@ -94,7 +94,7 @@ fi
 
 # --- EDIT tools: check path safety ---
 if in_list "$TOOL" $EDIT_TOOLS; then
-  FILE_PATH="$(echo "$INPUT" | jq -r '.args.filePath // .args.path // empty')"
+  FILE_PATH="$(echo "$INPUT" | jq -r '.tool_input.filePath // .tool_input.path // .tool_input.file_path // empty')"
 
   if [[ -z "$FILE_PATH" ]]; then
     exit 1  # No path = deny

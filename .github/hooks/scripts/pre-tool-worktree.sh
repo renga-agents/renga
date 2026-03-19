@@ -7,7 +7,7 @@ if ! command -v jq &>/dev/null; then exit 1; fi
 if ! echo "$INPUT" | jq empty 2>/dev/null; then exit 1; fi
 
 # Only applies to file-editing tools
-TOOL="$(echo "$INPUT" | jq -r '.tool // empty')"
+TOOL="$(echo "$INPUT" | jq -r '.tool_name // empty')"
 EDIT_TOOLS="edit replace_string_in_file create_file write_file multi_replace_string_in_file"
 
 in_list() {
@@ -20,7 +20,7 @@ if ! in_list "$TOOL" $EDIT_TOOLS; then
   exit 0  # Not a file-editing tool, skip check
 fi
 
-FILE_PATH="$(echo "$INPUT" | jq -r '.args.filePath // .args.path // empty')"
+FILE_PATH="$(echo "$INPUT" | jq -r '.tool_input.filePath // .tool_input.path // .tool_input.file_path // empty')"
 if [[ -z "$FILE_PATH" ]]; then
   echo "No file path provided" >&2
   exit 1

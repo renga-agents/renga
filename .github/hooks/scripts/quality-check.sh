@@ -3,16 +3,12 @@ set +e
 
 INPUT="$(cat 2>/dev/null || echo '{}')"
 
-# Derive project root
-_self="${BASH_SOURCE[0]:-$0}"
-_dir="$(cd "$(dirname "$_self")" 2>/dev/null && pwd)"
-PROJECT_ROOT="$(cd "$_dir/../../.." 2>/dev/null && pwd)"
-if [[ ! -f "$PROJECT_ROOT/.renga.yml" ]]; then
-  _d="$(pwd)"
-  while [[ "$_d" != "/" ]]; do
-    [[ -f "$_d/.renga.yml" ]] && PROJECT_ROOT="$_d" && break
-    _d="$(dirname "$_d")"
-  done
+# Project root from payload .cwd (most reliable) with BASH_SOURCE fallback
+PROJECT_ROOT="$(echo "$INPUT" | jq -r '.cwd // empty' 2>/dev/null)"
+if [[ -z "$PROJECT_ROOT" || ! -f "$PROJECT_ROOT/.renga.yml" ]]; then
+  _self="${BASH_SOURCE[0]:-$0}"
+  _dir="$(cd "$(dirname "$_self")" 2>/dev/null && pwd)"
+  PROJECT_ROOT="$(cd "$_dir/../../.." 2>/dev/null && pwd)"
 fi
 RENGA_BASE="${RENGA_DIR:-$PROJECT_ROOT/.renga}"
 
@@ -21,21 +17,14 @@ printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")"
   >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
 
 [[ -f "$PROJECT_ROOT/.hook-debug" ]] && \
-  printf '[quality-check] %s\n' "$INPUT" >> "$_tmp/renga-hook-debug.log" 2>/dev/null || true
+  printf '[quality-check] %s\n' "$INPUT" >> "$RENGA_BASE/hook-debug.log" 2>/dev/null || true
 
 if ! command -v jq &>/dev/null; then exit 0; fi
 
-AGENT="$(echo "$INPUT" | jq -r '
-  .agent // .agentName // .agent_name // .name //
-  .data.agent // .data.agentName // .data.name //
-  "unknown"
-' 2>/dev/null || echo "unknown")"
-
-REASON="$(echo "$INPUT" | jq -r '
-  .reason // .stopReason // .stop_reason // .stopType // .stop_type //
-  .data.reason // .data.stopReason //
-  "unknown"
-' 2>/dev/null || echo "unknown")"
+# Stop event payload: {hook_event_name, session_id, transcript_path, cwd, stop_hook_active}
+# agent and reason fields are not present — log as "unknown"
+AGENT="unknown"
+REASON="$(echo "$INPUT" | jq -r 'if .stop_hook_active == false then "end_of_turn" else "unknown" end' 2>/dev/null || echo "unknown")"
 
 SESSION_FILE="$RENGA_BASE/reports/.current-session"
 SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
