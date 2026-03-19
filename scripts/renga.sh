@@ -738,6 +738,30 @@ if m:
     done
   fi
 
+  # Installer copilot-instructions.md (seulement si absent — préserve les personnalisations)
+  local copilot_instr_src="$tmp_dir/copilot-instructions.md"
+  if [[ -f "$copilot_instr_src" ]]; then
+    if [[ ! -f "$ROOT_DIR/.github/copilot-instructions.md" ]]; then
+      cp "$copilot_instr_src" "$ROOT_DIR/.github/copilot-instructions.md"
+      ok ".github/copilot-instructions.md créé"
+    else
+      info ".github/copilot-instructions.md déjà présent — ignoré (personnalisations préservées)"
+    fi
+  fi
+
+  # Installer .vscode/settings.json si absent; sinon déposer settings.renga.json comme référence
+  local vscode_src="$tmp_dir/vscode-settings.json"
+  if [[ -f "$vscode_src" ]]; then
+    mkdir -p "$ROOT_DIR/.vscode"
+    if [[ ! -f "$ROOT_DIR/.vscode/settings.json" ]]; then
+      cp "$vscode_src" "$ROOT_DIR/.vscode/settings.json"
+      ok ".vscode/settings.json créé"
+    else
+      cp "$vscode_src" "$ROOT_DIR/.vscode/settings.renga.json"
+      info ".vscode/settings.json déjà présent — référence déposée dans .vscode/settings.renga.json"
+    fi
+  fi
+
   # Copier skills
   info "Installation des skills..."
   mkdir -p "$SKILLS_DIR"

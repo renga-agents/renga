@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "*.agent.md": "markdown",
+    ".renga.yml": "yaml",
+    ".renga.lock": "yaml"
+  },
+  "[markdown]": {
+    "editor.wordWrap": "on"
+  }
+}

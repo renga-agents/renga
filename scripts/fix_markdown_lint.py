@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Fix mechanical markdown lint warnings in .agent.md and reference files.
 
-Fixes: MD047, MD060, MD036, MD022, MD031, MD032, MD058
-Applied in that order to avoid interference.
+Fixes: MD009, MD012, MD022, MD026, MD031, MD032, MD036, MD040, MD047, MD058, MD060
+Applied in a safe order to avoid interference.
 """
 
 import argparse
@@ -285,6 +285,68 @@ def fix_md032(lines: list[str]) -> tuple[list[str], int]:
     return result, count
 
 
+def fix_md009(lines: list[str]) -> tuple[list[str], int]:
+    """Remove trailing whitespace from lines (excluding blank lines and frontmatter)."""
+    count = 0
+    for i, line in enumerate(lines):
+        if _in_frontmatter(lines, i):
+            continue
+        # Strip trailing whitespace while preserving the newline
+        if line.endswith("\n"):
+            stripped = line.rstrip() + "\n"
+        else:
+            stripped = line.rstrip()
+        if stripped != line:
+            lines[i] = stripped
+            count += 1
+    return lines, count
+
+
+def fix_md026(lines: list[str]) -> tuple[list[str], int]:
+    """Remove trailing punctuation (.,;:!?) from headings."""
+    count = 0
+    heading_re = re.compile(r"^(\s*(?:>\s*)*#{1,6}\s+.+?)([.,;:!?]+)(\s*)$")
+    for i, line in enumerate(lines):
+        if _in_frontmatter(lines, i) or _in_fenced_code_block(lines, i):
+            continue
+        m = heading_re.match(line.rstrip("\n"))
+        if m:
+            lines[i] = m.group(1) + "\n"
+            count += 1
+    return lines, count
+
+
+def fix_md040(lines: list[str]) -> tuple[list[str], int]:
+    """Add 'text' language specifier to opening fenced code blocks that have none."""
+    count = 0
+    for i, line in enumerate(lines):
+        if _in_frontmatter(lines, i):
+            continue
+        # Strip blockquote/indent prefix to check the fence itself
+        stripped = re.sub(r"^(\s*>\s*)*", "", line).strip()
+        # Opening fence = exactly ``` with no language, and not already inside a block
+        if stripped == "```" and not _in_fenced_code_block(lines, i):
+            bq_match = re.match(r"^(\s*(?:>\s*)*)", line)
+            prefix = bq_match.group(1) if bq_match else ""
+            lines[i] = prefix + "```text\n"
+            count += 1
+    return lines, count
+
+
+def fix_md012(lines: list[str]) -> tuple[list[str], int]:
+    """Remove multiple consecutive blank lines, keeping at most one."""
+    count = 0
+    result: list[str] = []
+    for line in lines:
+        if line.strip() == "" or line.strip() == ">":
+            if result and (result[-1].strip() == "" or result[-1].strip() == ">"):
+                if result[-1].strip() == line.strip():
+                    count += 1
+                    continue
+        result.append(line)
+    return result, count
+
+
 def fix_md058(lines: list[str]) -> tuple[list[str], int]:
     """Ensure blank lines around tables."""
     count = 0
@@ -354,13 +416,17 @@ def _remove_double_blanks(lines: list[str]) -> list[str]:
 # ---------------------------------------------------------------------------
 
 FIXERS = [
-    ("MD047", fix_md047),
-    ("MD060", fix_md060),
-    ("MD036", fix_md036),
-    ("MD022", fix_md022),
-    ("MD031", fix_md031),
-    ("MD032", fix_md032),
-    ("MD058", fix_md058),
+    ("MD009", fix_md009),   # trailing spaces — independent, run first
+    ("MD026", fix_md026),   # trailing heading punctuation — independent
+    ("MD040", fix_md040),   # fenced code language — independent
+    ("MD047", fix_md047),   # trailing newline
+    ("MD060", fix_md060),   # table separator spacing
+    ("MD036", fix_md036),   # bold-only lines → headings
+    ("MD022", fix_md022),   # blank lines around headings (may add blanks)
+    ("MD031", fix_md031),   # blank lines around code blocks (may add blanks)
+    ("MD032", fix_md032),   # blank lines around lists (may add blanks)
+    ("MD058", fix_md058),   # blank lines around tables (may add blanks)
+    ("MD012", fix_md012),   # consecutive blank lines — must run last
 ]
 
 
@@ -378,9 +444,6 @@ def process_file(filepath: Path, *, dry_run: bool = False) -> dict[str, int]:
         lines, n = fixer(lines)
         if n > 0:
             stats[rule_name] = n
-
-    # Clean up double blank lines introduced by fixes
-    lines = _remove_double_blanks(lines)
 
     # Final MD047: ensure exactly one trailing newline
     while len(lines) > 1 and lines[-1].strip() == "":

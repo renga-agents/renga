@@ -241,6 +241,28 @@ def _copy_renga_readme(root: Path, output: Path) -> Path | None:
     return dest
 
 
+def _copy_copilot_instructions(root: Path, output: Path) -> Path | None:
+    """Copy .github/copilot-instructions.md → dist/copilot-instructions.md."""
+    src = root / ".github" / "copilot-instructions.md"
+    if not src.exists():
+        log.warning("copilot-instructions.md not found: %s", src)
+        return None
+    dest = output / "copilot-instructions.md"
+    _copy_file(src, dest)
+    return dest
+
+
+def _copy_vscode_settings(root: Path, output: Path) -> Path | None:
+    """Copy .vscode/settings.renga.json → dist/vscode-settings.json."""
+    src = root / ".vscode" / "settings.renga.json"
+    if not src.exists():
+        log.warning("settings.renga.json not found: %s", src)
+        return None
+    dest = output / "vscode-settings.json"
+    _copy_file(src, dest)
+    return dest
+
+
 def _copy_hooks(root: Path, output: Path) -> list[Path]:
     """Copy .github/hooks/ → dist/hooks/, excluding _local/."""
     hooks_src = root / ".github" / "hooks"
@@ -380,6 +402,22 @@ def _build_manifest(output: Path, version: str) -> dict:
             "path": config_path.relative_to(output).as_posix(),
         }
 
+    # --- Copilot instructions ---
+    copilot_instr = output / "copilot-instructions.md"
+    if copilot_instr.exists():
+        manifest["copilot_instructions"] = {
+            "sha256": _sha256(copilot_instr),
+            "path": copilot_instr.relative_to(output).as_posix(),
+        }
+
+    # --- VSCode settings template ---
+    vscode_settings = output / "vscode-settings.json"
+    if vscode_settings.exists():
+        manifest["vscode_settings"] = {
+            "sha256": _sha256(vscode_settings),
+            "path": vscode_settings.relative_to(output).as_posix(),
+        }
+
     return manifest
 
 
@@ -459,6 +497,8 @@ def main(argv: list[str] | None = None) -> None:
     _copy_scripts(root, output)
     _copy_renga_readme(root, output)
     _copy_hooks(root, output)
+    _copy_copilot_instructions(root, output)
+    _copy_vscode_settings(root, output)
 
     # Build and write manifest
     manifest = _build_manifest(output, version)
