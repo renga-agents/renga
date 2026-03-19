@@ -23,7 +23,7 @@ skills: [task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, ha
 > - **skill `quality-control`** *(invoke after each wave's outputs are received)*: Report verification, review loop, browser validation, retrospective
 > - **skill `dispatch-protocol`** *(invoke when building each wave's agent prompts)*: QA scope, security brief, wave 0 constraints, coverage floors, multi-track scan
 > - **skill `hooks-catalog`** *(invoke when a hook DENY occurs or to understand policy)*: Active hooks, allowlist, protected paths
-> - **skill `agent-roster`** *(invoke once at session start, before building the DAG)*: Roster resolution from `.renga.yml` (whitelist / all / absent)
+> - **skill `agent-roster`** *(mandatory at session start — load the skill, then apply its logic; never scan \*.agent.md directly without it)*: Roster resolution from `.renga.yml` (whitelist / all / absent)
 >
 > **Static references** (`.github/agents/_references/` — read only if directly needed):
 >
@@ -98,7 +98,7 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 
 > ⚠️ Load only what is strictly necessary. Do not read preventively.
 
-- **Agent roster**: resolve the active agent list via skill `agent-roster` (covers `mode: whitelist`, `mode: all`, and absent config). Write the resolved roster to the scratchpad before building the DAG.
+- **Agent roster** ⚠️ **MANDATORY gate**: load skill `agent-roster` first, then apply its resolution logic (whitelist / all / absent). **Never scan `*.agent.md` directly without loading the skill** — doing so silently ignores whitelist mode and produces an incorrect roster (ERR-027).
 - **Project configuration**: read `.renga.yml` for thresholds and waivers (already done as part of roster resolution above).
 - **Timestamps**: local ISO 8601 format (`YYYY-MM-DDTHH:MM`) for `{session_start}`, `{wave_N_start}`, `{wave_N_end}`, `{session_end}` in the scratchpad
 - **Resume**: read `scratchpad.md` -> find the active session -> read `scratchpad-<slug>.md` (2 reads max)
