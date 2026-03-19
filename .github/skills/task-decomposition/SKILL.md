@@ -154,24 +154,20 @@ When the user prefixes a request with **"plan-only"** (or equivalent: "just plan
 ```text
 === DRY-RUN PLAN ===
 Criticality: L<N>
-Roster: [agents resolved from .renga.yml — or "mode: all"]
+Full plan: .renga/memory/scratchpad-<slug>.md
 
-Wave 0 (context + version anchoring): agent-A, agent-B
-Wave 1 (design/build): agent-C ‖ agent-D ‖ agent-E
-Wave 2 (review): agent-F → agent-G (fix loop)
-
-Acceptance criteria (per wave):
-- Wave 1: [criteria]
-- Wave 2: [criteria]
+Wave 0 (label): agent-A ‖ agent-B
+Wave 1 (label): agent-C ‖ agent-D ‖ agent-E
+Wave 2 (label): agent-F → agent-G (fix loop)
 
 Open questions (must be resolved before dispatch):
-1. ...
+1. [decision name] — [why it blocks dispatch]
 2. ...
 
 → Validate this plan to trigger dispatch.
 ```
 
-> **This block is the complete output to the user. Begin your response with it — no text before it** (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`), never in tables with Scope/Output columns. Acceptance criteria are **per wave, 1-2 sentences maximum** — never per agent. The user validates or challenges the plan before dispatch begins.
+> **This block is the complete output to the user. Begin your response with it — no text before it** (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`). **Acceptance criteria belong in the scratchpad** (wave plan section), not in this block — the inline block is a pointer, not a plan document. The user validates or challenges the plan before dispatch begins.
 
 ### Anti-pattern (ERR-028)
 
@@ -188,7 +184,8 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 - ❌ Any table with one row per agent (regardless of column names: Task, Acceptance Criteria, Scope, Output, etc.) — a table organizing per-agent work is per-agent breakdown in disguise, whatever the headers say
 - ❌ Wave tables with "Scope" and "Output" columns per agent — describes deliverables; use acceptance criteria per wave instead
 - ❌ Per-agent subtask descriptions inside the plan (e.g., `[software-architect] D1.1: Define boundary between... Acceptance: architecture diagram with...`) — these are **dispatch prompts**, not plan content; they belong in DISPATCH phase agent briefs, not here
-- ❌ Acceptance criteria per agent — acceptance criteria belong at the **wave level** (1-2 sentences total), not broken down per agent
+- ❌ Acceptance criteria per agent — acceptance criteria belong at the **wave level**, not broken down per agent
+- ❌ Acceptance criteria in the inline block — they belong in the scratchpad wave plan; the inline block is a lean pointer, not a plan document
 - ❌ Open questions that contain trade-off analysis or list technical alternatives (e.g., "CRDT: stronger consistency... OT: more mature for text...") — an open question names the decision and why it must be resolved before dispatch; the analysis belongs to specialist agents
 - ❌ "Covered Lanes" or agent exclusion list inside the plan block — belongs in the scratchpad, not in the user-facing output
 - ❌ A summary section listing what each wave "covers" with ✅ bullets — seiji substituting for agents
@@ -201,6 +198,6 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 **Allowed in plan-only mode:**
 
 - ✅ `Wave 0: software-architect ‖ infra-architect ‖ security-engineer (read-only)`
-- ✅ `Acceptance criteria — Wave 1: software-architect delivers an ADR with ≥ 2 alternatives evaluated`
-- ✅ `Open question: blockchain consensus choice (Hyperledger Fabric vs Corda) — must be resolved before Wave 1`
+- ✅ `Open question: consensus algorithm choice — irreversible architecture decision, must be resolved before Wave 1`
 - ✅ `Gate: Wave 1 blocked until security-engineer validates the P0 security brief`
+- ✅ Acceptance criteria per wave — **in the scratchpad wave plan**, not in the inline block
