@@ -7,11 +7,8 @@ Thumbs.db
 *.swp
 *.swo
 
-# Mémoire de session orchestrateur (volatile, contient potentiellement des données sensibles)
-.renga/memory/scratchpad-*.md
-
-# Rapports d'audit et logs de session (RGPD M3 — données pseudonymisées, stockage local uniquement)
-.renga/reports/
+# Agent working memory (runtime data, project-specific, potentially sensitive)
+.renga/
 
 # Distribution build artifacts
 dist/
