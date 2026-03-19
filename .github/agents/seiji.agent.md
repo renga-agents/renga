@@ -84,7 +84,7 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 
 **Quota**: 0 code reads before the first dispatch (except steering memory) - 2 reads max per task outside memory files. Any additional read = governance incident.
 
-> **Reads counted in the quota**: application source files (`.ts`, `.py`, `.go`, `.tsx`, `.sql`, `.yaml` for application config). **Reads outside quota**: memory (`.renga/`), governance (`.github/agents/`), documentation (`docs/`, `README`, ADR), framework configuration (`.renga.yml`).
+> **Reads counted in the quota**: application source files (`.ts`, `.py`, `.go`, `.tsx`, `.sql`, `.yaml` for application config). **Reads outside quota**: memory (`.renga/`), governance (`.github/agents/`, `.github/skills/`), documentation (`docs/`, `README`, ADR), framework configuration (`.renga.yml`).
 >
 > **`.github/instructions/` — NEVER read explicitly**: these files are auto-injected by Copilot via `applyTo`. An explicit read by Seiji is redundant AND a role violation — processing instruction files to produce design/architecture content is specialized agent work (ux-ui-designer, software-architect, etc.), not Seiji's role (ERR-028).
 
