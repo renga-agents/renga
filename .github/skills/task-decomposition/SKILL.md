@@ -167,7 +167,9 @@ Open questions (must be resolved before dispatch):
 → [N] decisions to resolve before dispatch. Starting with question 1 ↓
 ```
 
-> **This block is the complete plan structure.** Begin your response with it — no text before it (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`). **Acceptance criteria belong in the scratchpad** (wave plan section), not in this block — the inline block is a pointer, not a plan document.
+> **This block is the complete plan structure.** Begin your response with it — no text before it (no skill-loading narration, no "I am classifying", no "Starting with..."). No summary or additional sections after it. No tables. Waves list agents on a single line (`agent-A ‖ agent-B ‖ agent-C`) — use `‖` as separator, not commas or bullets. **Acceptance criteria belong in the scratchpad** (wave plan section), not in this block — the inline block is a pointer, not a plan document.
+>
+> **Format rules**: (1) `Full plan:` line is on line 3 of the block, immediately after `Criticality:` — do not move it to the bottom. (2) The block ends with `→ [N] decisions to resolve before dispatch. Starting with question 1 ↓` — this closing line is mandatory; it triggers interactive resolution mode.
 >
 > **After the block: enter interactive question resolution mode.** Do not wait for a generic "validate" response. Immediately guide the user through each open question one by one:
 > - Present the question with a **1-2 line framing** (what needs to be decided and why it blocks dispatch — no technical analysis, no alternatives list)
@@ -200,6 +202,9 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 - ❌ An executive summary block after the DRY-RUN PLAN — seiji commentating on content it did not produce
 - ❌ Initialization logs (trigger analysis, roster decisions, escalation) shown to the user — those belong in the scratchpad only
 - ❌ The auditable exit checklist embedded in the plan-only output — it is an internal governance tool, not a user deliverable
+- ❌ Scratchpad wave plan containing generated technical content (gRPC service definitions, CloudEvents schemas, database field-level schemas, K8s manifest details, specific cost figures, compliance matrix requirements, risk registry with mitigations) — these are deliverables produced by specialist agents; the scratchpad wave section contains: agents assigned, inputs, and acceptance criteria as success conditions. Exception: the user's own specifications (tech stacks, frameworks they named) may be referenced as agent inputs — Seiji must not generate new technical content
+- ❌ A "Decisions Made During Planning" section where Seiji pre-resolves or provides rationale for choices it listed as open questions — in plan-only mode, open questions are resolved interactively with the user, then dispatched to specialist agents; Seiji does not resolve them
+- ❌ Open questions in the inline block formatted as "Option A vs Option B?" when the options were introduced by Seiji (not specified in the user's prompt) — a question in the block names the decision and why it blocks dispatch; analysis of alternatives belongs to specialist agents
 
 **Litmus test**: does each item describe **who does what and what gates the dispatch**, or does it describe **what the answer will be**? If the latter → ERR-028.
 
@@ -208,4 +213,4 @@ The dry-run output is an **agentique delegation plan**, not a product document. 
 - ✅ `Wave 0: software-architect ‖ infra-architect ‖ security-engineer (read-only)`
 - ✅ `Open question: consensus algorithm choice — irreversible architecture decision, must be resolved before Wave 1`
 - ✅ `Gate: Wave 1 blocked until security-engineer validates the P0 security brief`
-- ✅ Acceptance criteria per wave — **in the scratchpad wave plan**, not in the inline block
+- ✅ Acceptance criteria per wave — **in the scratchpad wave plan**, not in the inline block. Acceptance criteria = success conditions ("tech stack rationale complete with no unresolved trade-offs", "vector DB options compared on cost, latency, scaling") — NOT pre-computed content (`service AgentRegistry { rpc... }`, "$260k/month TCO")
