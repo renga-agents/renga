@@ -114,6 +114,20 @@ Excluded agents: MobileDev (no mobile), MLEngineer (no AI) - justification
 
 ---
 
+## Time Estimates — Forbidden
+
+**Never** include estimates in hours, days, or weeks in any plan or DAG output. These figures are based on human work paradigms and are meaningless for AI agent execution.
+
+If sequencing information is needed, express it as **relative ordering** only:
+
+- ✅ "Wave 1 runs after Wave 0 is complete"
+- ✅ "Wave 2 is blocking — Wave 3 cannot start without its checkpoint"
+- ✅ "Agents in Wave 1 run in parallel"
+- ❌ "Wave 0: 4-6 hours" — forbidden
+- ❌ "Estimated duration: 3-4 weeks" — forbidden
+
+---
+
 ## Dry-run Gate (plan-only mode)
 
 When the user prefixes a request with **"plan-only"** (or equivalent: "just plan", "propose a plan", "what would you do"):

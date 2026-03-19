@@ -113,6 +113,48 @@ install_hooks() {
   fi
 }
 
+init_working_memory() {
+  local memory_dir="$ROOT_DIR/.renga/memory"
+  mkdir -p "$memory_dir"
+
+  # scratchpad.md — session index (append-only), create if absent
+  local scratchpad="$memory_dir/scratchpad.md"
+  if [[ ! -f "$scratchpad" ]]; then
+    cat > "$scratchpad" <<'SCRATCHPAD'
+# Session Index
+
+> Append-only master index. Each entry represents an orchestration session.
+> Format: `- YYYY-MM-DDTHH:MM | <slug> | <status> | <summary>`
+
+<!-- Sessions (append below) -->
+SCRATCHPAD
+    ok "Created .renga/memory/scratchpad.md"
+  fi
+
+  # project-context.md — stack and structuring decisions, create if absent
+  local ctx="$memory_dir/project-context.md"
+  if [[ ! -f "$ctx" ]]; then
+    cat > "$ctx" <<'CONTEXT'
+# Project Context
+
+> Fill in this file after your first session. Seiji reads it at session start.
+
+## Stack
+
+<!-- e.g. Next.js 15, PostgreSQL, Vercel, TypeScript -->
+
+## Key constraints
+
+<!-- e.g. Bash 3.2 compat, no mapfile, Python 3.9+ -->
+
+## Structuring decisions
+
+<!-- Record irreversible architectural decisions here -->
+CONTEXT
+    ok "Created .renga/memory/project-context.md"
+  fi
+}
+
 ensure_gitignore_reports() {
   local gitignore="$ROOT_DIR/.gitignore"
   if [[ -f "$gitignore" ]]; then
@@ -805,6 +847,9 @@ if m:
 
   # .gitignore reports
   ensure_gitignore_reports
+
+  # Initialize .renga/memory/ with scratchpad.md and project-context.md
+  init_working_memory
 
   # Appliquer la configuration des modèles LLM sur les agents installés
   _apply_models

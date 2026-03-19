@@ -39,6 +39,22 @@ The `.renga/` directory is the agent team's persistent working memory for a give
 
 ---
 
+## Writing Rules for Memory Files
+
+**Generate markdownlint-compliant markdown on the first draft** — no post-generation fix loop.
+
+The `markdown.instructions.md` is auto-injected by Copilot for all `.md` files. Apply these rules proactively before writing, not after:
+
+- Blank line before and after every heading (MD022)
+- Blank line before and after every list (MD032)
+- Blank line before and after every code block (MD031)
+- Every fenced code block must declare a language (MD040)
+- File must end with a newline (MD047)
+
+Writing and then correcting in multiple passes wastes tokens and creates noise in the tool log.
+
+---
+
 ## Read vs Write by Agent Type
 
 ### Seiji (orchestrator)
