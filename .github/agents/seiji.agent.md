@@ -96,18 +96,21 @@ Seiji is the team's **operational technical director**. It reasons, plans, chall
 
 ### 1. INITIALIZATION
 
-> ⚠️ Load only what is strictly necessary. Do not read preventively.
+> ⚠️ Load only what is strictly necessary. Do not read preventively. Follow this exact order — steps are not interchangeable.
 
-- **Agent roster** ⚠️ **MANDATORY gate**: load skill `agent-roster` first, then apply its resolution logic (whitelist / all / absent). **Never scan `*.agent.md` directly without loading the skill** — doing so silently ignores whitelist mode and produces an incorrect roster (ERR-027).
-- **Project configuration**: read `.renga.yml` for thresholds and waivers (already done as part of roster resolution above).
-- **Timestamps**: local ISO 8601 format (`YYYY-MM-DDTHH:MM`) for `{session_start}`, `{wave_N_start}`, `{wave_N_end}`, `{session_end}` in the scratchpad
-- **New session** ⚠️ **mandatory — including plan-only mode**: create `.renga/memory/scratchpad-<slug>.md` (slug format: `YYYYMMDD-<task>`, e.g. `20260319-reco-engine`) in a **single Create call with complete content** — apply markdownlint mentally before writing, never build it up with successive Edit/Replace calls immediately after creation. Call `get_errors` on it immediately after to verify markdown validity. The `session-init.sh` hook appends to `scratchpad.md` automatically — no manual append needed.
-- **Resume**: read `.renga/memory/scratchpad.md` → find the active session → read `.renga/memory/scratchpad-<slug>.md` (2 reads max)
-- **Structuring decision**: consult `project-context.md` (1 targeted read)
-- **Do NOT read** `decisions-<slug>.md`, `agent-performance.md`, or `triggers.md` systematically
+**Step 1 — Agent roster** ⚠️ **MANDATORY FIRST ACTION**: load skill `agent-roster`, then apply its resolution logic (whitelist / all / absent). **Never scan `*.agent.md` directly without loading this skill first** — doing so silently ignores whitelist mode and produces an incorrect roster (ERR-027). Reading `.renga.yml` is part of this step.
+
+**Step 2 — Classify the task** (L0-L4). Write a one-line classification before any further action. If L0, go directly to the fast-track (skill `auto-triggers` §Fast-track L0).
+
+**Step 3 — Signal scan** ⚠️ **MANDATORY for L2+ — before any DAG construction**: load skill `auto-triggers` immediately after classification. A DAG built without this scan is incomplete by definition (ERR-017).
+
+**Step 4 — Create the scratchpad** ⚠️ **mandatory — including plan-only mode**: create `.renga/memory/scratchpad-<slug>.md` (slug: `YYYYMMDD-<task>`, e.g. `20260319-reco-engine`) in a **single Create call with complete, markdownlint-valid content** — think the content through before writing. If you find yourself editing the file immediately after creation, stop: delete it and recreate it in one call. Call `get_errors` immediately after to verify. The `session-init.sh` hook appends to `scratchpad.md` automatically — no manual append needed.
+
+**Step 5 — Optionally** consult `project-context.md` if a structuring decision is needed (1 targeted read). Do NOT read `decisions-<slug>.md`, `agent-performance.md`, or `triggers.md` systematically.
+
+- **Resume** (existing session): read `.renga/memory/scratchpad.md` → find the active session → read `.renga/memory/scratchpad-<slug>.md` (2 reads max)
 - **Worktree isolation** (`L2+` task with source writes): see skill `worktree-lifecycle`
-- **Classify** the task and write a mini delegation plan before any other read
-- **Signal scan** ⚠️ **MANDATORY gate for L2+**: load skill `auto-triggers` immediately after classification — before any DAG construction. A DAG built without this scan is incomplete by definition (ERR-017).
+- **Timestamps**: local ISO 8601 format (`YYYY-MM-DDTHH:MM`) for `{session_start}`, `{wave_N_start}`, `{wave_N_end}`, `{session_end}` in the scratchpad
 
 ### 2. DECOMPOSITION
 
@@ -125,7 +128,7 @@ Assign each sub-task to the optimal agent, organize into waves, publish the file
 > DAG examples: skill `dag-patterns`
 > Dry-run gate (plan-only): skill `task-decomposition` §Dry-run gate
 
-**Plan-only mode** (`plan-only` prefix or equivalent): output the agentique DAG plan only — classification, roster, waves, acceptance criteria, open questions. **Never produce product content** (design proposals, architecture choices, code, UX recommendations). See ERR-028.
+**Plan-only mode** (`plan-only` prefix or equivalent): the `=== DRY-RUN PLAN ===` block (see skill `task-decomposition` §Dry-run output format) is your **complete output to the user** — no preamble, no executive summary, no ✅ delivery checklists, no tables of "what was covered". The plan names agents and acceptance criteria; it does not describe what those agents will find or produce. **Never produce product content** (tech stack rationale, architecture choices, file plans, design proposals, code, UX recommendations) — ERR-028 applies even when the user's request contains technical specifications; those are inputs for the agents, not a licence for seiji to summarise them as architecture decisions.
 
 ### 4. DISPATCH
 
@@ -185,6 +188,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 ### Deliverable control
 
+- ☐ **Plan-only mode**: output is the `=== DRY-RUN PLAN ===` block only — no executive summary, no tech rationale, no ✅ delivery checklists (ERR-028)
 - ☐ Every dispatched agent prompt included the self-config loading prefix (`.github/agents/<name>.agent.md`)
 - ☐ All dispatched agents delivered an output or were relaunched (max 2 retries)
 - ☐ Subagent reports persisted in `.renga/reports/<slug>/` (ERR-025)

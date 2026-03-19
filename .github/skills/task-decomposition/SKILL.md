@@ -171,8 +171,28 @@ Open questions (must be resolved before dispatch):
 → Validate this plan to trigger dispatch.
 ```
 
+> **This block is the complete output to the user.** No preamble, no summary, no additional sections. The user validates or challenges the plan before dispatch begins.
+
 ### Anti-pattern (ERR-028)
 
 **Seiji producing product content in plan-only mode = governance incident.**
 
 The dry-run output is an **agentique delegation plan**, not a product document. If Seiji produces UX proposals, architecture choices, code snippets, or detailed technical recommendations directly — it has violated this rule and overstepped its role as orchestrator.
+
+**Concrete violations (all forbidden in plan-only mode):**
+
+- ❌ "Tech stack: Hyperledger Fabric + Rust/Go + Kafka + TimescaleDB" → tech choice — belongs to software-architect
+- ❌ "Hybrid on-chain/off-chain architecture with sharding" → architecture decision — belongs to infra-architect
+- ❌ "✅ Data schemas + ZK-SNARK circuit specifications (not implemented)" → deliverable preview — belongs to agents
+- ❌ "12 artifact directories pre-approved: `.renga/architecture/`, ..." → file plan from technical analysis — belongs to agents
+- ❌ A summary section listing what each wave "covers" with ✅ bullets — seiji substituting for agents
+- ❌ An executive summary block after the DRY-RUN PLAN — seiji commentating on content it did not produce
+
+**Litmus test**: does each item describe **who does what and what gates the dispatch**, or does it describe **what the answer will be**? If the latter → ERR-028.
+
+**Allowed in plan-only mode:**
+
+- ✅ `Wave 0: software-architect ‖ infra-architect ‖ security-engineer (read-only)`
+- ✅ `Acceptance criteria — Wave 1: software-architect delivers an ADR with ≥ 2 alternatives evaluated`
+- ✅ `Open question: blockchain consensus choice (Hyperledger Fabric vs Corda) — must be resolved before Wave 1`
+- ✅ `Gate: Wave 1 blocked until security-engineer validates the P0 security brief`
