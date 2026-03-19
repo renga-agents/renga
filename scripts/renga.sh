@@ -207,13 +207,6 @@ write_profile_config() {
   case "$profile" in
     lite)
       cat > "$dest" <<EOF
-version: "1.0"
-
-project:
-  name: "my-project"
-  description: "Small project using the Lite profile"
-  framework_version: "$RENG_VERSION"
-
 agents:
   mode: "whitelist"
   include:
@@ -227,34 +220,11 @@ agents:
     - git-expert
     - tech-writer
 
-thresholds:
-  l2_min_agents: 2
-  l3_min_agents: 3
-  l4_min_agents: 5
-  max_retries: 3
-  migration_threshold_weeks: 4
-
-stack: {}
 waivers: []
-
-commits:
-  prefix: "feat|fix|docs|chore|refactor|test"
-  scope_required: false
-  max_subject_length: 72
-
-plugins: []
-paths: {}
 EOF
       ;;
     standard)
       cat > "$dest" <<EOF
-version: "1.0"
-
-project:
-  name: "my-project"
-  description: "Production-ready project using the Standard profile"
-  framework_version: "$RENG_VERSION"
-
 agents:
   mode: "whitelist"
   include:
@@ -279,56 +249,17 @@ agents:
     - fullstack-dev
     - mobile-dev
 
-thresholds:
-  l2_min_agents: 4
-  l3_min_agents: 6
-  l4_min_agents: 8
-  max_retries: 2
-  migration_threshold_weeks: 2
-
-stack: {}
 waivers: []
-
-commits:
-  prefix: "feat|fix|docs|chore|refactor|test|ci"
-  scope_required: false
-  max_subject_length: 72
-
-plugins: []
-paths: {}
 EOF
       ;;
     full)
       cat > "$dest" <<EOF
-version: "1.0"
-
-project:
-  name: "my-project"
-  description: "Large project using the Full profile"
-  framework_version: "$RENG_VERSION"
-
 agents:
   mode: "all"
   include: []
   exclude: []
 
-thresholds:
-  l2_min_agents: 4
-  l3_min_agents: 6
-  l4_min_agents: 8
-  max_retries: 2
-  migration_threshold_weeks: 2
-
-stack: {}
 waivers: []
-
-commits:
-  prefix: "feat|fix|docs|chore|refactor|test|ci"
-  scope_required: true
-  max_subject_length: 72
-
-plugins: []
-paths: {}
 EOF
       ;;
     *)
@@ -889,21 +820,8 @@ print(' '.join(plugins))
   # Écrire le lockfile
   cat > "$LOCK_FILE" <<LOCK
 version: "$installed_version"
-installed_at: "$(date -u +%Y-%m-%dT%H:%M:%S)"
-agents_installed: $agent_count
 plugins: []
 LOCK
-
-  # Mettre à jour framework_version dans .renga.yml
-  if [[ -f "$CONFIG_FILE" ]]; then
-    python3 -c "
-import re, pathlib
-path = pathlib.Path('$CONFIG_FILE')
-text = path.read_text()
-text = re.sub(r'(framework_version:\s*)[^\n]+', r'\\1\"$installed_version\"', text)
-path.write_text(text)
-" 2>/dev/null && ok "framework_version mis à jour dans .renga.yml ($installed_version)"
-  fi
 
   # Copier RENGA.md depuis le répertoire partagé
   if [[ ! -f "$ROOT_DIR/RENGA.md" ]] && [[ -f "$RENGA_SHARE_DIR/RENGA.md" ]]; then
