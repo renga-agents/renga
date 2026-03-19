@@ -116,9 +116,9 @@ Rationale: the framework targets macOS and Linux developers using VS Code on Uni
 | --- | --- | --- | --- |
 | `preToolUse` | `security.hooks.json` | `pre-tool-security.sh` | Inspects the targeted command or file. Returns `approve` or `reject` with a reason. Blocks `rm -rf`, `git push --force`, `chmod 777`, `curl` pipes, and writes outside the allowed zone. |
 | `preToolUse` | `governance.hooks.json` | `pre-tool-worktree.sh` | Verifies that the tool targets a file inside the agent's allowed zone, based on the active worktree and lane conventions. |
-| `postToolUse` | `audit.hooks.json` | `post-tool-audit.sh` | Writes JSON lines to `.copilot/logs/audit-YYYY-MM-DD.jsonl` with timestamp, tool, sanitized args, truncated result, and source agent. |
+| `postToolUse` | `audit.hooks.json` | `post-tool-audit.sh` | Writes JSON lines to `.renga/logs/audit-YYYY-MM-DD.jsonl` with timestamp, tool, sanitized args, truncated result, and source agent. |
 | `sessionStart` | `audit.hooks.json` | `session-init.sh` | Creates the session scratchpad, loads project environment variables, and writes a session-start entry to the audit log. |
-| `sessionEnd` | `audit.hooks.json` | `session-cleanup.sh` | Archives the scratchpad, compresses session logs, and cleans `.copilot/tmp/` temporary files. |
+| `sessionEnd` | `audit.hooks.json` | `session-cleanup.sh` | Archives the scratchpad, compresses session logs, and cleans `.renga/tmp/` temporary files. |
 | `agentStop` | `quality.hooks.json` | `quality-check.sh` | Verifies that the agent produced a valid handoff and that tests and lint checks pass. |
 | `subagentStop` | `quality.hooks.json` | `quality-check.sh` | Same checks as `agentStop`, adapted to subagent context. |
 | `errorOccurred` | `audit.hooks.json` | `error-tracker.sh` | Captures the error in the audit log and detects recurring patterns. |
@@ -126,13 +126,13 @@ Rationale: the framework targets macOS and Linux developers using VS Code on Uni
 
 ### Audit log format
 
-Logs are written as JSON Lines under `.copilot/logs/`:
+Logs are written as JSON Lines under `.renga/logs/`:
 
 ```jsonl
 
 {"ts":"2026-03-17T14:32:01Z","event":"tool_use","tool":"run_in_terminal","agent":"backend-dev","args_hash":"a1b2c3","status":"approved","hook":"pre-tool-security"}
 {"ts":"2026-03-17T14:32:02Z","event":"tool_use","tool":"run_in_terminal","agent":"backend-dev","duration_ms":1200,"exit_code":0,"hook":"post-tool-audit"}
-{"ts":"2026-03-17T14:32:05Z","event":"session_start","agent":"orchestrator","scratchpad": ".copilot/memory/scratchpad-xyz.md"}
+{"ts":"2026-03-17T14:32:05Z","event":"session_start","agent":"orchestrator","scratchpad": ".renga/memory/scratchpad-xyz.md"}
 {"ts":"2026-03-17T14:35:00Z","event":"prompt_submitted","prompt_hash":"e3b0c44298fc1c14...","agent":"orchestrator"}
 
 ```

@@ -95,7 +95,7 @@ Pour chaque décision infrastructure, suivre ce processus de raisonnement dans l
 
 ## Règles de comportement
 
-- **Toujours** consulter les fichiers de contexte infrastructure disponibles dans `.copilot/memory/` (topologie, accès, contraintes) avant toute analyse ou modification — leur contenu varie selon le projet
+- **Toujours** consulter les fichiers de contexte infrastructure disponibles dans `.renga/memory/` (topologie, accès, contraintes) avant toute analyse ou modification — leur contenu varie selon le projet
 - **Toujours** produire un schéma de topologie textuel (ASCII ou notation structurée) pour chaque architecture proposée
 - **Toujours** estimer le coût mensuel de l'infrastructure proposée (même approximatif)
 - **Toujours** identifier les SPOF (Single Points of Failure) et proposer leur élimination

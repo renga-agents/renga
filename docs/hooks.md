@@ -123,11 +123,11 @@ Concrete example, `security.hooks.json`:
 
 ### Generated Logs
 
-Hooks produce structured logs in `.copilot/reports/<session-id>/`:
+Hooks produce structured logs in `.renga/reports/<session-id>/`:
 
 ```text
 
-.copilot/reports/<uuid>/
+.renga/reports/<uuid>/
 ├── tool-audit.jsonl    ← every tool call (postToolUse)
 ├── session.log         ← session start/end
 ├── quality.jsonl       ← agent stops
@@ -245,7 +245,7 @@ Checks that the agent writes only inside its allowed zone, defined by the `WORKT
 
 **Event**: `postToolUse` and `userPromptSubmitted` · **JSON file**: `audit.hooks.json`
 
-Writes a JSON Lines log to `.copilot/reports/<session-id>/tool-audit.jsonl` after every tool call.
+Writes a JSON Lines log to `.renga/reports/<session-id>/tool-audit.jsonl` after every tool call.
 
 **Security rules**:
 
@@ -268,7 +268,7 @@ Writes a JSON Lines log to `.copilot/reports/<session-id>/tool-audit.jsonl` afte
 **Event**: `sessionStart` · **JSON file**: `audit.hooks.json`
 
 1. Generates a unique session identifier, UUID through Python or timestamp as fallback
-2. Creates the `.copilot/reports/<session-id>/` directory
+2. Creates the `.renga/reports/<session-id>/` directory
 3. Initializes the `tool-audit.jsonl` audit file
 4. Checks for the presence of `jq` and prints a warning if it is missing
 5. Writes the session start entry into `session.log`
@@ -279,7 +279,7 @@ Writes a JSON Lines log to `.copilot/reports/<session-id>/tool-audit.jsonl` afte
 
 **Event**: `sessionEnd` · **JSON file**: `audit.hooks.json`
 
-Writes the session end entry to `.copilot/reports/<session-id>/session.log`. It never fails (`set +e`).
+Writes the session end entry to `.renga/reports/<session-id>/session.log`. It never fails (`set +e`).
 
 ---
 
@@ -287,7 +287,7 @@ Writes the session end entry to `.copilot/reports/<session-id>/session.log`. It 
 
 **Event**: `agentStop` and `subagentStop` · **JSON file**: `quality.hooks.json`
 
-Logs the agent stop in `.copilot/reports/<session-id>/quality.jsonl` with the agent identity and the reason for stopping.
+Logs the agent stop in `.renga/reports/<session-id>/quality.jsonl` with the agent identity and the reason for stopping.
 
 **JSON Lines output**:
 
@@ -303,7 +303,7 @@ Logs the agent stop in `.copilot/reports/<session-id>/quality.jsonl` with the ag
 
 **Event**: `errorOccurred` · **JSON file**: `audit.hooks.json`
 
-Captures the error type and the affected tool in `.copilot/reports/<session-id>/errors.jsonl`. It never fails.
+Captures the error type and the affected tool in `.renga/reports/<session-id>/errors.jsonl`. It never fails.
 
 **JSON Lines output**:
 
@@ -535,7 +535,7 @@ The `userPromptSubmitted` hook logs a **salted SHA-256 hash** of the prompt, nev
 
 ### Local Logs
 
-All logs are written to `.copilot/reports/` on the local filesystem. No data is sent to an external service. The `.copilot/` directory is included in `.gitignore`, so logs are never committed.
+All logs are written to `.renga/reports/` on the local filesystem. No data is sent to an external service. The `.renga/` directory is included in `.gitignore`, so logs are never committed.
 
 ### Opt-Out
 
@@ -567,7 +567,7 @@ hooks:
 
 ### How Do I Know Whether My Hooks Are Working?
 
-Start a Copilot session and check whether the `.copilot/reports/<session-id>/` directory is created with the expected log files. You can also run validation:
+Start a Copilot session and check whether the `.renga/reports/<session-id>/` directory is created with the expected log files. You can also run validation:
 
 ```bash
 

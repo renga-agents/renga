@@ -171,7 +171,7 @@ Unified entry point for the framework's common operations.
 
 | Command | Description | Typical use |
 | --- | --- | --- |
-| `init` | Copies `.renga.example.yml` to `.renga.yml` and creates `.copilot/memory/` | First-time setup |
+| `init` | Copies `.renga.example.yml` to `.renga.yml` and creates `.renga/memory/` | First-time setup |
 | `validate` | Runs `validate_agents.py` to check all `.agent.md` files | Before each PR |
 | `doctor` | Full setup diagnosis: Python, required files, JSON schema, hooks | After setup or when something breaks |
 | `dashboard` | Generates `reports/dashboard.md` with a framework health overview | Reporting |

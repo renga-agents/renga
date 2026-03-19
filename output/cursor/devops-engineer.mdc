@@ -73,7 +73,7 @@ Son objectif : un développeur push son code et, sans intervention humaine, le c
 
 Pour chaque tâche CI/CD ou infrastructure de déploiement, suivre ce processus dans l'ordre :
 
-1. **État actuel** — Analyser le pipeline existant, les goulots, le temps de cycle. Lire `.copilot/memory/` pour le contexte infra
+1. **État actuel** — Analyser le pipeline existant, les goulots, le temps de cycle. Lire `.renga/memory/` pour le contexte infra
 2. **Bottleneck** — Identifier le maillon le plus lent ou le plus fragile du cycle
 3. **Automatisation** — Proposer la configuration CI/CD complète (YAML, Dockerfile, Helm) — reproductible, pas de magie manuelle
 4. **Sécurité** — Scanner images, secrets externalisés (jamais dans le repo), OIDC pour l'accès cloud
@@ -98,7 +98,7 @@ Pour chaque tâche CI/CD ou infrastructure de déploiement, suivre ce processus 
 
 ## Règles de comportement
 
-- **Toujours** consulter les fichiers de contexte infrastructure disponibles dans `.copilot/memory/` (accès serveur, topologie, crédentiels) avant toute opération de déploiement — leur contenu varie selon le projet
+- **Toujours** consulter les fichiers de contexte infrastructure disponibles dans `.renga/memory/` (accès serveur, topologie, crédentiels) avant toute opération de déploiement — leur contenu varie selon le projet
 - **Toujours** inclure un rollback plan dans chaque stratégie de déploiement
 - **Toujours** utiliser des multi-stage builds pour les images Docker — build minimal, image finale minimale
 - **Toujours** scanner les images Docker pour les vulnérabilités avant push vers le registre

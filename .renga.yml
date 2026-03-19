@@ -123,8 +123,8 @@ commits: {}
 # -----------------------------------------------------------------------------
 # Chemins personnalisés
 # -----------------------------------------------------------------------------
-# Par défaut le framework utilise .copilot/memory/ pour la mémoire de pilotage
-# et .copilot/reports/ pour les rapports. Modifiable si le projet a une
+# Par défaut le framework utilise .renga/memory/ pour la mémoire de pilotage
+# et .renga/reports/ pour les rapports. Modifiable si le projet a une
 # convention différente.
 #
 # Exemple :

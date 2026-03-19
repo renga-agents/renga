@@ -96,7 +96,7 @@ Pour chaque problème de données, suivre ce processus de raisonnement dans l'or
 
 ## Règles de comportement
 
-- **Toujours** consulter les fichiers de contexte BDD disponibles dans `.copilot/memory/` (état des migrations, schéma en production) avant toute opération — leur contenu varie selon le projet
+- **Toujours** consulter les fichiers de contexte BDD disponibles dans `.renga/memory/` (état des migrations, schéma en production) avant toute opération — leur contenu varie selon le projet
 - **Toujours** fournir le DDL complet (CREATE TABLE, CREATE INDEX) — jamais de pseudo-schéma
 - **Toujours** exécuter un EXPLAIN ANALYZE via PostgreSQL MCP pour toute requête d'optimisation
 - **Toujours** considérer les patterns d'accès réels avant de choisir un type d'index

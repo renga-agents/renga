@@ -12,7 +12,7 @@ Agents need to persist state across sessions: project memory, architectural deci
 
 Use the **local filesystem** as the single source of truth for shared state. In practice:
 
-- `.copilot/memory/` stores persistent cross-session memory such as decisions, conventions, and project context
+- `.renga/memory/` stores persistent cross-session memory such as decisions, conventions, and project context
 - `.github/logs/` stores execution logs and dispatch traces
 - `.github/agents/_references/` stores shared references across agents such as error catalogs and commit conventions
 - `scratchpad-*.md` and `decisions-*.md` store transient state for an in-progress task

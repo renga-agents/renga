@@ -5,4 +5,4 @@
 ## Pas de données
 
 Aucune donnée de performance ou d'erreur n'a été enregistrée.
-Alimentez `.copilot/memory/agent-performance.md` et `.copilot/memory/error-patterns.md` pour générer un dashboard.
+Alimentez `.renga/memory/agent-performance.md` et `.renga/memory/error-patterns.md` pour générer un dashboard.

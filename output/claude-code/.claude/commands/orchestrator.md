@@ -92,7 +92,7 @@ L'orchestrateur est le **directeur technique opérationnel** de l'équipe d'agen
 
 **Quota** : 0 lecture de code avant le premier dispatch (sauf mémoire de pilotage) — 2 lectures max par tâche hors fichiers de mémoire. Toute lecture supplémentaire = incident de gouvernance.
 
-> **Lectures comptées dans le quota** : fichiers source applicatifs (`.ts`, `.py`, `.go`, `.tsx`, `.sql`, `.yaml` de config applicative). **Lectures hors quota** : mémoire (`.copilot/`), gouvernance (`.github/agents/`), documentation (`docs/`, `README`, ADR), configuration framework (`.renga.yml`).
+> **Lectures comptées dans le quota** : fichiers source applicatifs (`.ts`, `.py`, `.go`, `.tsx`, `.sql`, `.yaml` de config applicative). **Lectures hors quota** : mémoire (`.renga/`), gouvernance (`.github/agents/`), documentation (`docs/`, `README`, ADR), configuration framework (`.renga.yml`).
 
 **Stratégie de prompt** : rédiger des prompts auto-suffisants (objectif, contraintes, critères, chemins). Le subagent lit et explore lui-même. Anti-pattern : lire 10 fichiers puis dispatcher un subagent qui les relira.
 
@@ -134,7 +134,7 @@ Affecter chaque sous-tâche à l'agent optimal, organiser en waves, publier le p
 - Dispatcher **avant** toute lecture d’artefacts métier
 - **`worktree_path`** : préfixer le prompt des agents écrivains. Agents lecture seule → pas de création de fichiers (ERR-013)
 - **Brief sécurité (ERR-008)** : injecter les contraintes P0 SecurityEngineer dans le prompt QAEngineer
-- **Persistance rapport (ERR-025)** : path `.copilot/reports/<slug>/wave-<N>-<agent-name>.md`
+- **Persistance rapport (ERR-025)** : path `.renga/reports/<slug>/wave-<N>-<agent-name>.md`
 - **Validation scope (ERR-007)** : avant wave 2, QAEngineer = tests + interfaces pures uniquement
 - **Parallélisme** : tous les `runSubagent` indépendants dans le même bloc de tool calls (8-12 agents normal en wave lecture)
 - **Handoff inter-agents** : Produit (ProductStrategist→PM→ProxyPO→devs) | Analytics (PM↔ProductAnalytics↔ProductStrategist) | Incident (IC→Obs→Debugger→DevOps→IC)
@@ -158,7 +158,7 @@ Enregistrer `{session_end}`, écrire les décisions dans `decisions-<slug>.md` +
 
 > **Étape obligatoire pour L2+.** Omettre la rétrospective = données de performance perdues = dashboard vide. Durée attendue : 5-10 minutes.
 
-1. **Évaluer** chaque agent dispatché vs critères d'acceptation → scorer via `.copilot/memory/rubric.md`
+1. **Évaluer** chaque agent dispatché vs critères d'acceptation → scorer via `.renga/memory/rubric.md`
 2. **Mettre à jour** `agent-performance-<slug>.md` avec les scores de cette session (obligatoire L2+, jamais le fichier consolidé)
 3. **Patterns d'erreur** → enrichir `error-patterns-<slug>.md` si retry ou échec
 4. **Amélioration de prompt** → si agent échoué ≥2× → entrée dans `prompt-improvements.md`
@@ -185,7 +185,7 @@ Enregistrer `{session_end}`, écrire les décisions dans `decisions-<slug>.md` +
 ### Contrôle des livrables
 
 - ☐ Tous les agents dispatched ont livré un output ou ont été relancés (max 2 retries)
-- ☐ Rapports subagents persistés dans `.copilot/reports/<slug>/` (ERR-025)
+- ☐ Rapports subagents persistés dans `.renga/reports/<slug>/` (ERR-025)
 - ☐ Index des rapports à jour (ERR-025)
 - ☐ Aucun output accepté sans vérification contre les critères d'acceptation (ERR-019)
 
@@ -226,13 +226,13 @@ Enregistrer `{session_end}`, écrire les décisions dans `decisions-<slug>.md` +
 
 | Fichier | Rôle |
 | --- | --- |
-| `.copilot/reports/<slug>/` | Rapports subagents (ERR-025) |
-| `.copilot/memory/scratchpad.md` | Index des sessions |
-| `.copilot/memory/scratchpad-<slug>.md` | Ardoise de session (supprimé à la clôture) |
-| `.copilot/memory/project-context.md` | Stack, contraintes, décisions structurantes |
-| `.copilot/memory/agent-performance[-<slug>].md` | Scoring historique (consolidé = lecture seule) / session courante |
-| `.copilot/memory/error-patterns[-<slug>].md` | Patterns d'erreurs (consolidé = lecture seule) / session courante |
-| `.copilot/memory/prompt-improvements.md` | Changelog des prompts agents |
+| `.renga/reports/<slug>/` | Rapports subagents (ERR-025) |
+| `.renga/memory/scratchpad.md` | Index des sessions |
+| `.renga/memory/scratchpad-<slug>.md` | Ardoise de session (supprimé à la clôture) |
+| `.renga/memory/project-context.md` | Stack, contraintes, décisions structurantes |
+| `.renga/memory/agent-performance[-<slug>].md` | Scoring historique (consolidé = lecture seule) / session courante |
+| `.renga/memory/error-patterns[-<slug>].md` | Patterns d'erreurs (consolidé = lecture seule) / session courante |
+| `.renga/memory/prompt-improvements.md` | Changelog des prompts agents |
 | `.github/logs/decisions[-<slug>].md` | Index (append-only) / journal de session |
 
 > Écriture per-session (`-<slug>.md`), consolidé reconstruit par `scripts/consolidate_memory.py`. `memories/repo/` = boîte de réception plateforme uniquement.

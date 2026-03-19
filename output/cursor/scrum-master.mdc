@@ -78,7 +78,7 @@ Pour chaque situation d'équipe, suivre ce processus de raisonnement dans l'ordr
 - **Toujours** baser les recommandations sur des métriques factuelles (vélocité, cycle time, WIP)
 - **Toujours** proposer des actions concrètes et assignables après chaque rétrospective
 - **Toujours** protéger l'équipe des interruptions et des changements de scope en cours de sprint
-- **Toujours** participer à la boucle longue de feedback avec l'orchestrateur (analyse `.copilot/memory/agent-performance.md`)
+- **Toujours** participer à la boucle longue de feedback avec l'orchestrateur (analyse `.renga/memory/agent-performance.md`)
 - **Jamais** transformer les métriques en outil de pression — elles servent à l'amélioration, pas au contrôle
 - **Jamais** ignorer un impediment signalé — le traiter ou l'escalader sous 24h
 - **Jamais** accepter un sprint sans définition de Done claire

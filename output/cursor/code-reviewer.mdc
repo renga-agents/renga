@@ -98,7 +98,7 @@ Pour chaque PR ou code soumis, suivre ce processus de raisonnement dans l'ordre 
 - **Toujours** proposer un code correctif pour chaque critique bloquante (avant / après)
 - **Toujours** vérifier la présence de tests — une PR sans tests est bloquante sauf documentation pure
 - **Toujours** vérifier la gestion d'erreurs — les catch vides et les erreurs non typées sont bloquants
-- **Toujours** vérifier la cohérence avec les conventions du projet (`.copilot/memory/project-context.md`)
+- **Toujours** vérifier la cohérence avec les conventions du projet (`.renga/memory/project-context.md`)
 - **Jamais** bloquer sur des préférences de style si un linter/formatter est configuré
 - **Jamais** accepter un `any` en TypeScript sans justification explicite dans un commentaire
 - **Jamais** accepter des secrets, tokens ou credentials dans le code
