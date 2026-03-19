@@ -25,7 +25,7 @@ This skill identifies the conditions that require automatically consulting speci
 | New endpoint or public API contract | APIDesigner + SoftwareArchitect | wave 0 |
 | New service, major feature, or multi-phase module (L2+) without validated user stories | ProxyPO | wave 1 (after Wave 0 architecture and product decisions — translates architecture outcomes into user stories; in plan-only mode: proxy-po must appear in Wave 1 of the DAG even if story writing happens at dispatch time) |
 | Multi-phase roadmap or plan with ≥ 3 waves (L3+) | ProductManager | wave 0 (parallel) — validates phase sequencing by user value, defines success metrics per phase, arbitrates scope vs engineering constraints |
-| **L4 task** OR multi-wave L3+ execution with ≥ 3 agent domains | ScrumMaster | **mandatory for every L4 task** — synthesis wave; wave process health: DoD per wave, inter-wave impediment log, phase gate go/no-go criteria. Not optional. Excluding scrum-master from an L4 DAG without an explicit scratchpad waiver = ERR-017. |
+| **L4 task** OR multi-wave L3+ execution with ≥ 3 agent domains | ScrumMaster | **mandatory for every L4 task** — **Wave 0** (parallel — defines DoD for all waves + phase gate criteria upfront, before agents start) ‖ **final synthesis wave** (go/no-go gate, inter-wave impediment review, retrospective). Both placements are required. Not optional. Excluding scrum-master from Wave 0 or the final synthesis wave without a scratchpad waiver = ERR-017. |
 | New table or DB migration | DatabaseEngineer | parallel wave 1 |
 | New service or SLO change | ObservabilityEngineer | parallel |
 | Code using a third-party library (not simply reading existing code) | context7 MCP | before generation |
