@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 set +e
 
-SESSION_FILE=".renga/reports/.current-session"
+# Derive project root from script location — robust against CWD variations
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+RENGA_BASE="${RENGA_DIR:-$PROJECT_ROOT/.renga}"
+SESSION_FILE="$RENGA_BASE/reports/.current-session"
+
+# Unconditional trace
+echo "[$(date -u +%T)] session-cleanup.sh pid=$$ project=$PROJECT_ROOT" >> /tmp/renga-hooks-trace.log 2>/dev/null || true
+
 SESSION_ID="$(cat "$SESSION_FILE" 2>/dev/null | tr -d '[:space:]')"
 SESSION_ID="${SESSION_ID:-default}"
-REPORT_DIR=".renga/reports/${SESSION_ID}"
+REPORT_DIR="$RENGA_BASE/reports/$SESSION_ID"
 
 # Check jq dependency
 if ! command -v jq &>/dev/null; then
