@@ -4,7 +4,7 @@ user-invocable: false
 description: "Cross-cutting architecture review, inter-service consistency, technical debt"
 tools: ["read", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 model: ['Claude Haiku 4.5 (copilot)']
-skills: [dag-patterns]
+skills: [dag-patterns, code-review-protocol]
 ---
 # Agent: architecture-reviewer
 

@@ -4,7 +4,7 @@ user-invocable: false
 description: "Application security, OWASP, hardening, vulnerability audits"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*", "playwright/*"]
 model: ['Claude Haiku 4.5 (copilot)']
-skills: [auto-triggers]
+skills: [auto-triggers, code-review-protocol]
 ---
 
 # Agent: security-engineer

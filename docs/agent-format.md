@@ -359,7 +359,7 @@ Loading a skill follows 3 steps to optimize token usage:
 
 ### Framework Skills
 
-The framework includes 5 ready-to-use skills:
+The framework includes 13 ready-to-use skills:
 
 | Skill | Description |
 | --- | --- |
@@ -368,6 +368,14 @@ The framework includes 5 ready-to-use skills:
 | `auto-triggers` | Identifies automatic triggers for specialized agents |
 | `worktree-lifecycle` | Manages the lifecycle of an isolated Git worktree |
 | `handoff-protocol` | Standardizes handoffs between agents |
+| `commit-discipline` | Git commit batching, asset/source separation, wave cadence |
+| `quality-control` | Subagent output verification, review loop, browser validation, retrospective |
+| `dispatch-protocol` | Wave construction, QA scope, security brief, coverage floors |
+| `hooks-catalog` | Active hooks, allowlist, protected paths |
+| `agent-roster` | Roster resolution from `.renga.yml` (whitelist / all / absent) |
+| `working-memory` | `.renga/` directory structure, read/write conventions, file naming |
+| `tdd-protocol` | TDD wave protocol (wave 1/2/3), ERR-007 mocking rules, mandatory red commit |
+| `code-review-protocol` | 6-step review process with 🔴/🟡/🟢 severity classification |
 
 ---
 

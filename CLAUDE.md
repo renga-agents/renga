@@ -24,7 +24,7 @@ scripts/
   agents/               # The ~52 core agent files (*.agent.md)
     _profiles/          # Handoff protocol, filière definitions
     _references/        # ONE remaining file: replicate-models.md (game-studio only)
-    _plugins/           # Plugin metadata only (agents.txt per plugin)
+    _plugins/           # Plugin metadata only (agents.md per plugin)
     plugins/            # Plugin agent source files (NOT installed directly)
   hooks/                # .hooks.json files + scripts/
   instructions/         # Copilot instructions files
@@ -49,7 +49,7 @@ install.sh              # System-wide CLI installer (curl | sh)
 
 ### Plugin flat install
 
-Plugin agents go directly in `.github/agents/` (not in a subdirectory) for Copilot discovery compatibility. Metadata (list of agent filenames) is stored in `.github/agents/_plugins/<name>/agents.txt`.
+Plugin agents go directly in `.github/agents/` (not in a subdirectory) for Copilot discovery compatibility. Metadata (list of agent filenames) is stored in `.github/agents/_plugins/<name>/agents.md`.
 
 ### Schemas are optional
 
@@ -71,20 +71,23 @@ Installed scripts and schemas are cached in `${XDG_DATA_HOME:-$HOME/.local/share
 
 ## Skills architecture (`.github/skills/`)
 
-10 skills total. Seiji lists all of them in its `skills:` frontmatter.
+13 skills total. Seiji declares orchestration skills; specialized agents declare domain-specific skills.
 
-| Skill | Content | ERR rules |
-| --- | --- | --- |
-| `task-decomposition` | L0-L4 classification, acceptance criteria, dry-run gate | ERR-014, ERR-024, ERR-020 |
-| `dag-patterns` | 3 full DAG examples (fullstack, auth, ML) | ERR-004, ERR-015 |
-| `auto-triggers` | Trigger table, escalation table, circuit breaker, ERR-020 | ERR-016, ERR-017, ERR-020 |
-| `worktree-lifecycle` | Creation, zoning, multi-MOE, closure, rollback | ERR-013 |
-| `handoff-protocol` | Handoff block format, standard chains (Product/Analytics/Incident) | — (pointers to other skills) |
-| `commit-discipline` | Coherent batches, asset/source separation, multiline, wave cadence, file plan | ERR-001, ERR-004, ERR-005, ERR-015, ERR-018 |
-| `quality-control` | Report verification, review loop, browser validation, retrospective | ERR-019, ERR-021, ERR-022, ERR-023, ERR-025 |
-| `dispatch-protocol` | QA scope, security brief, wave 0 constraints, coverage floors, multi-track catalog | ERR-007, ERR-008, ERR-013, ERR-014, ERR-024 |
-| `hooks-catalog` | Active hooks table, allowlist, protected paths | — |
-| `agent-roster` | Roster resolution from `.renga.yml` (whitelist/all/absent), scratchpad logging | ERR-027 |
+| Skill | Content | ERR rules | Declared by |
+| --- | --- | --- | --- |
+| `task-decomposition` | L0-L4 classification, acceptance criteria, dry-run gate | ERR-014, ERR-024, ERR-020 | seiji, qa-engineer, software-architect |
+| `dag-patterns` | 3 full DAG examples (fullstack, auth, ML) | ERR-004, ERR-015 | seiji, software-architect, architecture-reviewer |
+| `auto-triggers` | Trigger table, escalation table, circuit breaker, ERR-020 | ERR-016, ERR-017, ERR-020 | seiji, security-engineer, incident-commander |
+| `worktree-lifecycle` | Creation, zoning, multi-MOE, closure, rollback | ERR-013 | seiji, git-expert, devops-engineer |
+| `handoff-protocol` | Handoff block format, standard chains (Product/Analytics/Incident) | — (pointers to other skills) | seiji, git-expert, code-reviewer |
+| `commit-discipline` | Coherent batches, asset/source separation, multiline, wave cadence, file plan | ERR-001, ERR-004, ERR-005, ERR-015, ERR-018 | seiji |
+| `quality-control` | Report verification, review loop, browser validation, retrospective | ERR-019, ERR-021, ERR-022, ERR-023, ERR-025 | seiji |
+| `dispatch-protocol` | QA scope, security brief, wave 0 constraints, coverage floors, multi-track catalog | ERR-007, ERR-008, ERR-013, ERR-014, ERR-024 | seiji |
+| `hooks-catalog` | Active hooks table, allowlist, protected paths | — | seiji |
+| `agent-roster` | Roster resolution from `.renga.yml` (whitelist/all/absent), scratchpad logging | ERR-027 | seiji |
+| `working-memory` | `.renga/` structure, read/write conventions, file naming, retention rules | — | seiji, devops-engineer, database-engineer, infra-architect, scrum-master, qa-engineer |
+| `tdd-protocol` | TDD wave protocol (wave 1/2/3), ERR-007 forbidden files, mocking rules, mandatory red commit | ERR-007 | qa-engineer, backend-dev |
+| `code-review-protocol` | 6-step review process (overview→security→correctness→maintainability→performance→tests), 🔴/🟡/🟢 verdict | — | code-reviewer, security-engineer, architecture-reviewer |
 
 Note: some ERR rules appear in multiple skills (from different angles, e.g. ERR-014 in both task-decomposition and dispatch-protocol). This is intentional — the skill that *applies* the rule embeds it.
 
