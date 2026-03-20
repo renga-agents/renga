@@ -943,7 +943,7 @@ cmd_list() {
   if [[ -d "$RENGA_DIR/_plugins" ]]; then
     local found_plugins=0
     for d in "$RENGA_DIR/_plugins"/*/; do
-      [[ -d "$d" ]] && [[ -f "$d/agents.txt" ]] || continue
+      [[ -d "$d" ]] && [[ -f "$d/agents.md" ]] || continue
       if [[ $found_plugins -eq 0 ]]; then
         echo ""
         info "Plugins installés :"
@@ -951,7 +951,7 @@ cmd_list() {
       found_plugins=1
       local plugin_name count
       plugin_name="$(basename "$d")"
-      count="$(wc -l < "$d/agents.txt" | tr -d ' ')"
+      count="$(wc -l < "$d/agents.md" | tr -d ' ')"
       echo "  $plugin_name ($count agents)"
     done
   fi
@@ -1010,7 +1010,7 @@ _install_plugin_flat() {
   done
 
   # Save agent list for uninstall
-  printf '%s' "$agents_list" > "$meta_dir/agents.txt"
+  printf '%s' "$agents_list" > "$meta_dir/agents.md"
 
   # Copy README if present
   [[ -f "$src_dir/README.md" ]] && cp "$src_dir/README.md" "$meta_dir/"
@@ -1067,7 +1067,7 @@ cmd_plugin() {
       info "Ajout du plugin '$plugin_name'..."
 
       # Check if already installed (metadata dir exists)
-      if [[ -f "$RENGA_DIR/_plugins/$plugin_name/agents.txt" ]]; then
+      if [[ -f "$RENGA_DIR/_plugins/$plugin_name/agents.md" ]]; then
         warn "Plugin '$plugin_name' déjà installé"
         return 0
       fi
@@ -1108,7 +1108,7 @@ else:
       [[ $# -ge 1 ]] || { fail "Usage: renga plugin remove <name>"; return 1; }
       local plugin_name="$1"
       local meta_dir="$RENGA_DIR/_plugins/$plugin_name"
-      if [[ ! -f "$meta_dir/agents.txt" ]]; then
+      if [[ ! -f "$meta_dir/agents.md" ]]; then
         warn "Plugin '$plugin_name' non installé"
         return 0
       fi
@@ -1116,7 +1116,7 @@ else:
       while IFS= read -r agent_name; do
         [[ -n "$agent_name" ]] || continue
         rm -f "$RENGA_DIR/${agent_name}.agent.md"
-      done < "$meta_dir/agents.txt"
+      done < "$meta_dir/agents.md"
       rm -rf "$meta_dir"
       _remove_plugin_from_config "$plugin_name"
       ok "Plugin '$plugin_name' supprimé"
@@ -1137,7 +1137,7 @@ plugins = m.get('plugins', {})
 if not plugins:
     print('  Aucun plugin disponible.')
 for name, data in plugins.items():
-    installed = (meta_base / name / 'agents.txt').exists()
+    installed = (meta_base / name / 'agents.md').exists()
     marker = '[installed]' if installed else '[available]'
     count = len(data.get('agents', []))
     print(f'  {marker} {name} ({count} agents)')
@@ -1145,11 +1145,11 @@ for name, data in plugins.items():
       elif [[ -d "$RENGA_DIR/_plugins" ]]; then
         local found=0
         for d in "$RENGA_DIR/_plugins"/*/; do
-          [[ -d "$d" ]] && [[ -f "$d/agents.txt" ]] || continue
+          [[ -d "$d" ]] && [[ -f "$d/agents.md" ]] || continue
           found=1
           local pname pcount
           pname="$(basename "$d")"
-          pcount="$(wc -l < "$d/agents.txt" | tr -d ' ')"
+          pcount="$(wc -l < "$d/agents.md" | tr -d ' ')"
           echo "  [installed] $pname ($pcount agents)"
         done
         [[ $found -eq 0 ]] && echo "  Aucun plugin installé."
