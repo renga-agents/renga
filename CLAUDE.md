@@ -71,7 +71,7 @@ Installed scripts and schemas are cached in `${XDG_DATA_HOME:-$HOME/.local/share
 
 ## Skills architecture (`.github/skills/`)
 
-15 skills total. Seiji declares orchestration skills; specialized agents declare domain-specific skills.
+16 skills total. Seiji declares orchestration skills; specialized agents declare domain-specific skills.
 
 | Skill | Content | ERR rules | Declared by |
 | --- | --- | --- | --- |
@@ -90,6 +90,7 @@ Installed scripts and schemas are cached in `${XDG_DATA_HOME:-$HOME/.local/share
 | `code-review-protocol` | 6-step review process (overview→security→correctness→maintainability→performance→tests), 🔴/🟡/🟢 verdict | — | code-reviewer, security-engineer, architecture-reviewer |
 | `execution-modes` | 5 execution modes (sequential, parallel, waves, super-wave, mega-wave), platform constraints, filesystem safety matrix, fan-out rules | — | seiji |
 | `consensus-protocol` | Multi-wave consensus protocol, trigger thresholds, participation format, convergence criteria, cross-stream arbitration, super-wave flow | — | seiji |
+| `task-reception` | Pre-execution coherence gate (3-point SCOPE/CRITERIA/CONTEXT check), TASK CHALLENGE format, anti-patterns | — | software-architect, security-engineer, backend-dev, architecture-reviewer, qa-engineer, code-reviewer |
 
 Note: some ERR rules appear in multiple skills (from different angles, e.g. ERR-014 in both task-decomposition and dispatch-protocol). This is intentional — the skill that *applies* the rule embeds it.
 

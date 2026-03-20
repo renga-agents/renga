@@ -145,6 +145,18 @@ Assign each sub-task to the optimal agent, organize into waves, publish the file
 
 If any box fails: edit the scratchpad to fix the inconsistency first. The DRY-RUN PLAN is produced only after all four pass.
 
+**PLAN AUDIT — mandatory for L2+, dispatched after the self-check passes**: Before writing the DRY-RUN PLAN, dispatch `plan-reviewer` with the scratchpad path and classification. Prompt template:
+
+```text
+Start by reading your configuration file at .github/agents/plan-reviewer.agent.md.
+Task: audit the execution plan at .renga/memory/scratchpad-<slug>.md (classification: L<N>).
+Return your structured verdict.
+```
+
+- **APPROVED** → proceed to the DRY-RUN PLAN block.
+- **NEEDS_REVISION** → apply the listed 🔴 fixes to the scratchpad, then re-dispatch `plan-reviewer` once. If the second verdict is still NEEDS_REVISION → add all unresolved blockers to the open questions list (tag: `[plan-reviewer]`) and proceed.
+- **L0-L1**: skip this step entirely.
+
 **Language**: always respond in the language of the user's request — the DRY-RUN PLAN block (wave labels, open question text, closing line) and all interactive question framing adapt to the user's language. Agent names and identifiers are non-translatable technical tokens and remain in English (`software-architect ‖ security-engineer`).
 
 **Block format — write in this exact order**:
@@ -196,6 +208,7 @@ Open questions (must be resolved before dispatch):
 - **`worktree_path`**: prefix writer-agent prompts with it. Read-only agents -> no file creation (ERR-013)
 - **Security brief (ERR-008)**: inject P0 security-engineer constraints into the qa-engineer prompt
 - **Report persistence (ERR-025)**: Every subagent prompt MUST include the ERR-025 instruction verbatim (see skill `quality-control` §Report Verification). The **agent** writes its own full report to `.renga/reports/<slug>/wave-<N>-<agent-name>.md` and returns ONLY the structured summary (verdict + findings + top-3 P0 + file path) to seiji. Never collect or copy report content into seiji's context — reference the file path for inter-wave use.
+- **TASK CHALLENGE handling**: if a dispatched agent returns a `=== TASK CHALLENGE ===` block instead of executing, treat it as a domain signal (not a failure). Read the `Check`, `Observation`, `Impact`, and `Proposal` fields. Then arbitrate: (a) **valid challenge** → correct the brief (clarify scope, resolve the criteria, or supply the missing prerequisite) and re-dispatch once; (b) **overcautious challenge** → re-dispatch with an explicit scope clarification and a note that the agent must proceed; (c) **reveals a plan gap** → update the scratchpad, escalate to human if the gap is structural. Log challenge + resolution in the scratchpad. A re-dispatched agent that received a corrected brief must proceed — it will not re-challenge the same point.
 - **Scope validation (ERR-007)**: before wave 2, qa-engineer = tests + pure interfaces only
 - **Parallelism**: all independent `runSubagent` calls in the same tool-call block (8-12 agents is normal in a reading wave)
 - **Inter-agent handoff**: Product (product-strategist->product-manager->proxy-po->devs) | Analytics (product-manager<->product-analytics<->product-strategist) | Incident (incident-commander->observability-engineer->debugger->devops-engineer->incident-commander)
