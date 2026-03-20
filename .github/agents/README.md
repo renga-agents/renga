@@ -1,6 +1,6 @@
 # Annuaire des agents
 
-> Ce dossier contient les 52 agents core (46 invocables + 6 référentiels) de l'équipe IA.
+> Ce dossier contient les 51 agents core (1 orchestrateur invocable + 46 agents spécialistes + 4 profils de filière) de l'équipe IA.
 > Chaque fichier `.agent.md` définit l'identité, les responsabilités, les outils
 > et les règles de comportement d'un agent.
 
@@ -19,7 +19,7 @@
 - <a href="#-produit--design">📦 Produit & Design</a>
 - <a href="#-business--finance">💼 Business & Finance</a>
 - <a href="#️-conformité--gouvernance">⚖️ Conformité & Gouvernance</a>
-- <a href="#-protocoles--référentiels">📚 Protocoles & Référentiels</a>
+- <a href="#-skills-système">📚 Skills système</a>
 - <a href="#️-profils-_profiles">🗂️ Profils (_profiles/)</a>
 
 ---
@@ -38,8 +38,8 @@ La syntaxe est la même pour tous les agents invocables :
 
 ```
 
-@backend-dev: Implémenter le endpoint POST /api/v1/orders avec validation NestJS
-@security-engineer: Auditer le flux d'authentification OAuth2 du service payments
+@seiji: Implémenter le endpoint POST /api/v1/orders avec validation NestJS
+@seiji: Auditer le flux d'authentification OAuth2 du service payments
 @seiji: Mettre en place un système de notifications push temps réel
 
 ```
@@ -52,8 +52,7 @@ La syntaxe est la même pour tous les agents invocables :
 
 ### Choisir le bon point d'entrée
 
-- **Tâche mono-domaine, courte et ciblée** : invoquer directement le spécialiste concerné.
-- **Tâche transverse, ambiguë, multi-fichiers ou multi-agents** : invoquer `@seiji:` pour qu'il planifie et dispatche.
+- **Toute tâche** : invoquer `@seiji:` — c'est le seul agent directement invocable. Seiji planifie et dispatche les spécialistes appropriés.
 - **Décision critique à arbitrer** : invoquer `@seiji consensus: <question>`.
 
 ### Contraintes de plateforme à connaître
@@ -69,17 +68,15 @@ La syntaxe est la même pour tous les agents invocables :
 
 ### Découverte rapide
 
-| Besoin | Agent recommandé | Quand passer par l'orchestrateur |
-| --- | --- | --- |
-| Implémenter une API ou une logique métier | `@backend-dev:` | Si la feature implique aussi sécurité, base de données, QA ou documentation |
-| Construire une interface ou un composant React | `@frontend-dev:` | Si l'effort implique UX, accessibilité, performance ou backend |
-| Enquêter sur un bug difficile | `@debugger:` | Si la cause peut toucher plusieurs couches ou l'infra |
-| Coordonner un incident en production | `@incident-commander:` | Si plusieurs équipes doivent investiguer et mitiger en parallèle |
-| Auditer la sécurité d'un flux | `@security-engineer:` | Si la décision impacte aussi conformité, risque ou architecture |
-| Piloter une feature transverse | `@product-manager:` | Si le scope, les dépendances ou les arbitrages restent mouvants |
-| Mesurer l'adoption d'une feature | `@product-analytics:` | Si la question implique aussi data, tracking ou arbitrage roadmap |
-| Concevoir une architecture | `@software-architect:` | Si plusieurs domaines ou arbitrages irréversibles sont impliqués |
-| Arbitrer une décision sensible | `@seiji consensus:` | Toujours, pour un vrai protocole de consensus multi-agents |
+| Besoin | Comment invoquer |
+| --- | --- |
+| Implémenter une API ou une logique métier | `@seiji: <description>` — seiji dispatche backend-dev (+ sécurité, QA, etc. si nécessaire) |
+| Construire une interface ou un composant React | `@seiji: <description>` — seiji dispatche frontend-dev (+ UX, accessibilité si nécessaire) |
+| Enquêter sur un bug difficile | `@seiji: <description>` — seiji dispatche debugger et les agents complémentaires |
+| Coordonner un incident en production | `@seiji: <description>` — seiji dispatche incident-commander et les agents concernés |
+| Auditer la sécurité d'un flux | `@seiji: <description>` — seiji dispatche security-engineer (+ conformité, risque si nécessaire) |
+| Piloter une feature transverse | `@seiji: <description>` — seiji dispatche product-manager et les équipes concernées |
+| Arbitrer une décision sensible | `@seiji consensus: <question>` — protocole de consensus multi-agents |
 
 ### Validation automatique
 
@@ -219,8 +216,6 @@ Typiquement, cela couvre encore des profils comme animation, mobile, fullstack, 
 ├── orchestrator-product.agent.md  ← Profil de filière (référence, non invocable)
 ├── orchestrator-data.agent.md     ← Profil de filière (référence, non invocable)
 ├── orchestrator-governance.agent.md ← Profil de filière (référence, non invocable)
-├── consensus-protocol.agent.md    ← Référentiel du protocole de consensus
-├── execution-modes.agent.md       ← Référentiel des modes d'exécution (séquentiel, parallèle, vagues)
 ├── <nom>.agent.md                 ← Agents spécialisés (invocables)
 └── _profiles/                     ← Profils transverses (droits d'outils par catégorie)
     ├── advisory.profile.md        ← Profil sans exécution (conseil, conformité, stratégie)
@@ -233,9 +228,9 @@ Typiquement, cela couvre encore des profils comme animation, mobile, fullstack, 
 > que seiji lit lors de la planification pour choisir les bons agents spécialisés.
 > Ils ne sont **pas invocables** directement par l'utilisateur.
 
-> **Note sur les référentiels** (`consensus-protocol`, `execution-modes`) : ce sont aussi
-> des documents internes de gouvernance. Ils décrivent comment seiji raisonne,
-> mais ne constituent pas des points d'entrée utilisateur.
+> **Note sur les protocoles** : les anciens référentiels `consensus-protocol` et `execution-modes`
+> ont été convertis en **skills** (`.github/skills/`). Ils sont chargés nativement par Copilot
+> via le frontmatter `skills:` de seiji — aucune lecture de fichier explicite n'est nécessaire.
 
 ---
 
@@ -395,14 +390,16 @@ Agents distribués en tant que plugins bundled dans `_plugins/`. Ces agents ne f
 
 ---
 
-## 📚 Protocoles & Référentiels
+## 📚 Skills système
 
-Documents techniques utilisés par seiji pour gouverner l'exécution. **Non invocables directement.**
+Les protocoles d'exécution et de consensus ont été convertis en **skills** (chargés nativement par Copilot, sans lecture de fichier explicite). Ils sont déclarés dans le frontmatter `skills:` de seiji.
 
-| Fichier | Rôle |
-| --- | --- |
-| [consensus-protocol.agent.md](consensus-protocol.agent.md) | Définit le protocole de consensus multi-vagues pour les décisions critiques (architecture irréversible, sécurité, réglementaire, désaccord entre agents). Invocation via `@seiji consensus: <question>`. |
-| [execution-modes.agent.md](execution-modes.agent.md) | Référence des trois modes d'exécution : `séquentiel` (B dépend de A), `parallèle` (agents indépendants) et `vagues` (consensus itératif). Inclut la matrice filesystem et les règles de fan-out. |
+| Skill | Rôle | Fichier |
+| --- | --- | --- |
+| **execution-modes** | Référence des 5 modes d'exécution : séquentiel, parallèle, vagues (consensus), super-wave (cross-stream), mega-wave (mission stratégique). Inclut la matrice filesystem et les règles de fan-out. | [SKILL.md](../skills/execution-modes/SKILL.md) |
+| **consensus-protocol** | Protocole de consensus multi-vagues pour les décisions critiques (architecture irréversible, sécurité, réglementaire, désaccord entre agents). Invocation via `@seiji consensus: <question>`. | [SKILL.md](../skills/consensus-protocol/SKILL.md) |
+
+> Pour la liste complète des 15 skills, voir `CLAUDE.md` §Skills architecture.
 
 ---
 

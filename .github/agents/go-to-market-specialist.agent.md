@@ -3,7 +3,7 @@ name: go-to-market-specialist
 user-invocable: false
 description: "Pricing, segmentation, launch strategy, feature adoption"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: go-to-market-specialist
 

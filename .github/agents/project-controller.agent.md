@@ -3,7 +3,7 @@ name: project-controller
 user-invocable: false
 description: "PMO, budget tracking, reporting, dependency management, risk register"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 
 # Agent: project-controller

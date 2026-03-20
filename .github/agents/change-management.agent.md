@@ -3,7 +3,7 @@ name: change-management
 user-invocable: false
 description: "Change management, adoption, training, internal communication"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 
 # Agent: change-management

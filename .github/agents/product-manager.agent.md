@@ -3,7 +3,7 @@ name: product-manager
 user-invocable: false
 description: "Feature ownership, cross-functional coordination, tradeoffs, product delivery"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 
 # Agent: product-manager

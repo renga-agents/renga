@@ -21,14 +21,14 @@ scripts/
   agent_parser.py       # Shared parser for Markdown tables (used by dashboard)
 
 .github/
-  agents/               # The ~52 core agent files (*.agent.md)
-    _profiles/          # Handoff protocol, filière definitions
+  agents/               # The 51 core agent files (*.agent.md)
+    _profiles/          # Tool profiles (advisory/technical), filière definitions
     _references/        # ONE remaining file: replicate-models.md (game-studio only)
     _plugins/           # Plugin metadata only (agents.md per plugin)
     plugins/            # Plugin agent source files (NOT installed directly)
   hooks/                # .hooks.json files + scripts/
   instructions/         # Copilot instructions files
-  skills/               # SKILL.md files (10 skills — see §Skills architecture below)
+  skills/               # SKILL.md files (15 skills — see §Skills architecture below)
   workflows/
     ci.yml              # Runs pytest + validate_agents on every push/PR
     release.yml         # Triggered by v* tag: builds dist, creates GitHub Release
@@ -71,23 +71,25 @@ Installed scripts and schemas are cached in `${XDG_DATA_HOME:-$HOME/.local/share
 
 ## Skills architecture (`.github/skills/`)
 
-13 skills total. Seiji declares orchestration skills; specialized agents declare domain-specific skills.
+15 skills total. Seiji declares orchestration skills; specialized agents declare domain-specific skills.
 
 | Skill | Content | ERR rules | Declared by |
 | --- | --- | --- | --- |
-| `task-decomposition` | L0-L4 classification, acceptance criteria, dry-run gate | ERR-014, ERR-024, ERR-020 | seiji, qa-engineer, software-architect |
+| `task-decomposition` | L0-L4 classification, acceptance criteria, dry-run gate | ERR-014, ERR-024, ERR-020, ERR-028 | seiji, qa-engineer, software-architect |
 | `dag-patterns` | 3 full DAG examples (fullstack, auth, ML) | ERR-004, ERR-015 | seiji, software-architect, architecture-reviewer |
 | `auto-triggers` | Trigger table, escalation table, circuit breaker, ERR-020 | ERR-016, ERR-017, ERR-020 | seiji, security-engineer, incident-commander |
 | `worktree-lifecycle` | Creation, zoning, multi-MOE, closure, rollback | ERR-013 | seiji, git-expert, devops-engineer |
 | `handoff-protocol` | Handoff block format, standard chains (Product/Analytics/Incident) | — (pointers to other skills) | seiji, git-expert, code-reviewer |
 | `commit-discipline` | Coherent batches, asset/source separation, multiline, wave cadence, file plan | ERR-001, ERR-004, ERR-005, ERR-015, ERR-018 | seiji |
 | `quality-control` | Report verification, review loop, browser validation, retrospective | ERR-019, ERR-021, ERR-022, ERR-023, ERR-025 | seiji |
-| `dispatch-protocol` | QA scope, security brief, wave 0 constraints, coverage floors, multi-track catalog | ERR-007, ERR-008, ERR-013, ERR-014, ERR-024 | seiji |
+| `dispatch-protocol` | QA scope, security brief, wave 0 constraints, coverage floors, multi-track catalog | ERR-007, ERR-008, ERR-013, ERR-014, ERR-024, ERR-026 | seiji |
 | `hooks-catalog` | Active hooks table, allowlist, protected paths | — | seiji |
 | `agent-roster` | Roster resolution from `.renga.yml` (whitelist/all/absent), scratchpad logging | ERR-027 | seiji |
 | `working-memory` | `.renga/` structure, read/write conventions, file naming, retention rules | — | seiji, devops-engineer, database-engineer, infra-architect, scrum-master, qa-engineer |
 | `tdd-protocol` | TDD wave protocol (wave 1/2/3), ERR-007 forbidden files, mocking rules, mandatory red commit | ERR-007 | qa-engineer, backend-dev |
 | `code-review-protocol` | 6-step review process (overview→security→correctness→maintainability→performance→tests), 🔴/🟡/🟢 verdict | — | code-reviewer, security-engineer, architecture-reviewer |
+| `execution-modes` | 5 execution modes (sequential, parallel, waves, super-wave, mega-wave), platform constraints, filesystem safety matrix, fan-out rules | — | seiji |
+| `consensus-protocol` | Multi-wave consensus protocol, trigger thresholds, participation format, convergence criteria, cross-stream arbitration, super-wave flow | — | seiji |
 
 Note: some ERR rules appear in multiple skills (from different angles, e.g. ERR-014 in both task-decomposition and dispatch-protocol). This is intentional — the skill that *applies* the rule embeds it.
 
@@ -211,7 +213,7 @@ Defined in `write_profile_config()` (line ~154 in `scripts/renga.sh`). The lite 
 
 ## CI workflow gotchas
 
-- `set -e` is active in GitHub Actions shell steps. If a command exits non-zero, the step dies immediately — `cmd; rc=$?` does NOT work. Use `cmd || { rc=$?; ...; }` instead.
+- `set -e` causes the step to exit immediately on a non-zero exit code — `cmd; rc=$?` never reaches `rc=$?` because the step dies on `cmd`. Use `cmd || { rc=$?; ...; }` instead.
 - CI installs `pytest` and `pyyaml` explicitly (`pip install pytest pyyaml`).
 - `validate_agents.py` is called directly from the repo (not from share dir) in CI — `--agents-dir .github/agents` is not passed, so `repo_root` falls back to `Path(__file__).parent.parent` = repo root. This is correct for CI.
 
@@ -239,7 +241,7 @@ description: "One-line description"
 tools: ["execute", "read", "edit", "search"]
 filiere: tech          # tech | data | product | governance
 model: "Claude Sonnet 4.6 (copilot)"
-user-invocable: true   # false for meta-agents (consensus-protocol, execution-modes)
+user-invocable: true   # false for filière orchestrators (orchestrator-tech, etc.)
 skills: [skill-name]   # optional — skills loaded natively by Copilot
 agents: ["*"]          # optional — declares sub-agent access; ["*"] = all agents
 ---

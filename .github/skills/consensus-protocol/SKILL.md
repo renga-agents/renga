@@ -1,14 +1,13 @@
 ---
 name: consensus-protocol
-user-invocable: false
-description: "Internal non-invocable reference for the multi-wave consensus protocol for critical decisions"
-tools: ["read"]
-model: ['Claude Haiku 4.5 (copilot)']
+description: "Multi-wave consensus protocol for critical decisions — trigger thresholds, participation format, convergence criteria, cross-stream arbitration, and super-wave flow."
+argument-hint: "Describe the critical decision or disagreement requiring consensus"
+user-invocable: true
 ---
-# Multi-wave consensus protocol
+# Skill: Multi-Wave Consensus Protocol
 
-> Shared reference for all agents to participate in a consensus-based decision process.
-> Invocation: `@seiji consensus: <question to decide>`
+Shared reference for all agents to participate in a consensus-based decision process.
+Invocation: `@seiji consensus: <question to decide>`
 
 ---
 
@@ -46,12 +45,10 @@ Wave mode is triggered **automatically** by seiji in the following situations:
 Each agent produces its answer **without seeing the others' answers**. This is the phase of maximum perspective diversity.
 
 ```text
-
  ┌─ Agent_A→ Position A
  ├─ Agent_B→ Position B
  ├─ Agent_C→ Position C
  └─ Agent_D→ Position D
-
 ```
 
 Seiji collects the 4 positions and produces an **intermediate synthesis** identifying:
@@ -69,12 +66,10 @@ Each agent receives the intermediate synthesis and can:
 - **Enrich** it with new arguments inspired by the other positions
 
 ```text
-
  ┌─ Agent_A'→ Position A' (maintained or revised)
  ├─ Agent_B'→ Position B' (maintained or revised)
  ├─ Agent_C'→ Position C' (maintained or revised)
  └─ Agent_D'→ Position D' (maintained or revised)
-
 ```
 
 **Obligation**: any agent that maintains a divergence must explicitly argue why the opposing arguments do not convince it.
@@ -96,7 +91,6 @@ Triggered only if convergence is insufficient after Wave 2. Seiji:
 Each agent **MUST** structure its response in this exact format:
 
 ```markdown
-
 ## Position [AGENT_NAME][VARIANT] - Wave [N]
 
 **Recommendation** : [one decisive sentence - no "it depends"]
@@ -116,7 +110,6 @@ Each agent **MUST** structure its response in this exact format:
 
 **Divergence from previous wave** : [Maintained / Revised - why]
 ← this section is mandatory starting from Wave 2
-
 ```
 
 ### Formatting rules
@@ -153,7 +146,6 @@ Seiji **must** escalate to a human if:
 Seiji **must** produce this format after every consensus:
 
 ```markdown
-
 ## CONSENSUS VERDICT - [TOPIC]
 
 **Date** : [DATE]
@@ -180,7 +172,6 @@ Seiji **must** produce this format after every consensus:
 
 **ADR Reference** : [link to the generated ADR if architectural decision]
 **Log** : decision recorded in `.github/logs/decisions-<slug>.md` (index updated in `decisions.md`)
-
 ```
 
 ---
@@ -190,17 +181,13 @@ Seiji **must** produce this format after every consensus:
 Wave mode uses the following notation in workflows:
 
 ```text
-
 {A ⟳ B ⟳ C} WAVE_1 → SYNTHESIS → {A' ⟳ B' ⟳ C'} WAVE_2 → VERDICT
-
 ```
 
 If arbitration is needed after Wave 3:
 
 ```text
-
 {A ⟳ B ⟳ C} V1 → SYNTHESIS → {A' ⟳ B' ⟳ C'} V2 → {A'' ⟳ B'' ⟳ C''} V3 → ARBITRATION → VERDICT
-
 ```
 
 ---
@@ -219,7 +206,7 @@ If arbitration is needed after Wave 3:
 
 When the disagreement opposes agents from **two different streams** (example: security-engineer vs product-manager), the standard 3-wave protocol is not enough: the evaluation criteria diverge fundamentally and none of the conflicting agents has authority over the other's domain.
 
-> This protocol covers conflicts involving **exactly 2 streams**. For conflicts affecting ≥ 3 streams simultaneously, see the [Super-wave](#super-wave---cross-stream-cross-disciplinary-consensus) section.
+> This protocol covers conflicts involving **exactly 2 streams**. For conflicts affecting ≥ 3 streams simultaneously, see the Super-wave section below.
 
 ### Specific process
 
@@ -273,7 +260,6 @@ Triggered by the main MOE when the decision affects **≥ 3 streams simultaneous
 ### Flow
 
 ```text
-
 Inter-stream wave 1:
  ┌─ Tech stream (specialists selected via tech profile) → Technical stream synthesis
  ├─ Product stream (specialists selected via product profile) → Product stream synthesis
@@ -286,13 +272,11 @@ Inter-stream wave 2 (if conflict):
  Specialists from each stream answer specifically to the identified conflicts
 
 MOE verdict: decision with execution plan coordinated by stream
-
 ```
 
 ### Stream synthesis format
 
 ```markdown
-
 ## [STREAM] Synthesis - Super-wave [TOPIC]
 
 **Stream position** : [decisive recommendation in 1 sentence]
@@ -305,7 +289,6 @@ MOE verdict: decision with execution plan coordinated by stream
 - From [Stream X] : [what I need]
 
 **Risk if ignored** : [concrete consequence if my stream is not consulted]
-
 ```
 
 ### Super-wave arbitration
@@ -314,7 +297,7 @@ If streams still diverge after Inter-stream Wave 2, the main MOE arbitrates by a
 
 1. Priority: Governance > Tech > Data > Product on compliance/security questions
 2. Priority: Product > Tech > Data > Governance on user value questions
-3. Human escalation if Governance ↔ Product conflict on an irreversible decision
+3. Human escalation if Governance <-> Product conflict on an irreversible decision
 
 ---
 

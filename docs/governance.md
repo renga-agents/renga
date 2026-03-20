@@ -178,7 +178,7 @@ When a critical decision requires input from several agents, such as irreversibl
 - Technical arbitration with compliance implications
 - Disagreement between two agents on the same question
 
-> Complete reference: see [consensus-protocol.agent.md](../.github/agents/consensus-protocol.agent.md)
+> Complete reference: see skill `consensus-protocol` (`.github/skills/consensus-protocol/SKILL.md`)
 
 ---
 

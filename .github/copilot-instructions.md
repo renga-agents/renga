@@ -13,8 +13,7 @@ Structuring decisions, ADRs, and technical context: `.renga/memory/project-conte
 
 ## Using the agent team
 
-- **`@seiji`** — entry point for any multi-file, architectural, or multi-domain task. Seiji decomposes, plans, dispatches specialist agents, and synthesizes results.
-- **Specialized agents** — invoke directly for focused single-domain tasks: `@software-architect`, `@security-engineer`, `@qa-engineer`, `@devops-engineer`, etc.
+- **`@seiji`** — sole entry point for all tasks. Seiji decomposes, plans, dispatches specialist agents, and synthesizes results. Specialist agents are not directly invocable — they are dispatched internally by seiji.
 
 Config: `.renga.yml` · Roster: `.github/agents/` · Session memory: `.renga/memory/`
 

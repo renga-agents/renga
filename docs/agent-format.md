@@ -235,27 +235,21 @@ For new agents, **do not** include `model:` in the frontmatter — the central c
 
 ## Shared Handoff Protocol
 
-The "Handoff Contract" block follows a standard format defined in:
+The "Handoff Contract" block follows a standard format defined in skill `handoff-protocol` (`.github/skills/handoff-protocol/SKILL.md`), which Copilot loads natively.
 
-```text
-
-.github/agents/_profiles/handoff-protocol.md
-
-```
-
-This profile defines:
+This skill defines:
 
 - The required **structure** (Fixed Decisions, Open Questions, Artifacts, Next Action)
 - The protocol **rules** (completeness, no renegotiation, traceability, symmetry)
 - A **concrete example** of a handoff
 
-Existing agents keep their handoff block inline. New agents can reference the profile:
+Existing agents keep their handoff block inline. New agents can reference the skill:
 
 ```markdown
 
 ## Handoff Contract
 
-> Handoff structure: see `_profiles/handoff-protocol.md`
+> Handoff structure: see skill `handoff-protocol`
 
 **Primary handoff to `<recipients>`**
 

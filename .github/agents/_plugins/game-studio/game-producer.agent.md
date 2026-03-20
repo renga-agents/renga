@@ -5,7 +5,7 @@ filiere: product
 user-invocable: false
 description: "Video game production management — budget, planning, resource arbitration, progress tracking, and budget alerts"
 tools: ["read", "edit", "search", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: GameProducer
 

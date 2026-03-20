@@ -264,8 +264,9 @@ def validate_agent_file(
         # Some reference docs may only have a main title — that's acceptable
         pass
 
-    # Non-invocable agents (reference docs, lane profiles, protocols) don't have
-    # collaboration contracts — they are read by the orchestrator, not dispatched.
+    # Non-invocable agents (reference docs, filière orchestrator profiles, meta-protocols)
+    # don't require collaboration contracts — they are read by seiji, not dispatched.
+    # This covers: orchestrator-{tech,data,product,governance}.
     # user-invocable may be parsed as string 'false' or bool False from YAML.
     _inv = frontmatter.get("user-invocable", True)
     is_invocable = str(_inv).lower() != "false"

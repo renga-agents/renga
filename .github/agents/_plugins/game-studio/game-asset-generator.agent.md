@@ -5,7 +5,7 @@ filiere: tech
 user-invocable: false
 description: "Generate visual asset kits for video game prototypes via Replicate API—images, pixel art sprites, animations, videos, UI"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "replicate/*"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: GameAssetGenerator
 

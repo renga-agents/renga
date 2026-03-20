@@ -1,13 +1,12 @@
 ---
 name: execution-modes
-user-invocable: false
-description: "Internal non-invocable reference for execution modes: sequential, parallel, waves"
-tools: ["read"]
-model: ['Claude Haiku 4.5 (copilot)']
+description: "Defines agent execution modes (sequential, parallel, waves, super-wave, mega-wave), platform constraints, filesystem safety matrix, and fan-out rules."
+argument-hint: "Describe the task or DAG pattern you need to execute"
+user-invocable: true
 ---
-# Agent execution modes
+# Skill: Execution Modes
 
-> Technical reference for seiji and agents. Defines the 3 execution modes with notation, rules, and concrete examples.
+Technical reference for seiji and agents. Defines the 5 execution modes with notation, rules, and concrete examples.
 
 ---
 
@@ -51,18 +50,16 @@ The `run_in_terminal` tool with `isBackground: true` opens a persistent VS Code 
 
 | Terminal type | ID available? | Programmatic closure | Rule |
 | --- | --- | --- | --- |
-| `isBackground: true` | ✅ Yes - returned by `run_in_terminal` | ✅ `kill_terminal(id)` | **Mandatory** after completion is confirmed |
-| `isBackground: false` | ❌ No - shared zsh shell without ID | ❌ Not applicable | Do not attempt - shared session |
+| `isBackground: true` | Yes - returned by `run_in_terminal` | `kill_terminal(id)` | **Mandatory** after completion is confirmed |
+| `isBackground: false` | No - shared zsh shell without ID | Not applicable | Do not attempt - shared session |
 
 **Mandatory sequence for any background terminal**:
 
 ```text
-
 id = run_in_terminal(cmd, isBackground=true)
 output = await_terminal(id, timeout)
 # ... use the output if needed
 kill_terminal(id)   ← ALWAYS, even in case of error
-
 ```
 
 **Legitimate exceptions** (background terminal kept open):
@@ -79,9 +76,7 @@ kill_terminal(id)   ← ALWAYS, even in case of error
 ### Notation
 
 ```text
-
 A ──→ B ──→ C
-
 ```
 
 ### Trigger rule
@@ -92,7 +87,7 @@ Use sequential mode when **one agent's output is a required input** for the next
 
 1. Seiji launches agent A with the instructions and context
 2. Agent A produces its output
-3. Seiji evaluates the output (see quality control in `seiji.agent.md`)
+3. Seiji evaluates the output (see quality control in skill `quality-control`)
 4. If validated → A's output is injected as context for agent B
 5. Repeat until the last step
 
@@ -107,9 +102,7 @@ Use sequential mode when **one agent's output is a required input** for the next
 #### Feature development
 
 ```text
-
 software-architect ──→ backend-dev ──→ qa-engineer
-
 ```
 
 The architecture must be validated before development starts. The final specs must exist before tests are written.
@@ -117,9 +110,7 @@ The architecture must be validated before development starts. The final specs mu
 #### API documentation
 
 ```text
-
 api-designer ──→ backend-dev ──→ tech-writer
-
 ```
 
 The API contract is defined first, implemented next, documented last.
@@ -127,9 +118,7 @@ The API contract is defined first, implemented next, documented last.
 #### Database migration
 
 ```text
-
 database-engineer ──→ backend-dev ──→ qa-engineer ──→ devops-engineer
-
 ```
 
 The migration schema is designed, the code is adapted, tests are written, then deployment is planned.
@@ -141,9 +130,7 @@ The migration schema is designed, the code is adapted, tests are written, then d
 ### Parallel notation
 
 ```text
-
 [A ‖ B ‖ C ‖ D] ──→ SYNTHESIS
-
 ```
 
 ### Parallel trigger rule
@@ -165,7 +152,6 @@ Use parallel mode when **agents do not create write/read dependencies between ea
 ### Common patterns:
 
 ```text
-
 ✅ Safe parallel
 [security-engineer ‖ legal-compliance ‖ performance-engineer]   ← read-only
 [backend-dev(src/api/) ‖ database-engineer(src/migrations/)]  ← distinct zones
@@ -177,7 +163,6 @@ Use parallel mode when **agents do not create write/read dependencies between ea
 
 ✅ Mandatory TDD (feature with new code)
 qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
-
 ```
 
 ### Fan-out rules (number of agents per wave)
@@ -213,7 +198,6 @@ qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
 #### Massive Wave 0 - cross-cutting audit of a new feature (8 read-only agents)
 
 ```text
-
  ┌─ software-architect(architecture consistency, patterns)
  ├─ security-engineer(attack vectors, OWASP)
  ├─ performance-engineer(SLO impact, scalability)
@@ -223,26 +207,22 @@ qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
  ├─ api-designer(API contract, DX)
  └─ proxy-po(acceptance criteria, business value)
  ──→ Seiji SYNTHESIS (8 consolidated reports)
-
 ```
 
 #### Full code review (5 read-only agents)
 
 ```text
-
  ┌─ code-reviewer(quality, patterns, maintainability)
  ├─ security-engineer(vulnerabilities, OWASP)
  ├─ performance-engineer(algorithmic complexity, N+1 queries)
  ├─ accessibility-engineer(WCAG, HTML semantics)
  └─ tech-writer(inline documentation quality)
  ──→ SYNTHESIS: consolidated review report
-
 ```
 
 #### Feature launch - cross-stream (6 agents)
 
 ```text
-
  ┌─ tech-writer(user documentation)
  ├─ change-management(communication plan)
  ├─ go-to-market-specialist(messaging, segmentation)
@@ -250,19 +230,16 @@ qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
  ├─ proxy-po(business release notes)
  └─ devops-engineer(deployment plan, rollback)
  ──→ SYNTHESIS: complete launch kit
-
 ```
 
 #### Multi-zone implementation (4 safe parallel writers)
 
 ```text
-
  ┌─ backend-dev(src/api/ - endpoint + service)
  ├─ database-engineer(src/migrations/ - SQL migration)
  ├─ frontend-dev(src/components/ - UI component)
  └─ qa-engineer(tests/ - TDD red tests)
  ──→ SYNTHESIS: inter-zone consistency check
-
 ```
 
 ---
@@ -272,26 +249,22 @@ qa-engineer(red) ──→ backend-dev(green) ──→ code-reviewer
 ### Wave notation
 
 ```text
-
 {A ⟳ B ⟳ C} WAVE_1 → SYNTHESIS → {A' ⟳ B' ⟳ C'} WAVE_2 → VERDICT
-
 ```
 
 If arbitration is needed:
 
 ```text
-
 {A ⟳ B ⟳ C} V1 → SYNTHESIS → {A' ⟳ B' ⟳ C'} V2 → {A'' ⟳ B'' ⟳ C''} V3 → ARBITRATION → VERDICT
-
 ```
 
 ### Wave trigger rule
 
-Use wave mode for the **critical decisions** defined in `consensus-protocol.agent.md`. This mode is the most expensive and must not be used for easily reversible decisions.
+Use wave mode for **critical decisions** as defined in skill `consensus-protocol`. This mode is the most expensive and must not be used for easily reversible decisions.
 
 ### Wave behavior
 
-Full reference: `agents/consensus-protocol.agent.md`
+Full reference: skill `consensus-protocol`
 
 1. **Wave 1** (independent): each agent produces its position without seeing the others'
 2. **Intermediate synthesis**: seiji identifies convergences, divergences, blind spots
@@ -310,7 +283,6 @@ Full reference: `agents/consensus-protocol.agent.md`
 #### Choosing a database for a catalog service
 
 ```text
-
 Context: 50M items, 90% reads, 10% writes, full-text search required
 
 Wave 1:
@@ -329,7 +301,6 @@ Wave 2:
 
 VERDICT: PostgreSQL with pg_trgm, benchmark at 3 months, switch threshold to Elasticsearch defined
 Consensus level: Strong (4/4 converge on PostgreSQL after Wave 2)
-
 ```
 
 ---
@@ -341,13 +312,11 @@ Reserved for decisions that affect **simultaneously ≥ 3 streams** (tech + prod
 ### Super-wave notation
 
 ```text
-
 [FT:{A ⟳ B}] ‖ [FP:{C ⟳ D}] ‖ [FD:{E ⟳ F}] ‖ [FG:{G ⟳ H}]
  SUPER-WAVE_1 ──→ MOE_SYNTHESIS ──→ GLOBAL_VERDICT
-
 ```
 
-FT = Technical stream specialists, FP = Product stream, FD = Data/AI stream, FG = Governance stream.  
+FT = Technical stream specialists, FP = Product stream, FD = Data/AI stream, FG = Governance stream.
 The MOE dispatches specialists **directly** (depth=1) by reading the matrices in the stream profiles. There is no intermediate sub-MOE agent - the MOE coordinates the groups itself.
 
 ### Super-wave behavior
@@ -365,7 +334,7 @@ The MOE dispatches specialists **directly** (depth=1) by reading the matrices in
 | --- | --- | --- |
 | Scope | Agents from one stream | Specialists from different streams |
 | Facilitator | Main MOE | Main MOE only |
-| Agents involved | 4-8 experts | 4 groups × 2-5 specialists each (12-20 agents total) |
+| Agents involved | 4-8 experts | 4 groups x 2-5 specialists each (12-20 agents total) |
 | Typical duration | 15-45 min | 60-120 min |
 | Threshold | Critical single-stream decision | Impact on ≥ 3 streams OR cross-cutting ambiguity |
 
@@ -374,13 +343,11 @@ The MOE dispatches specialists **directly** (depth=1) by reading the matrices in
 #### Adopting LangGraph for AI orchestration
 
 ```text
-
  ┌─ Tech stream : { ml-engineer ⟳ backend-dev } - API integration and latency
  ├─ Product stream : { ai-product-manager ⟳ proxy-po } - roadmap and user stories
  ├─ Data stream : { data-scientist ⟳ mlops-engineer } - pipelines and model monitoring
  └─ Governance stream : { legal-compliance ⟳ ai-ethics-governance } - AI Act compliance
  ──→ MOE SYNTHESIS → VERDICT : "Adopt LangGraph as a pilot, AI Act compliance verified"
-
 ```
 
 ---
@@ -392,7 +359,6 @@ Reserved for **end-to-end missions** involving the 4 streams in coordinated phas
 ### Mega-wave notation
 
 ```text
-
 MISSION{scope}
  ──→ MOE_DECOMPOSITION
     ├── [Tech stream: N agents] ──→ TECH_DELIVERABLES
@@ -401,7 +367,6 @@ MISSION{scope}
     └── [Governance stream: N agents] ──→ GOVERNANCE_DELIVERABLES
  ──→ MOE_INTEGRATION
  ──→ FINAL_DELIVERABLE
-
 ```
 
 ### Mega-wave trigger rule
@@ -424,11 +389,9 @@ The mega-wave produces an explicit **cross-stream dependency DAG** before any ex
 Modes can be combined in the same DAG. Seiji organizes the phases:
 
 ```text
-
 software-architect ──→ [backend-dev ‖ database-engineer ‖ frontend-dev]
  ──→ {security-engineer ⟳ performance-engineer ⟳ legal-compliance} CONSENSUS
  ──→ qa-engineer ──→ devops-engineer ──→ tech-writer
-
 ```
 
 Reading: architecture in sequential mode first, then development in parallel, then audit in consensus, then testing, deployment, and documentation in sequential mode.

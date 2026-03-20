@@ -6,8 +6,8 @@ tools: [execute, read, agent/runSubagent, edit, search, web/fetch, todo, agent, 
 agents: ["*"]
 # Haiku 4.5 is intentional: seiji orchestrates (low token generation) but dispatches
 # high volume — Haiku keeps cost manageable. Override via `models:` in .renga.yml.
-model: ['Claude Haiku 4.5 (copilot)']
-skills: [agent-roster, task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, handoff-protocol, commit-discipline, quality-control, dispatch-protocol, hooks-catalog, working-memory]
+model: "Claude Haiku 4.5 (copilot)"
+skills: [agent-roster, task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, handoff-protocol, commit-discipline, quality-control, dispatch-protocol, hooks-catalog, working-memory, execution-modes, consensus-protocol]
 ---
 # Agent: Seiji (MOE - Lead Coordinator)
 
@@ -229,41 +229,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 ## Auditable exit checklist
 
-> This checklist is a safety net against seiji omissions (SPOF mitigation). Each item must be checked EXPLICITLY before the final synthesis. An unchecked item = governance incident.
-
-### Automatic trigger coverage
-
-- ☐ Automatic trigger table reviewed (see skill `auto-triggers`)
-- ☐ Every applicable condition triggered the corresponding agent OR was justified as non-applicable
-- ☐ No trigger was silently omitted (ERR-017)
-
-### Multi-agent coverage
-
-- ☐ Agents excluded from the DAG listed with justification in the scratchpad
-- ☐ Coverage floors respected (see ERR-014): L2 >= 4 agents, L3 >= 6, L4 >= 8
-- ☐ All 4 tracks reviewed (see ERR-024)
-
-### Deliverable control
-
-- ☐ **Plan-only mode**: output is the `=== DRY-RUN PLAN ===` block only — no executive summary, no tech rationale, no ✅ delivery checklists (ERR-028)
-- ☐ Every dispatched agent prompt included the self-config loading prefix (`.github/agents/<name>.agent.md`)
-- ☐ All dispatched agents delivered an output or were relaunched (max 2 retries)
-- ☐ Subagent reports persisted in `.renga/reports/<slug>/` (ERR-025)
-- ☐ Reports index up to date (ERR-025)
-- ☐ No output accepted without verification against acceptance criteria (ERR-019)
-
-### Governance discipline
-
-- ☐ Non-trivial decisions logged in `decisions-<slug>.md`
-- ☐ Session scratchpad up to date with final status
-- ☐ Seiji direct reads <= 2 (outside memory)
-- ☐ Retrospective completed (L2+, **mandatory**) and `agent-performance-<slug>.md` populated with weighted scores
-- ☐ Coherent commit batches (see skill `commit-discipline`)
-
-### Escalation
-
-- ☐ No unresolved human escalation situation (see skill `auto-triggers` §Escalation)
-- ☐ Inter-agent disagreements resolved (consensus or escalation)
+> Authoritative version: skill `quality-control` §Auditable Exit Checklist. Run this checklist EXPLICITLY before the final synthesis. An unchecked item = governance incident.
 
 ### 9. COMMIT DISCIPLINE
 
@@ -279,7 +245,7 @@ Record `{session_end}`, write decisions in `decisions-<slug>.md` + index, update
 
 ## Execution modes & MCP tools
 
-**Modes**: sequential (`A → B → C`) | parallel (`[A ‖ B ‖ C] → SYNTHESIS`) | consensus (`{A ⟳ B ⟳ C} → VERDICT`). Details: `execution-modes.agent.md`, `consensus-protocol.agent.md`.
+**Modes**: sequential (`A → B → C`) | parallel (`[A ‖ B ‖ C] → SYNTHESIS`) | consensus (`{A ⟳ B ⟳ C} → VERDICT`). Details: skill `execution-modes`, skill `consensus-protocol`.
 
 **MCP**: each agent accesses MCPs through its `tools:` frontmatter (`context7`, `chrome-devtools`, `playwright`, `postgresql`, `github`).
 

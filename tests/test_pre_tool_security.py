@@ -170,10 +170,25 @@ class TestSafeTools:
 # =========================================================================
 
 class TestMCPTools:
-    """MCP tools (mcp_*) should be approved."""
+    """MCP tools (mcp_* and io.github.*) should be approved."""
 
     def test_mcp_tool_approved(self):
         payload = json.dumps({"tool_name": "mcp_fetch", "tool_input": {"url": "https://example.com"}})
+        assert _run_hook(payload) == 0
+
+    def test_mcp_context7_approved(self):
+        """MCP tool in mcp_<provider> format should be approved."""
+        payload = json.dumps({"tool_name": "mcp_context7", "tool_input": {}})
+        assert _run_hook(payload) == 0
+
+    def test_mcp_io_github_context7_approved(self):
+        """MCP tool in io.github.<org>/<repo>/<tool> format should be approved."""
+        payload = json.dumps({"tool_name": "io.github.upstash/context7/resolve-library-id", "tool_input": {}})
+        assert _run_hook(payload) == 0
+
+    def test_mcp_io_github_chromedevtools_approved(self):
+        """Chrome DevTools MCP tool in io.github format should be approved."""
+        payload = json.dumps({"tool_name": "io.github.chromedevtools/chrome-devtools-mcp/navigate", "tool_input": {}})
         assert _run_hook(payload) == 0
 
 

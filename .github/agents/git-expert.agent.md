@@ -3,7 +3,7 @@ name: git-expert
 user-invocable: false
 description: "Git strategy, conflict resolution, branch workflows, history"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 skills: [worktree-lifecycle, handoff-protocol]
 ---
 # Agent: git-expert

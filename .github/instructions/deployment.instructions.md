@@ -1,5 +1,6 @@
 ---
 description: "Use when deploying, debugging production issues, modifying Docker/Ansible config, or troubleshooting VPS. Covers the full deployment pipeline, SSH access, and common pitfalls."
+applyTo: "**/Dockerfile,**/docker-compose*,**/ansible/**,**/.github/workflows/**"
 ---
 # Deployment & Infrastructure Guidelines
 

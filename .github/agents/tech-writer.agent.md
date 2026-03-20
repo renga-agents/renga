@@ -3,7 +3,7 @@ name: tech-writer
 user-invocable: false
 description: "Technical and user documentation, API docs, guides, changelogs"
 tools: ["read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]  # edit retained: the TechWriter creates and edits documentation
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: tech-writer
 

@@ -67,7 +67,7 @@ A good plugin is **focused**: it covers a specific domain that core agents do no
 
 ## Handoff Contract
 
-> Handoff structure: see `_profiles/handoff-protocol.md`
+> Handoff structure: see the handoff-protocol skill (`.github/skills/handoff-protocol/SKILL.md`)
 
 ### Primary Handoff to `backend-dev` or `frontend-dev`
 

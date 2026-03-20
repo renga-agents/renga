@@ -3,7 +3,7 @@ name: risk-manager
 user-invocable: false
 description: "Risk mapping, DPIA, contingency plans, impact analysis"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 
 # Agent: risk-manager

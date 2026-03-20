@@ -3,7 +3,7 @@ name: proxy-po
 user-invocable: false
 description: "User stories, backlog management, prioritization, acceptance criteria"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: proxy-po
 

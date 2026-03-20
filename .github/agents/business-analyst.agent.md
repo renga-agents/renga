@@ -3,7 +3,7 @@ name: business-analyst
 user-invocable: false
 description: "Business processes, BPMN, gap analysis, requirements elicitation"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 
 # Agent: business-analyst

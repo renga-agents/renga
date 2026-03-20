@@ -5,7 +5,7 @@ filiere: product
 user-invocable: false
 description: "Narrative writing, in-game texts, dialogues, narrative economy and internal consistency for video games"
 tools: ["read", "edit", "search", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: NarrativeDesigner
 

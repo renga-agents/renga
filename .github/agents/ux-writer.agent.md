@@ -3,7 +3,7 @@ name: ux-writer
 user-invocable: false
 description: "Microcopy, onboarding, tone of voice, interface content"
 tools: ["read", "search", "web", "agent", "todo"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: ux-writer
 

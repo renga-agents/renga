@@ -3,7 +3,7 @@ name: orchestrator-governance
 user-invocable: false
 description: "Governance lane reference — non-invocable internal profile read by the orchestrator to route security, compliance, risk, AI ethics, and FinOps specialists"
 tools: ["read"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Lane Profile: Governance
 

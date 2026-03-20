@@ -21,7 +21,7 @@ Authoritative source for active Copilot hooks and their behavioral impact on age
 | postToolUse (audit) | audit.hooks.json | post-tool-audit.sh | Transparent logging, never blocks |
 | postToolUse (markdown) | markdown.hooks.json | post-tool-md-format.sh | Auto-formats `.renga/**/*.md` after create/edit — silent skip if no formatter installed |
 | sessionStart | audit.hooks.json | session-init.sh | Initializes the session directory |
-| sessionEnd | audit.hooks.json | session-cleanup.sh | Archives session logs |
+| agentStop | audit.hooks.json | session-cleanup.sh | Archives session logs |
 | userPromptSubmitted | audit.hooks.json | post-tool-audit.sh | Logs anonymized prompt hash |
 | agentStop | quality.hooks.json | quality-check.sh | Logs stop reason |
 | subagentStop | quality.hooks.json | quality-check.sh | Logs subagent stop reason |

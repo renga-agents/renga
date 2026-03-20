@@ -3,7 +3,7 @@ name: devops-engineer
 user-invocable: false
 description: "CI/CD, containerization, pipelines, deployment, automation"
 tools: ["execute", "read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "playwright/*", "io.github.upstash/context7/*"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 skills: [worktree-lifecycle, working-memory]
 ---
 

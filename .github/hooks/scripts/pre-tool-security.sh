@@ -118,7 +118,8 @@ fi
 
 
 # --- MCP tools: approve (external API calls, no local filesystem side effects) ---
-if [[ "$TOOL" == mcp_* ]]; then
+# Copilot may transmit MCP tool names as "mcp_<provider>" or "io.github.<org>/<repo>/<tool>"
+if [[ "$TOOL" == mcp_* ]] || [[ "$TOOL" == io.github.* ]]; then
   exit 0
 fi
 

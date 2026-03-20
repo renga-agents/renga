@@ -4,7 +4,7 @@ filiere: product
 user-invocable: false
 description: "Hybrid creative and artistic direction — global strategic vision (narrative, thematic coherence) and visual execution (graphic language, assets) for digital products such as websites or video games"
 tools: ["read", "edit", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 ---
 # Agent: CreativeDirector
 

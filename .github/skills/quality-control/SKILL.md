@@ -31,7 +31,7 @@ After receipt of each summary:
 
 - **Satisfactory** → accept and move to the next step
 - **Insufficient** → return with precise criticism. Maximum 2 retries, then log in `error-patterns.md` and choose an alternative approach
-- **Disagreement** → consensus via `consensus-protocol.agent.md`
+- **Disagreement** → consensus via skill `consensus-protocol`
 - **Blocker** → human escalation with a structured summary
 
 ---
@@ -141,4 +141,38 @@ Score these 3 dimensions per agent and average them:
 
 ## Auditable Exit Checklist
 
-> Authoritative version: `seiji.agent.md §Auditable Exit Checklist`. This skill does not duplicate it — refer to seiji for the up-to-date list.
+> This checklist is a safety net against seiji omissions (SPOF mitigation). Each item must be checked EXPLICITLY before the final synthesis. An unchecked item = governance incident.
+
+### Automatic trigger coverage
+
+- [ ] Automatic trigger table reviewed (see skill `auto-triggers`)
+- [ ] Every applicable condition triggered the corresponding agent OR was justified as non-applicable
+- [ ] No trigger was silently omitted (ERR-017)
+
+### Multi-agent coverage
+
+- [ ] Agents excluded from the DAG listed with justification in the scratchpad
+- [ ] Coverage floors respected (see ERR-014): L2 >= 4 agents, L3 >= 6, L4 >= 8
+- [ ] All 4 tracks reviewed (see ERR-024)
+
+### Deliverable control
+
+- [ ] **Plan-only mode**: output is the `=== DRY-RUN PLAN ===` block only — no executive summary, no tech rationale, no delivery checklists (ERR-028)
+- [ ] Every dispatched agent prompt included the self-config loading prefix (`.github/agents/<name>.agent.md`)
+- [ ] All dispatched agents delivered an output or were relaunched (max 2 retries)
+- [ ] Subagent reports persisted in `.renga/reports/<slug>/` (ERR-025)
+- [ ] Reports index up to date (ERR-025)
+- [ ] No output accepted without verification against acceptance criteria (ERR-019)
+
+### Governance discipline
+
+- [ ] Non-trivial decisions logged in `decisions-<slug>.md`
+- [ ] Session scratchpad up to date with final status
+- [ ] Seiji direct reads <= 2 (outside memory)
+- [ ] Retrospective completed (L2+, **mandatory**) and `agent-performance-<slug>.md` populated with weighted scores
+- [ ] Coherent commit batches (see skill `commit-discipline`)
+
+### Escalation
+
+- [ ] No unresolved human escalation situation (see skill `auto-triggers` §Escalation)
+- [ ] Inter-agent disagreements resolved (consensus or escalation)

@@ -23,6 +23,11 @@ set -euo pipefail
 # Version (replaced by build_dist.py at build time)
 # ---------------------------------------------------------------------------
 RENGA_VERSION="__RENGA_VERSION__"
+# Dev fallback: if running directly from source (not a built dist), resolve
+# the version from the latest git tag to avoid displaying the raw placeholder.
+if [[ "$RENGA_VERSION" == "__RENGA_VERSION__" ]]; then
+  RENGA_VERSION="$(git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null || echo "dev")"
+fi
 
 # ---------------------------------------------------------------------------
 # Couleurs & symboles

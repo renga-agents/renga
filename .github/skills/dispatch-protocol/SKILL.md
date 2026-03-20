@@ -164,3 +164,21 @@ DUAL AFFILIATIONS:
 ```
 
 For each excluded agent, note a one-word justification: `mobile-dev — out of scope`.
+
+---
+
+## Self-Config Loading in Subagent Prompts (ERR-026)
+
+Every subagent prompt dispatched by seiji **must** begin with:
+
+> `"Start by reading your configuration file at .github/agents/<agent-name>.agent.md. Apply your tools, constraints, and specialization from that file throughout this task."`
+
+**Never dispatch a bare prompt** without this prefix. If an agent ignores its config, it will not apply its governance rules, tools constraints, or domain specialization — this is a governance incident (ERR-026).
+
+**Template**:
+
+```
+Start by reading your configuration file at .github/agents/<agent-name>.agent.md. Apply your tools, constraints, and specialization from that file throughout this task.
+
+[actual task prompt here]
+```

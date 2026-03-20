@@ -3,7 +3,7 @@ name: code-reviewer
 user-invocable: false
 description: "Code review, quality standards, maintainability, best practices"
 tools: ["read", "search", "web", "agent", "todo", "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
-model: ['Claude Haiku 4.5 (copilot)']
+model: "Claude Haiku 4.5 (copilot)"
 skills: [handoff-protocol, code-review-protocol]
 ---
 # Agent: code-reviewer

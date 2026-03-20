@@ -7,8 +7,13 @@
 # of the target repository.
 # ---
 
+# Config format version (not the framework version).
+version: "1.0"
+
 project:
-  framework_version: "1.0.77"
+  framework_version: "1.0.86"
+  name: ""
+  description: ""
 
 agents:
   mode: "whitelist"
