@@ -26,7 +26,9 @@ RENGA_VERSION="__RENGA_VERSION__"
 # Dev fallback: if running directly from source (not a built dist), resolve
 # the version from the latest git tag to avoid displaying the raw placeholder.
 if [[ "$RENGA_VERSION" == "__RENGA_VERSION__" ]]; then
-  RENGA_VERSION="$(git -C "$SCRIPT_DIR" describe --tags --abbrev=0 2>/dev/null || echo "dev")"
+  _renga_src_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  RENGA_VERSION="$(git -C "$_renga_src_dir" describe --tags --abbrev=0 2>/dev/null || echo "dev")"
+  unset _renga_src_dir
 fi
 
 # ---------------------------------------------------------------------------
