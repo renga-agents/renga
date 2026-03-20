@@ -18,3 +18,5 @@ node_modules/
 scripts/__pycache__/
 tests/__pycache__/
 **/__pycache__/
+
+qdrant_storage/
