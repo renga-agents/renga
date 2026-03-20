@@ -14,10 +14,10 @@ RENGA_BASE="${RENGA_DIR:-$PROJECT_ROOT/.renga}"
 SESSION_FILE="$RENGA_BASE/reports/.current-session"
 MEMORY_DIR="$RENGA_BASE/memory"
 
-_tmp="${TMPDIR:-/tmp}"
-printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
-  >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
 if [[ -f "$PROJECT_ROOT/.hook-debug" ]]; then
+  _tmp="${TMPDIR:-/tmp}"
+  printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
+    >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
   mkdir -p "$RENGA_BASE" 2>/dev/null || true
   printf '[session-init] %s\n' "$INPUT" >> "$RENGA_BASE/hook-debug.log" 2>/dev/null || true
 fi

@@ -181,8 +181,8 @@ Unified entry point for the framework's common operations.
 
 ```bash
 
-# Initialize a new project
-./scripts/renga.sh init
+# Install renga in a new project
+renga install
 
 # Check that all agents are valid
 ./scripts/renga.sh validate

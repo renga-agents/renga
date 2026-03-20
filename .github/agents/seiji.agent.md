@@ -4,6 +4,8 @@ user-invocable: true
 description: "Operational steering of all agents - decomposition, planning, dispatch, and quality control"
 tools: [execute, read, agent/runSubagent, edit, search, web/fetch, todo, agent, "io.github.chromedevtools/chrome-devtools-mcp/*", "io.github.upstash/context7/*"]
 agents: ["*"]
+# Haiku 4.5 is intentional: seiji orchestrates (low token generation) but dispatches
+# high volume — Haiku keeps cost manageable. Override via `models:` in .renga.yml.
 model: ['Claude Haiku 4.5 (copilot)']
 skills: [agent-roster, task-decomposition, dag-patterns, auto-triggers, worktree-lifecycle, handoff-protocol, commit-discipline, quality-control, dispatch-protocol, hooks-catalog, working-memory]
 ---

@@ -47,6 +47,33 @@ agents:
 #     approved_by: "@lead-dev"
 waivers: []
 
+# --- Criticality thresholds (optional) ---
+# Calibrate orchestrator behavior per complexity level.
+# thresholds:
+#   l2_min_agents: 4
+#   l3_min_agents: 6
+#   l4_min_agents: 8
+#   max_retries: 2
+#   migration_threshold_weeks: 2
+
+# --- Stack overrides (optional) ---
+# Override the default stack declared in each agent.
+# stack:
+#   backend: "FastAPI"
+#   frontend: "Vue 3"
+
+# --- Commit conventions (optional) ---
+# commits:
+#   prefix: "feat|fix|docs|chore|refactor|test|ci"
+#   scope_required: true
+#   max_subject_length: 72
+
+# --- Custom paths (optional) ---
+# paths:
+#   memory: ".renga/memory"
+#   reports: ".renga/reports"
+#   agents: ".github/agents"
+
 # --- LLM Models (optional) ---
 # Override the model used per agent via `renga models apply`.
 # Without this section, each agent uses the model in its own frontmatter.

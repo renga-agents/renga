@@ -2,7 +2,8 @@
 name: dag-patterns
 description: "Builds a multi-agent DAG organized in waves (reading -> TDD -> implementation -> review) with a file plan and checkpoints."
 argument-hint: "Describe the feature or task for which to build the DAG"
-user-invocable: true
+user-invocable: false
+---
 
 # Skill: Multi-Agent DAG Patterns
 

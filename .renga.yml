@@ -10,6 +10,8 @@
 #
 # ---
 
+# Config format version (not the framework version — that lives in .renga.lock and
+# .renga.example.yml as `project.framework_version`).
 version: "1.0"
 
 # -----------------------------------------------------------------------------
@@ -24,29 +26,21 @@ project:
 # -----------------------------------------------------------------------------
 # Sélection des agents actifs
 # -----------------------------------------------------------------------------
-# Trois modes disponibles :
+# Two modes available:
 #
-#   "all"       — Tous les agents du framework sont disponibles (défaut)
-#   "whitelist" — Seuls les agents listés dans `include` sont chargés
-#   "blacklist" — Tous les agents SAUF ceux listés dans `exclude`
+#   "all"       — All framework agents are available (default)
+#   "whitelist" — Only agents listed in `include` are loaded
 #
-# Les noms correspondent aux fichiers .agent.md sans l'extension.
-# L'orchestrateur et ses sous-orchestrateurs sont TOUJOURS chargés
-# quel que soit le mode (ils ne peuvent pas être exclus).
+# Names correspond to .agent.md filenames without the extension.
+# The orchestrator (seiji) is ALWAYS loaded regardless of mode.
 #
-# Exemples :
+# Example:
 #   mode: "whitelist"
 #   include:
 #     - backend-dev
 #     - frontend-dev
 #     - qa-engineer
 #     - software-architect
-#
-#   mode: "blacklist"
-#   exclude:
-#     - game-asset-generator
-#     - audio-generator
-#     - animations-engineer
 agents:
   mode: "all"
   include: []

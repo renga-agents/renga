@@ -2,7 +2,7 @@
 name: agent-roster
 description: "Resolves the active agent list from .renga.yml (whitelist / all / absent) and writes the roster to the scratchpad before DAG construction."
 argument-hint: "Read .renga.yml and resolve the roster for this session"
-user-invocable: true
+user-invocable: false
 ---
 # Skill: Agent Roster Resolution
 

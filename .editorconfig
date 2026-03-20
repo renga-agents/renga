@@ -1,0 +1,27 @@
+# EditorConfig — https://editorconfig.org
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.py]
+indent_size = 4
+
+[*.sh]
+indent_size = 2
+
+[*.{agent.md,instructions.md}]
+indent_size = 2
+max_line_length = off
+
+[SKILL.md]
+indent_size = 2
+max_line_length = off
+
+[Makefile]
+indent_style = tab

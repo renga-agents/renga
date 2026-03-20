@@ -2,7 +2,8 @@
 name: auto-triggers
 description: "Identifies automatic triggers for specialized agents based on conditions detected in the task (personal data, security, AI, compliance)."
 argument-hint: "Describe the task or change to analyze in order to detect the required triggers"
-user-invocable: true
+user-invocable: false
+---
 
 # Skill: Automatic Triggers
 

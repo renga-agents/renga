@@ -12,11 +12,10 @@ if [[ -z "$PROJECT_ROOT" || ! -f "$PROJECT_ROOT/.renga.yml" ]]; then
 fi
 RENGA_BASE="${RENGA_DIR:-$PROJECT_ROOT/.renga}"
 
-_tmp="${TMPDIR:-/tmp}"
-printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
-  >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
-
 if [[ -f "$PROJECT_ROOT/.hook-debug" ]]; then
+  _tmp="${TMPDIR:-/tmp}"
+  printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
+    >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
   mkdir -p "$RENGA_BASE" 2>/dev/null || true
   printf '[error-tracker] %s\n' "$INPUT" >> "$RENGA_BASE/hook-debug.log" 2>/dev/null || true
 fi

@@ -241,6 +241,7 @@ filiere: tech          # tech | data | product | governance
 model: "Claude Sonnet 4.6 (copilot)"
 user-invocable: true   # false for meta-agents (consensus-protocol, execution-modes)
 skills: [skill-name]   # optional — skills loaded natively by Copilot
+agents: ["*"]          # optional — declares sub-agent access; ["*"] = all agents
 ---
 # Agent: AgentName
 ...
@@ -248,7 +249,7 @@ skills: [skill-name]   # optional — skills loaded natively by Copilot
 ...
 ```
 
-Required frontmatter fields: `name`, `description`. All user-invocable agents need a Collaboration/Handoff section.
+Required frontmatter fields: `name`, `description`. All user-invocable agents need a Collaboration/Handoff section. The `agents: ["*"]` wildcard in seiji's frontmatter declares that seiji can delegate to any agent — this is a Copilot convention for orchestrators.
 
 ---
 

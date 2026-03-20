@@ -138,14 +138,12 @@ From the root of your project:
 
 ```bash
 
-renga init
 renga install
 code .
 
 ```
 
-`renga init` defaults to the Lite profile. In an interactive terminal, it lets you choose between Lite, Standard, and Full.  
-`renga install` downloads the agents from the latest release.
+`renga install` is the single onboarding command. It creates `.renga.yml` (defaulting to Lite profile), installs agents/hooks/skills, and optionally activates plugins. In an interactive terminal, it lets you choose between Lite, Standard, and Full profiles.
 
 ### 3. Open Copilot Chat and start with one specialist
 

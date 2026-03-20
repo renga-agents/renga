@@ -26,5 +26,7 @@ jobs:
             rc=$?
             [ $rc -le 1 ] || exit $rc
           }
+      - name: Run hook script tests
+        run: bash tests/test_hook_scripts.sh
       - name: Validate schema syntax
         run: python -c "import json, pathlib; json.loads(pathlib.Path('schemas/agent.schema.json').read_text())"

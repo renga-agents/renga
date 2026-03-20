@@ -50,7 +50,6 @@ Depuis la racine de votre projet :
 
 ```bash
 
-renga init
 renga install
 code .
 
@@ -81,7 +80,7 @@ Le profil Lite active 8 agents essentiels:
 - git-expert
 - tech-writer
 
-Le CLI `renga init` sélectionne Lite par défaut.
+`renga install` sélectionne Lite par défaut.
 
 ---
 

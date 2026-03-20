@@ -13,13 +13,11 @@ if [[ -z "$PROJECT_ROOT" || ! -f "$PROJECT_ROOT/.renga.yml" ]]; then
 fi
 RENGA_BASE="${RENGA_DIR:-$PROJECT_ROOT/.renga}"
 
-# Always dump raw payload for diagnostics (answers "what does Copilot actually send?")
-_tmp="${TMPDIR:-/tmp}"
-printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
-  >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
-
-# Debug mode: full dump when .hook-debug exists at project root
+# Debug mode: dump raw payload when .hook-debug exists at project root
 if [[ -f "$PROJECT_ROOT/.hook-debug" ]]; then
+  _tmp="${TMPDIR:-/tmp}"
+  printf '=== %s %s ===\n%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$(basename "$0")" "$INPUT" \
+    >> "$_tmp/renga-last-hook-payload.txt" 2>/dev/null || true
   mkdir -p "$RENGA_BASE" 2>/dev/null || true
   printf '[post-tool-audit] %s\n' "$INPUT" >> "$RENGA_BASE/hook-debug.log" 2>/dev/null || true
 fi

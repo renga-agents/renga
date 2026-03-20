@@ -6,8 +6,7 @@
 # Usage: ./scripts/renga.sh <command>
 #
 # Commands:
-#   init      — Copie .renga.example.yml → .renga.yml + crée .renga/memory/
-#   install   — Installe les agents depuis une release GitHub
+#   install   — Installe les agents depuis une release GitHub (crée .renga.yml si absent)
 #   update    — Met à jour les agents vers la dernière version
 #   list      — Liste les agents et plugins installés
 #   plugin    — Gestion des plugins (add, remove, list)
@@ -15,6 +14,7 @@
 #   doctor    — Vérifie la santé du setup (Python, fichiers, schéma)
 #   dashboard — Lance scripts/generate_dashboard.py
 #   build     — Construit l'artefact de distribution
+#   version   — Affiche la version
 # =============================================================================
 
 set -euo pipefail
@@ -22,7 +22,7 @@ set -euo pipefail
 # ---------------------------------------------------------------------------
 # Version (replaced by build_dist.py at build time)
 # ---------------------------------------------------------------------------
-RENG_VERSION="__RENGA_VERSION__"
+RENGA_VERSION="__RENGA_VERSION__"
 
 # ---------------------------------------------------------------------------
 # Couleurs & symboles
@@ -170,34 +170,6 @@ ensure_gitignore_reports() {
 
 normalize_profile() {
   printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
-}
-
-prompt_init_profile() {
-  if [[ ! -t 0 ]]; then
-    printf 'lite\n'
-    return 0
-  fi
-
-  local answer
-  printf 'Select a profile [lite/standard/full] (default: lite): '
-  read -r answer || true
-  answer="$(normalize_profile "$answer")"
-
-  case "$answer" in
-    ""|lite|l)
-      printf 'lite\n'
-      ;;
-    standard|s)
-      printf 'standard\n'
-      ;;
-    full|f)
-      printf 'full\n'
-      ;;
-    *)
-      warn "Unknown profile '$answer' — falling back to lite"
-      printf 'lite\n'
-      ;;
-  esac
 }
 
 write_profile_config() {
@@ -356,7 +328,7 @@ cmd_doctor() {
   if [[ -f "$ROOT_DIR/.renga.yml" ]]; then
     ok ".renga.yml présent"
   else
-    warn ".renga.yml absent — lancez './scripts/renga.sh init'"
+    warn ".renga.yml absent — lancez 'renga install'"
     errors=$((errors + 1))
   fi
 
@@ -400,7 +372,7 @@ cmd_doctor() {
       warn "Aucun SKILL.md dans .github/skills/"
     fi
   else
-    warn ".github/skills/ introuvable — lancez './scripts/renga.sh init'"
+    warn ".github/skills/ introuvable — lancez 'renga install'"
   fi
 
   # 6. Hooks directory
@@ -420,7 +392,7 @@ cmd_doctor() {
       warn ".github/hooks/scripts/ introuvable"
     fi
   else
-    warn ".github/hooks/ introuvable — lancez './scripts/renga.sh init'"
+    warn ".github/hooks/ introuvable — lancez 'renga install'"
   fi
 
 
@@ -609,7 +581,10 @@ cmd_install() {
   # Télécharger et extraire dans un répertoire temporaire
   local tmp_dir
   tmp_dir="$(mktemp -d)"
-  trap "rm -rf '$tmp_dir'" EXIT
+  # Save any existing EXIT trap and chain our cleanup
+  local _prev_trap
+  _prev_trap="$(trap -p EXIT | sed "s/^trap -- '//;s/' EXIT$//" 2>/dev/null || true)"
+  trap "rm -rf '$tmp_dir'; ${_prev_trap:-true}" EXIT
 
   # Récupérer les infos de la release dans un fichier (évite la corruption par caractères de contrôle)
   local release_json_file="$tmp_dir/release.json"
@@ -622,7 +597,7 @@ cmd_install() {
   local tarball_url
   tarball_url="$(python3 -c "
 import json
-data = json.load(open('$release_json_file'))
+data = json.load(open('$release_json_file', encoding='utf-8'))
 assets = data.get('assets', [])
 for a in assets:
     if a['name'].endswith('.tar.gz'):
@@ -653,14 +628,15 @@ else:
   fi
 
   local installed_version
-  installed_version="$(python3 -c "import json; print(json.load(open('$manifest'))['version'])")"
+  installed_version="$(python3 -c "import json; print(json.load(open('$manifest', encoding='utf-8'))['version'])")"
 
   # Lire la whitelist depuis .renga.yml
   local whitelist_mode="all"
+  # Note: `local -a` works on Bash 3.2+ (macOS default), unlike `declare -A`
   local -a whitelist_agents=()
   if [[ -f "$CONFIG_FILE" ]]; then
     whitelist_mode="$(python3 -c "
-for line in open('$CONFIG_FILE'):
+for line in open('$CONFIG_FILE', encoding='utf-8'):
     s = line.strip()
     if s.startswith('mode:'):
         val = s.split(':',1)[1].strip().strip('\"\'')
@@ -676,7 +652,7 @@ else:
         [[ -n "$_agent_name" ]] && whitelist_agents+=("$_agent_name")
       done < <(python3 -c "
 import re
-text = open('$CONFIG_FILE').read()
+text = open('$CONFIG_FILE', encoding='utf-8').read()
 m = re.search(r'include:\s*\n((?:\s+-\s+\S+\n?)+)', text)
 if m:
     for line in m.group(1).strip().splitlines():
@@ -817,7 +793,7 @@ if m:
   local available_plugins=""
   available_plugins="$(python3 -c "
 import json
-m = json.load(open('$manifest'))
+m = json.load(open('$manifest', encoding='utf-8'))
 plugins = list(m.get('plugins', {}).keys())
 print(' '.join(plugins))
 " 2>/dev/null)"
@@ -876,7 +852,7 @@ cmd_update() {
   local current_version
   current_version="$(python3 -c "
 import re
-text = open('$LOCK_FILE').read()
+text = open('$LOCK_FILE', encoding='utf-8').read()
 m = re.search(r'version:\s*\"?([^\"\\n]+)', text)
 print(m.group(1) if m else 'unknown')
 ")"
@@ -895,7 +871,7 @@ print(m.group(1) if m else 'unknown')
     local remote_version
     remote_version="$(python3 -c "
 import json
-d = json.load(open('$remote_json'))
+d = json.load(open('$remote_json', encoding='utf-8'))
 print(d.get('tag_name', '?').lstrip('v'))
 ")"
     rm -rf "$tmp_dr"
@@ -935,7 +911,7 @@ cmd_list() {
         local sname
         sname="$(basename "$(dirname "$skill_file")")"
         echo "  $sname"
-      done <<< "$skill_dirs"
+      done <<< "$skill_dirs"  # <<< herestring: Bash 3.2+ compatible (unlike mapfile)
     fi
   fi
 
@@ -1024,17 +1000,19 @@ _add_plugin_to_config() {
   [[ -f "$CONFIG_FILE" ]] || return 0
   python3 -c "
 import re, pathlib, sys
-path = pathlib.Path('$CONFIG_FILE')
+cfg = sys.argv[1]
+name = sys.argv[2]
+path = pathlib.Path(cfg)
 text = path.read_text()
-if '  - $plugin_name' in text:
+if '  - ' + name in text:
     sys.exit(0)
 # plugins: [] -> plugins:\n  - name
-text = re.sub(r'plugins:\s*\[\]', 'plugins:\n  - $plugin_name', text)
+text = re.sub(r'plugins:\s*\[\]', 'plugins:\n  - ' + name, text)
 # plugins:\n  - other\n -> add new entry
-if '  - $plugin_name' not in text:
-    text = re.sub(r'(plugins:\n(?:  - [^\n]+\n)+)', r'\1  - $plugin_name\n', text)
+if '  - ' + name not in text:
+    text = re.sub(r'(plugins:\n(?:  - [^\n]+\n)+)', r'\1  - ' + name + '\n', text)
 path.write_text(text)
-" 2>/dev/null
+" "$CONFIG_FILE" "$plugin_name" 2>/dev/null
 }
 
 # Remove plugin name from plugins: section in .renga.yml
@@ -1042,14 +1020,16 @@ _remove_plugin_from_config() {
   local plugin_name="$1"
   [[ -f "$CONFIG_FILE" ]] || return 0
   python3 -c "
-import re, pathlib
-path = pathlib.Path('$CONFIG_FILE')
+import re, pathlib, sys
+cfg = sys.argv[1]
+name = sys.argv[2]
+path = pathlib.Path(cfg)
 text = path.read_text()
-text = re.sub(r'\n  - $plugin_name\b[^\n]*', '', text)
+text = re.sub(r'\n  - ' + re.escape(name) + r'\b[^\n]*', '', text)
 # If plugins: section is now empty, normalize to plugins: []
 text = re.sub(r'plugins:\n(?=\S|\Z)', 'plugins: []\n', text)
 path.write_text(text)
-" 2>/dev/null
+" "$CONFIG_FILE" "$plugin_name" 2>/dev/null
 }
 
 cmd_plugin() {
@@ -1075,7 +1055,10 @@ cmd_plugin() {
       # Fetch from latest release (use temp file to avoid control char corruption)
       local tmp_dir
       tmp_dir="$(mktemp -d)"
-      trap "rm -rf '$tmp_dir'" EXIT
+      # Save any existing EXIT trap and chain our cleanup
+      local _prev_trap
+      _prev_trap="$(trap -p EXIT | sed "s/^trap -- '//;s/' EXIT$//" 2>/dev/null || true)"
+      trap "rm -rf '$tmp_dir'; ${_prev_trap:-true}" EXIT
 
       local release_json_file="$tmp_dir/release.json"
       curl -fsSL "$RENGA_API/releases/latest" -o "$release_json_file" || {
@@ -1086,7 +1069,7 @@ cmd_plugin() {
       local tarball_url
       tarball_url="$(python3 -c "
 import json
-data = json.load(open('$release_json_file'))
+data = json.load(open('$release_json_file', encoding='utf-8'))
 for a in data.get('assets', []):
     if a['name'].endswith('.tar.gz'):
         print(a['browser_download_url']); break
@@ -1132,7 +1115,7 @@ else:
 import json, pathlib
 cached = pathlib.Path('$cached_manifest')
 meta_base = pathlib.Path('$RENGA_DIR/_plugins')
-m = json.load(cached.open())
+m = json.load(cached.open(encoding='utf-8'))
 plugins = m.get('plugins', {})
 if not plugins:
     print('  Aucun plugin disponible.')
@@ -1283,7 +1266,7 @@ cmd_skill() {
           local sdesc
           sdesc="$(python3 -c "
 import re
-text = open('$skill_md').read()
+text = open('$skill_md', encoding='utf-8').read()
 m = re.search(r'description:\s*[\"\x27]?(.+?)[\"\x27]?\s*$', text, re.M)
 print(m.group(1) if m else '—')
 " 2>/dev/null || echo '—')"
@@ -1309,7 +1292,7 @@ print(m.group(1) if m else '—')
           local valid
           valid="$(python3 -c "
 import re, sys
-text = open('$skill_md').read()
+text = open('$skill_md', encoding='utf-8').read()
 if not text.startswith('---'):
     print('ERR:no-frontmatter'); sys.exit()
 m_name = re.search(r'^name:\s*(.+)', text, re.M)
@@ -1350,6 +1333,10 @@ print('OK')
   esac
 }
 
+cmd_version() {
+  echo "renga $RENGA_VERSION"
+}
+
 cmd_help() {
   cat <<EOF
 ${BOLD}renga CLI${RESET} — Framework de gouvernance IA
@@ -1368,6 +1355,7 @@ ${BOLD}Commands:${RESET}
   skill <sub>               Gestion des skills (list, validate)
   dashboard                 Génère le dashboard de performance
   build                     Construit l'artefact de distribution
+  version                   Affiche la version
   help                      Affiche cette aide
 
 EOF
@@ -1394,6 +1382,7 @@ case "${1}" in
   doctor)    cmd_doctor ;;
   dashboard) cmd_dashboard ;;
   build)     shift; cmd_build "$@" ;;
+  version|--version|-v) cmd_version ;;
   help|--help|-h) cmd_help ;;
   *)
     fail "Commande inconnue : '${1}'"

@@ -2,7 +2,8 @@
 name: task-decomposition
 description: "Breaks down a complex task into atomic subtasks with criticality classification (L0-L4), multi-agent coverage, and acceptance criteria."
 argument-hint: "Describe the task to decompose (example: 'Add a POST /api/v1/notifications endpoint with WebSocket')"
-user-invocable: true
+user-invocable: false
+---
 
 # Skill: Task Decomposition
 

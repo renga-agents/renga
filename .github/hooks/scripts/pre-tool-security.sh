@@ -60,13 +60,13 @@ if in_list "$TOOL" $EXEC_TOOLS; then
   fi
 
   # Reject dangerous patterns BEFORE whitelist check
-  # Subshells, backticks, and output redirections can execute/write arbitrary content
-  if [[ "$COMMAND" =~ \$\( ]] || [[ "$COMMAND" =~ \` ]]; then
-    echo "Dangerous pattern: subshell/backtick detected" >&2
+  # Subshells, backticks, process substitution, and output redirections can execute/write arbitrary content
+  if [[ "$COMMAND" =~ \$\( ]] || [[ "$COMMAND" =~ \` ]] || [[ "$COMMAND" =~ \<\( ]] || [[ "$COMMAND" =~ \>\( ]]; then
+    echo "Dangerous pattern: subshell/backtick/process-substitution detected" >&2
     exit 1
   fi
-  # Block output redirections (but allow stderr redirect 2>)
-  if echo "$COMMAND" | grep -qE '(^|[^2])\s*>' 2>/dev/null; then
+  # Block output redirections: >, >>, 1>, 1>> (but allow stderr redirect 2>, 2>>)
+  if echo "$COMMAND" | grep -qE '(^|[^2[:alnum:]])[1]?\s*>{1,2}' 2>/dev/null; then
     echo "Dangerous pattern: output redirection detected" >&2
     exit 1
   fi
